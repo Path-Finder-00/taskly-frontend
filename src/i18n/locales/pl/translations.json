@@ -1,0 +1,10 @@
+{
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "roleAssignments": "Zarządzaj Przypisanymi Rolami",
+        "projectUsers": "Zarządzaj Członkami Projektów",
+        "myProjects": "Moje Projekty",
+        "myTickets": "Moje Zgłoszenia",
+        "userProfile": "Profil Użytkownika"
+    }
+}

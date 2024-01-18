@@ -1,0 +1,10 @@
+{
+    "sidebar": { 
+        "dashboard": "Dashboard",
+        "roleAssignments": "Manage Role Assignments",
+        "projectUsers": "Manage Project Users",
+        "myProjects": "My Projects",
+        "myTickets": "My Tickets",
+        "userProfile": "User Profile"
+    }
+}
