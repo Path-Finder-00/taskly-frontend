@@ -7,7 +7,7 @@ export const Sidebar = styled.div`
     height: 100vh;
     left: 0;
     width: ${sizes.sidebarWidth}px;
-    padding: 0 16px 24px;
+    padding: 30px 16px 24px;
     background: ${color.sidebar};
     border-right: 1px solid ${color.recessedBackground}
 `;

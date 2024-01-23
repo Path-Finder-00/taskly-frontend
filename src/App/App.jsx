@@ -1,17 +1,21 @@
-import MenuSidebar from '@/components/MenuSidebar'
-import MenuTopbar from '@/components/MenuTopbar'
+import { useState } from 'react'
+
+// import MenuSidebar from '@/components/MenuSidebar'
+// import MenuTopbar from '@/components/MenuTopbar'
+import Project from '@/Project'
+import LoginForm from '@/Project/Login'
 
 import './fontStyles.css'
 
 const App = () => {
 
-  //const [ counter, setCounter ] = useState(0)
-
+  const [user, setUser] = useState(null)
 
   return (
     <>
-      <MenuTopbar />
-      <MenuSidebar />
+      {user === null && <h2>log in to application</h2>}
+      {user === null && <LoginForm setUser={setUser} />}
+      {user && <Project />}
     </>
   )
 }

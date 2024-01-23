@@ -1,4 +1,4 @@
-import { Topbar } from '@/components/MenuTopbar/Styles'
+import { Topbar } from './Styles'
 
 const MenuTopbar = () => {
     return(

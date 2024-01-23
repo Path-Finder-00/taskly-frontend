@@ -6,7 +6,7 @@ export const Item = styled.div`
     display: flex;
     padding: 8px 12px;
     border-radius: 3px;
-    &:hover { background: ${color.primary}; }
+    &:hover { background: ${color.third}; color: ${color.mainBackground} }
 `;
 
 export const ItemText = styled.div`
