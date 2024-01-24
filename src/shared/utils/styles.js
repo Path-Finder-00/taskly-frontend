@@ -26,3 +26,10 @@ export const font = {
     extraBold: 'font-family: "OpenSans-ExtraBold"; font-weight: bolder;',
     size: size => `font-size: ${size}px`
 };
+
+export const styleUtils = {
+    scrollableY: css`
+        overflow-x: hidden;
+        overflow-y: auto;
+    `,
+}
