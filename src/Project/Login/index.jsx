@@ -35,27 +35,31 @@ const LoginForm = ({ setUser }) => {
     }
 
     return (
-        <form onSubmit={handleLogin}>
-            <div>
-                email
-                <input
-                    type="text"
-                    id='email'
-                    value={email}
-                    onChange={handleEmailChange}
-                />
-            </div>
-            <div>
-                password
-                <input
-                    type="password"
-                    id='password'
-                    value={password}
-                    onChange={handlePasswordChange}
-                />
-            </div>
-            <button id='login-button' type="submit">login</button>
-        </form>
+        <>
+            <form onSubmit={handleLogin}>
+                <div>
+                    email 
+                    <input
+                        type="text"
+                        id='email'
+                        value={email}
+                        onChange={handleEmailChange}
+                    />
+                </div>
+                <div>
+                    password
+                    <input
+                        type="password"
+                        id='password'
+                        value={password}
+                        onChange={handlePasswordChange}
+                    />
+                </div>
+                <button id='login-button' type="submit">login</button>
+            </form>
+            <p>email: test_admin@gmail.com</p>
+            <p>password: password</p>
+        </>
     )
 }
 
