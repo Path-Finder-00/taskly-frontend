@@ -18,16 +18,18 @@ export const SelectedValue = styled.div`
 `
 
 export const Placeholder = styled.div`
-    color: ${color.textDark}
+    color: ${color.textDark};
 `
 
 export const Dropdown = styled.div`
     position: absolute;
     top: 100%;
-    left: 0;
-    border-radius: 0 0 4px 4px;
-    background: #fff;
+    left: -1px;
+    ${font.size(18)};
+    border-radius: 0 0 2px 2px;
+    background: ${color.mainBackground};
     width: 100%;
+    border: 1px solid ${color.textDark};
 `
 
 export const Options = styled.div`
@@ -36,7 +38,7 @@ export const Options = styled.div`
 `
 
 export const Option = styled.div`
-    padding: 8px 14px;
+    padding: 5px 5px 5px 10px;
     word-break: break-word;
     &:hover { background: ${color.third}; color: ${color.mainBackground} }
 `

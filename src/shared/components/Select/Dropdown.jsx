@@ -15,7 +15,7 @@ const SelectDropdown = ({ options, handleDropdownState, handleOptionChange }) =>
                         key={option.value}
                         onClick={() => selectOption(option)}
                     >
-                        {option}
+                        {option.value}
                     </Option>
                 ))}
             </Options>

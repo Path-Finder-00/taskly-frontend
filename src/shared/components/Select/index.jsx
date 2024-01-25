@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import Dropdown from './Dropdown'
+import { StyledSelect, SelectedValue, Placeholder } from './Styles.js'
 
-import { StyledSelect, SelectedValue, Placeholder, Dropdown } from './Styles.js'
-
-const Select = ({ options }) => {
+const Select = () => {
 
     const [isDropdownOpen, setDropdownOpen] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
@@ -15,6 +15,8 @@ const Select = ({ options }) => {
         setSelectedOption(event.target.value)
     }
 
+    const options = [ {value: 'option1'}, {value: 'option2'} ]
+
     return (
         <StyledSelect>
             <SelectedValue onClick={handleDropdownState} >
@@ -22,13 +24,13 @@ const Select = ({ options }) => {
                 {selectedOption && true}
             </SelectedValue>
 
-            {isDropdownOpen && (
+            {isDropdownOpen &&
                 <Dropdown 
                     options={options}
                     handleDropdownState={handleDropdownState}
                     handleOptionChange={handleOptionChange} 
                 />
-            )}
+            }
         </StyledSelect>
     )
 }
