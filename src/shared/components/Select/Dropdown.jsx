@@ -1,6 +1,7 @@
+import { forwardRef } from 'react'
 import { Dropdown, Options, Option } from './Styles'
 
-const SelectDropdown = ({ options, handleDropdownState, handleOptionChange }) => {
+const SelectDropdown = forwardRef(({ options, handleDropdownState, handleOptionChange }, ref) => {
 
     const selectOption = option => {
         handleDropdownState()
@@ -8,7 +9,7 @@ const SelectDropdown = ({ options, handleDropdownState, handleOptionChange }) =>
     }
 
     return (
-        <Dropdown>
+        <Dropdown ref={ref}>
             <Options>
                 {options.map(option => (
                     <Option
@@ -21,6 +22,8 @@ const SelectDropdown = ({ options, handleDropdownState, handleOptionChange }) =>
             </Options>
         </Dropdown>
     )
-}
+})
+
+SelectDropdown.displayName = 'SelectDropdown'
 
 export default SelectDropdown

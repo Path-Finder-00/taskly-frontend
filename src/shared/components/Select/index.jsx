@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Dropdown from './Dropdown'
 import { StyledSelect, SelectedValue, Placeholder } from './Styles.js'
 
@@ -15,6 +15,18 @@ const Select = () => {
         setSelectedOption(event.target.value)
     }
 
+    const selectRef = useRef()
+    const dropdownRef = useRef()
+
+    useEffect(() => {  
+        const handleClickOutside = (event) => {
+            if (isDropdownOpen && !dropdownRef.current?.contains(event.target)) {
+                setDropdownOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+    }, [isDropdownOpen, dropdownRef, selectRef])
+
     const options = [ {value: 'option1'}, {value: 'option2'} ]
 
     return (
@@ -29,6 +41,7 @@ const Select = () => {
                     options={options}
                     handleDropdownState={handleDropdownState}
                     handleOptionChange={handleOptionChange} 
+                    ref={dropdownRef}
                 />
             }
         </StyledSelect>
