@@ -7,7 +7,7 @@ const topPadding = sizes.topbarHeight + 30
 
 // TODO: Change the media settings
 
-export const ProjectCanvas = styled.div`
+export const DashboardCanvas = styled.div`
     padding: ${topPadding}px 50px 10px ${leftPadding}px;
     background: ${color.supplementaryBackground};
 

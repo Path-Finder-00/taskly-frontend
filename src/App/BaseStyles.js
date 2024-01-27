@@ -7,5 +7,6 @@ export default createGlobalStyle`
         color: ${color.textDark};
         ${font.size(16)};
         ${font.regular};
+        background: ${color.supplementaryBackground};
     }
 `;

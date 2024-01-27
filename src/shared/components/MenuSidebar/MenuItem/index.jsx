@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { Item, ItemText } from './Styles'
 
 const MenuItem = ({ text }) => {
