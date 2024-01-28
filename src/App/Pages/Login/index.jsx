@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import loginService from '@/App/services/login.js'
 
 const LoginForm = ({ setUser }) => {
+
+    const navigate = useNavigate()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -29,6 +32,7 @@ const LoginForm = ({ setUser }) => {
             setUser(user)
             setEmail('')
             setPassword('')
+            navigate('/dashboard')
         } catch (exception) {
             console.log(exception)
         }

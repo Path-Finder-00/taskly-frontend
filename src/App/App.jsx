@@ -16,12 +16,12 @@ const App = () => {
   return (
     <Fragment>
       <BaseStyles />
-      <MenuTopbar />
-      <MenuSidebar />
+      { user && <MenuTopbar /> }
+      { user && <MenuSidebar /> }
       <Routes>
-        <Navigate replace from="/" to="/dashboard" />
         <Route path="/login" element={ <LoginForm setUser={setUser} /> } /> 
         <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
+        <Route path="*" element={ <Navigate to="/login" replace /> } />
       </Routes>
     </Fragment>
   )
