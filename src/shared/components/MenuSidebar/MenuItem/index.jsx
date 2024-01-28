@@ -1,10 +1,14 @@
+import { Link } from 'react-router-dom'
+
 import { Item, ItemText } from './Styles'
 
-const MenuItem = ({ text }) => {
+const MenuItem = ({ text, endpoint }) => {
 
     return (
         <Item>
-            <ItemText>{text}</ItemText>
+            <Link to="/">
+                <ItemText>{text}</ItemText>
+            </Link>
         </Item>
     )
 }

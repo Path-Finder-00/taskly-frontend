@@ -6,5 +6,8 @@
         "myProjects": "Moje Projekty",
         "myTickets": "Moje Zgłoszenia",
         "userProfile": "Profil Użytkownika"
+    },
+    "dropdown": {
+        "empty": "Brak dostępnych opcji."
     }
 }

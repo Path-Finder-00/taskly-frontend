@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import loginService from '@/App/services/login.js'
+import { storeAuthToken } from '@/shared/utils/authToken'
 
 const LoginForm = ({ setUser }) => {
 
@@ -26,7 +27,7 @@ const LoginForm = ({ setUser }) => {
                 email, password
             })
 
-            window.localStorage.setItem('loggedTasklyAppUser', JSON.stringify(user))
+            storeAuthToken(user.token)
         
             console.log(user.token)
             setUser(user)

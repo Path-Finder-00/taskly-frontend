@@ -1,7 +1,10 @@
 import { forwardRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dropdown, Options, Option } from './Styles'
 
-const SelectDropdown = forwardRef(({ options, handleDropdownState, handleOptionChange }, ref) => {
+const SelectDropdown = forwardRef(({ options, displayAttribute, handleDropdownState, handleOptionChange }, ref) => {
+
+    const { t } = useTranslation("translations")
 
     const selectOption = option => {
         handleDropdownState()
@@ -11,14 +14,20 @@ const SelectDropdown = forwardRef(({ options, handleDropdownState, handleOptionC
     return (
         <Dropdown ref={ref}>
             <Options>
-                {options.map(option => (
+                {options ? options.map(option => (
                     <Option
-                        key={option.value}
+                        key={option.id}
                         onClick={() => selectOption(option)}
                     >
-                        {option.value}
+                        {option[displayAttribute]}
                     </Option>
-                ))}
+                )) : <Option
+                        key={'empty'}
+                        onClick={() => null}
+                    >
+                        {t('dropdown.empty')}
+                    </Option>
+                }
             </Options>
         </Dropdown>
     )
