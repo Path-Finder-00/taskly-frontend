@@ -3,6 +3,9 @@ import { sizes, color, font } from '@/shared/utils/styles';
 
 export const Sidebar = styled.div`
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
     top: ${sizes.topbarHeight}px;
     height: 100vh;
     left: 0;
@@ -14,14 +17,17 @@ export const Sidebar = styled.div`
 
 export const MenuItem = styled.div`
     position: relative;
-    display: flex;
     padding: 8px 12px;
     border-radius: 3px;
     &:hover { background: ${color.third}; color: ${color.mainBackground} }
-`;
-
-export const ItemText = styled.div`
-    padding-top: 2px;
     ${font.size(20)};
     ${font.regular};
+    text-decoration: none;
+    color: ${color.textDark};
+
+    &.active {
+        color: ${color.mainBackground};
+        background: ${color.third};
+        box-shadow: 4px 4px lightgrey;
+    }
 `;

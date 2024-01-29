@@ -1,35 +1,31 @@
 import { useTranslation } from 'react-i18next'
-import { NavLink, useResolvedPath } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-import { Sidebar, MenuItem, ItemText } from './Styles'
+import { Sidebar, MenuItem } from './Styles'
 
 const MenuSidebar = () => {
-    const match = useResolvedPath()
 
     const { t } = useTranslation("translations")
 
     return(
         <Sidebar>
-            {renderMenuItem(match, t('sidebar.dashboard'), '/dashboard')}
-            {renderMenuItem(match, t('sidebar.roleAssignments'), '/dashboard')}
-            {renderMenuItem(match, t('sidebar.projectUsers'), '/dashboard')}
-            {renderMenuItem(match, t('sidebar.myProjects'), '/dashboard')}
-            {renderMenuItem(match, t('sidebar.myTickets'), '/dashboard')}
-            {renderMenuItem(match, t('sidebar.userProfile'), '/dashboard')}
+            {renderMenuItem(t('sidebar.dashboard'), '/dashboard')}
+            {renderMenuItem(t('sidebar.roleAssignments'), '/roles')}
+            {renderMenuItem(t('sidebar.projectUsers'), '/users')}
+            {renderMenuItem(t('sidebar.myProjects'), '/projects')}
+            {renderMenuItem(t('sidebar.myTickets'), '/tickets')}
+            {renderMenuItem(t('sidebar.userProfile'), '/profile')}
         </Sidebar>
     )
 }
 
-const renderMenuItem = (match, text, path) => {
-    const isImplemented = !!path
+const renderMenuItem = (text, path) => {
 
-    const menuItemProps = isImplemented
-        ? { as: NavLink, exact: true, to: `${match.pathname}${path}`}
-        : { as: 'div' }
+    const menuItemProps = { as: NavLink, end: true, to: `${path}`}
 
     return (
         <MenuItem {...menuItemProps}>
-            <ItemText>{text}</ItemText>
+            {text}
         </MenuItem>
     )
 }
