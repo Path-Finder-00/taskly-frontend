@@ -2,17 +2,15 @@ import styled from 'styled-components';
 import { sizes, color, font } from '@/shared/utils/styles';
 
 export const Sidebar = styled.div`
-    position: fixed;
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 5px;
-    top: ${sizes.topbarHeight}px;
-    height: 100vh;
+    height: auto;
     left: 0;
     width: ${sizes.sidebarWidth}px;
-    padding: 30px 16px 24px;
+    padding: 30px 16px 0 16px;
     background: ${color.sidebar};
-    border-right: 1px solid ${color.recessedBackground}
 `;
 
 export const MenuItem = styled.div`

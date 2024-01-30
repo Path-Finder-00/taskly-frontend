@@ -16,7 +16,7 @@ export const color = {
 
 export const sizes = {
     sidebarWidth: 320,
-    topbarHeight: 100
+    topbarHeight: 80
 };
 
 export const font = {
