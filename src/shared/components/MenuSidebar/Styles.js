@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { sizes, color, font } from '@/shared/utils/styles';
 
 export const Sidebar = styled.div`
@@ -7,7 +8,6 @@ export const Sidebar = styled.div`
     flex-direction: column;
     gap: 5px;
     height: auto;
-    left: 0;
     width: ${sizes.sidebarWidth}px;
     padding: 30px 16px 0 16px;
     background: ${color.sidebar};

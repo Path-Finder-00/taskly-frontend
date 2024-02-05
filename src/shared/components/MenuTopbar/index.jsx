@@ -2,7 +2,9 @@ import { Topbar } from './Styles'
 
 const MenuTopbar = () => {
     return(
-        <Topbar></Topbar>
+        <Topbar>
+            {/* <StyledLogo /> */}
+        </Topbar>
     )
 }
 

@@ -1,4 +1,5 @@
 import { css } from 'styled-components';
+import Color from 'color';
 
 export const color = {
     primary: '#3e74db', // Blue
@@ -32,4 +33,15 @@ export const styleUtils = {
         overflow-x: hidden;
         overflow-y: auto;
     `,
-}
+};
+
+export const mixin = {
+    darken: (colorValue, amount) =>
+        Color(colorValue)
+            .darken(amount)
+            .string(),
+    lighten: (colorValue, amount) =>
+        Color(colorValue)
+            .lighten(amount)
+            .string()
+};

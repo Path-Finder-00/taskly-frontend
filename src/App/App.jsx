@@ -6,6 +6,7 @@ import MenuTopbar from '@/shared/components/MenuTopbar'
 import { Container, Content, Canvas } from './MainStyle'
 import BaseStyles from './BaseStyles'
 import Dashboard from '@/App/Pages/Dashboard'
+import Projects from '@/App/Pages/Projects'
 import LoginForm from '@/App/Pages/Login'
 
 import './fontStyles.css'
@@ -25,6 +26,7 @@ const App = () => {
             <Routes>
               <Route path="/login" element={ <LoginForm setUser={setUser} /> } /> 
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
+              <Route path="/projects" element={user ? <Projects /> : <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Canvas>

@@ -21,4 +21,16 @@ export default createGlobalStyle`
         display: flex;
         flex-direction: column;
     }
+
+    button {
+        background: none;
+        border: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        ${font.regular};
+    }
 `;

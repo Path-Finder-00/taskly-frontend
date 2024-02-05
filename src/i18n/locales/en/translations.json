@@ -9,5 +9,9 @@
     },
     "dropdown": {
         "empty": "There are no options available."
+    },
+    "projects": {
+        "title": "My Projects",
+        "create": "Create Project"
     }
 }
