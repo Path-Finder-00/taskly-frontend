@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 
 import loginService from '@/App/services/login.js'
 import { storeAuthToken } from '@/shared/utils/authToken'
+import './login.css'
+import logo from '../../assets/taskly_logo.png'
 
 const LoginForm = ({ setUser }) => {
 
@@ -41,31 +43,38 @@ const LoginForm = ({ setUser }) => {
 
     return (
         <>
-            <form onSubmit={handleLogin}>
-                <div>
-                    email 
-                    <input
-                        type="text"
-                        id='email'
-                        value={email}
-                        onChange={handleEmailChange}
-                    />
-                </div>
-                <div>
-                    password
-                    <input
-                        type="password"
-                        id='password'
-                        value={password}
-                        onChange={handlePasswordChange}
-                    />
-                </div>
-                <button id='login-button' type="submit">login</button>
-            </form>
-            <p>email: test_admin@gmail.com</p>
-            <p>password: password</p>
+          <form onSubmit={handleLogin} className="signin-form-container">
+            <div className="logo">
+                <img src={logo} alt="taskly-logo" />
+            </div>
+            <div className="input-wrapper">
+                <input
+                type="text"
+                id="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="input-field"
+                placeholder="Email"
+                />
+            </div>
+            <div className="input-wrapper">
+                <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="input-field"
+                placeholder="Password"
+                />
+            </div>
+            <button id="login-button" type="submit" className="signin-submit-button">Sign in</button>
+            <div className="signin-info">
+                <p>email: test_admin@gmail.com</p>
+                <p>password: password</p>
+          </div>
+          </form>
         </>
-    )
+      );
 }
 
 export default LoginForm
