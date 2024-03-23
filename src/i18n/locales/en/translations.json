@@ -10,6 +10,9 @@
     "dropdown": {
         "empty": "There are no options available."
     },
+    "dashboards": {
+        "project": "Project"
+    },
     "projects": {
         "title": "My Projects",
         "create": "Create Project"
