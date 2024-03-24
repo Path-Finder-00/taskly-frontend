@@ -15,6 +15,15 @@
     },
     "projects": {
         "title": "Moje Projekty",
-        "create": "Stwórz Projekt"
+        "create": "Stwórz Projekt",
+        "yourProjects": "Twoje Projekty",
+        "subtitle": "Wszystkie projekty, w których uczestniczysz",
+        "search": "Szukaj",
+        "name": "Nazwa Projektu",
+        "description": "Opis",
+        "action": "Akcja",
+        "manage": "Zarządzaj Członkami",
+        "details": "Szczegóły",
+        "noProject": "Obecnie nie bierzesz udziału w żadnym projekcie"
     }
 }

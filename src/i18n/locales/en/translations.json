@@ -15,6 +15,15 @@
     },
     "projects": {
         "title": "My Projects",
-        "create": "Create Project"
+        "create": "Create Project",
+        "yourProjects": "Your Projects",
+        "subtitle": "All the projects you participate in",
+        "search": "Search",
+        "name": "Project Name",
+        "description": "Description",
+        "action": "Action",
+        "manage": "Manage Users",
+        "details": "Details",
+        "noProject": "Currently you don't participate in any project"
     }
 }
