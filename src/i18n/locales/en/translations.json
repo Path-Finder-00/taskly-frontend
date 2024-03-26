@@ -28,8 +28,15 @@
         "createNew": "Create New Project",
         "selectMember": "Select a Team Member to assign to the Project",
         "teamMember": "Team Member",
+        "projectTeamMembers": "Project Team Members",
         "selectRole": "Select a Role to assign to Project Member",
         "role": "Role",
-        "add": "Add Team Member to Project"
+        "add": "Add Team Member to Project",
+        "noProjectTeamMembers": "You haven't added Project Team Members yet"
+    },
+    "users": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role"
     }
 }

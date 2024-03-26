@@ -28,8 +28,15 @@
         "createNew": "Stwórz Nowy Projekt",
         "selectMember": "Wybierz Członka Zespołu, którego chcesz dodać do projektu",
         "teamMember": "Członek Zespołu",
+        "projectTeamMembers": "Członkowie Zespołu Projektowego",
         "selectRole": "Wybierz Rolę, jaką chcesz przypisać Członkowi Projektu",
         "role": "Rola",
-        "add": "Dodaj Członka Zespołu do Projektu"
+        "add": "Dodaj Członka Zespołu do Projektu",
+        "noProjectTeamMembers": "Nie dodałeś jeszcze Członków Zespołu Projektowego"
+    },
+    "users": {
+        "name": "Imię i nazwisko",
+        "email": "Email",
+        "role": "Rola"
     }
 }
