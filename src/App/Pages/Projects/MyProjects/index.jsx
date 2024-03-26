@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 import { 
     Box,
@@ -19,13 +20,14 @@ import projectService from '@/App/services/projects'
 
 import { sizes, color, font } from '@/shared/utils/styles';
 
-const Projects = () => {
+const MyProjects = () => {
 
     const [filter, setFilter] = useState('')
     const [projects, setProjects] = useState([])
     const filterCount = projects.length
 
     const { t } = useTranslation("translations")
+    const navigate = useNavigate()
 
     useEffect(() => {
         projectService
@@ -52,7 +54,7 @@ const Projects = () => {
                 <Typography variant="h4" sx={{ color: `${color.textDark}`}}>
                     {t('projects.title')}
                 </Typography>
-                <Button variant="contained" sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                     {t('projects.create')}
                 </Button>
             </Box>
@@ -118,4 +120,4 @@ const Projects = () => {
     )
 }
 
-export default Projects
+export default MyProjects

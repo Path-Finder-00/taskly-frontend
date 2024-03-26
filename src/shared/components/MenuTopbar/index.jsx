@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router-dom'
+
 import { Box, AppBar, Toolbar, IconButton } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
 import { sizes, color } from '@/shared/utils/styles'
 import logo from '@/App/assets/taskly_logo.png'
+
 
 const MenuTopbar = () => {
     const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -10,6 +13,8 @@ const MenuTopbar = () => {
         width: '100%',
         background: color.sidebar
     }))
+
+    const navigate = useNavigate()
 
     return(
         <Box>
@@ -19,6 +24,7 @@ const MenuTopbar = () => {
                         color="inherit"
                         aria-label="go to dashboard"
                         edge="start"
+                        onClick={() => navigate('/dashboard')}
                     >
                         <img src={logo} height={sizes.topbarHeight - 20} />
                     </IconButton>

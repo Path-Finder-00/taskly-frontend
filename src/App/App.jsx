@@ -14,6 +14,7 @@ import { sizes, color, font } from '@/shared/utils/styles';
 import { theme, mainTheme } from '@/shared/utils/theme'
 import Dashboard from '@/App/Pages/Dashboard'
 import MyProjects from '@/App/Pages/Projects/MyProjects'
+import CreateProject from '@/App/Pages/Projects/CreateProject'
 import LoginForm from '@/App/Pages/Login'
 
 import './fontStyles.css'
@@ -38,6 +39,7 @@ const App = () => {
               <Route path="/login" element={ <LoginForm setUser={setUser} /> } /> 
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
               <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/createProject" element={user ? <CreateProject />: <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Box>

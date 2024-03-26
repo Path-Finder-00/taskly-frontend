@@ -41,7 +41,7 @@ const MenuSidebar = () => {
     function RenderMenuItem({ text, path }) {
         const navigate = useNavigate();
         const location = useLocation();
-        const isActive = location.pathname === path;
+        const isActive = location.pathname.includes(path);
     
         return (
             <StyledListItem button active={isActive ? 1 : 0} onClick={() => navigate(path)}>

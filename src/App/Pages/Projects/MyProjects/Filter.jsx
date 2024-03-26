@@ -17,6 +17,7 @@ const Filter = ({ handleFilterChange }) => {
             <InputLabel>{t('projects.search')}</InputLabel>
             <OutlinedInput
                 onChange={handleFilterChange}
+                label={t('projects.search')}
                 endAdornment={
                     <InputAdornment position="end">
                         <SearchIcon />

@@ -24,6 +24,12 @@
         "action": "Akcja",
         "manage": "Zarządzaj Członkami",
         "details": "Szczegóły",
-        "noProject": "Obecnie nie bierzesz udziału w żadnym projekcie"
+        "noProject": "Obecnie nie bierzesz udziału w żadnym projekcie",
+        "createNew": "Stwórz Nowy Projekt",
+        "selectMember": "Wybierz Członka Zespołu, którego chcesz dodać do projektu",
+        "teamMember": "Członek Zespołu",
+        "selectRole": "Wybierz Rolę, jaką chcesz przypisać Członkowi Projektu",
+        "role": "Rola",
+        "add": "Dodaj Członka Zespołu do Projektu"
     }
 }

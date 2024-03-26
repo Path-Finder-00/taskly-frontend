@@ -24,6 +24,12 @@
         "action": "Action",
         "manage": "Manage Users",
         "details": "Details",
-        "noProject": "Currently you don't participate in any project"
+        "noProject": "Currently you don't participate in any project",
+        "createNew": "Create New Project",
+        "selectMember": "Select a Team Member to assign to the Project",
+        "teamMember": "Team Member",
+        "selectRole": "Select a Role to assign to Project Member",
+        "role": "Role",
+        "add": "Add Team Member to Project"
     }
 }
