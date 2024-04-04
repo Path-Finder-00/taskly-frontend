@@ -32,11 +32,24 @@
         "selectRole": "Wybierz Rolę, jaką chcesz przypisać Członkowi Projektu",
         "role": "Rola",
         "add": "Dodaj Członka Zespołu do Projektu",
-        "noProjectTeamMembers": "Nie dodałeś jeszcze Członków Zespołu Projektowego"
+        "noProjectTeamMembers": "Nie dodałeś jeszcze Członków Zespołu Projektowego",
+        "projectDescription": "Opis Projektu",
+        "projectDetails": "Szczegóły Projektu",
+        "projectTickets": "Zgłoszenia do projektu",
+        "projectTicketsInfo": "Skrócone informacje o zgłoszeniu",
+        "projectPersonnel": "Pracownicy w Projekcie",
+        "projectPersonnelInfo": "Aktualni pracownicy w Projekcie"
     },
     "users": {
         "name": "Imię i nazwisko",
         "email": "Email",
         "role": "Rola"
+    },
+    "tickets": {
+        "title": "Tytuł",
+        "submitter": "Zgłaszający",
+        "developer": "Deweloper",
+        "status": "Status",
+        "created": "Data utworzenia"
     }
 }

@@ -32,11 +32,24 @@
         "selectRole": "Select a Role to assign to Project Member",
         "role": "Role",
         "add": "Add Team Member to Project",
-        "noProjectTeamMembers": "You haven't added Project Team Members yet"
+        "noProjectTeamMembers": "You haven't added Project Team Members yet",
+        "projectDescription": "Details for project",
+        "projectDetails": "Project Description",
+        "projectTickets": "Tickets for this project",
+        "projectTicketsInfo": "Condensed Ticket Details",
+        "projectPersonnel": "Assigned Personnel",
+        "projectPersonnelInfo": "Current users on this project"
     },
     "users": {
         "name": "Name",
         "email": "Email",
         "role": "Role"
+    },
+    "tickets": {
+        "title": "Title",
+        "submitter": "Submitter",
+        "developer": "Developer",
+        "status": "Status",
+        "created": "Created"
     }
 }

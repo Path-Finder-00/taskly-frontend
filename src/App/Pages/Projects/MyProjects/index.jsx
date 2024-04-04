@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-import { 
+import {
     Box,
     Typography,
     Button,
@@ -33,13 +33,14 @@ const MyProjects = () => {
         projectService
             .getUserProjects()
             .then(projects => {
-                setProjects(projects)})
+                setProjects(projects)
+            })
     }, [])
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
     }
-    
+
     return (
         <Box sx={{ flexGrow: 1, p: 3, height: '100%' }}>
             <Box
@@ -51,21 +52,21 @@ const MyProjects = () => {
                     paddingBottom: '20px'
                 }}
             >
-                <Typography variant="h4" sx={{ color: `${color.textDark}`}}>
+                <Typography variant="h4" sx={{ color: `${color.textDark}` }}>
                     {t('projects.title')}
                 </Typography>
                 <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                     {t('projects.create')}
                 </Button>
             </Box>
-            <Box sx={{ width: '100%', boxShadow: 3  }} >
+            <Box sx={{ width: '100%', boxShadow: 3 }} >
                 <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
-                <Typography variant="h6" component="div">
-                    {t('projects.yourProjects')}
-                </Typography>
-                <Typography variant="subtitle1" component="div">
-                    {t('projects.subtitle')}
-                </Typography>
+                    <Typography variant="h6" component="div">
+                        {t('projects.yourProjects')}
+                    </Typography>
+                    <Typography variant="subtitle1" component="div">
+                        {t('projects.subtitle')}
+                    </Typography>
                 </Box>
                 <TableContainer component={Paper} elevation={0}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
@@ -75,17 +76,17 @@ const MyProjects = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}`}}>
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                         {t('projects.name')}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}`}}>
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                         {t('projects.description')}
                                     </Typography>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}`}}>
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                         {t('projects.action')}
                                     </Typography>
                                 </TableCell>
@@ -102,10 +103,10 @@ const MyProjects = () => {
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button variant="contained" color="primary">{t('projects.manage')}</Button>
-                                        <Button variant="outlined" color="primary" sx={{ ml: 1 }}>{t('projects.details')}</Button>
+                                        <Button variant="outlined" color="primary" onClick={() => navigate('/projects/projectDetails')} sx={{ ml: 1 }}>{t('projects.details')}</Button>
                                     </TableCell>
                                 </TableRow>
-                                )) :
+                            )) :
                                 <TableRow key={0}>
                                     <TableCell>
                                         {t('projects.noProject')}
