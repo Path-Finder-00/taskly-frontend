@@ -49,6 +49,7 @@ const ProjectDetails = () => {
         { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
         { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
         { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
+        { title: 'To kolejny rekord', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM'}
     ];
 
     const { t } = useTranslation("translations")
