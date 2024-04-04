@@ -7,6 +7,17 @@ const getUserProjects = async () => {
 
     return response
 }
+const getProjectById = async (projectId) => {
+  try {
+      const url = `${baseUrl}/${projectId}`;
+      const response = api.get(url);
+      console.log(response);
+      return response;
+  } catch (error) {
+      console.error('Error fetching project details:', error);
+      throw error;
+  }
+};
 
-export default { getUserProjects }
+export default { getUserProjects, getProjectById }
 

@@ -41,6 +41,10 @@ const MyProjects = () => {
         setFilter(event.target.value)
     }
 
+    const handleNavigateToProjectDetails = (projectId) => {
+        navigate(`/projects/projectDetails/${projectId}`);
+      };
+
     return (
         <Box sx={{ flexGrow: 1, p: 3, height: '100%' }}>
             <Box
@@ -103,7 +107,7 @@ const MyProjects = () => {
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button variant="contained" color="primary">{t('projects.manage')}</Button>
-                                        <Button variant="outlined" color="primary" onClick={() => navigate('/projects/projectDetails')} sx={{ ml: 1 }}>{t('projects.details')}</Button>
+                                        <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
                                     </TableCell>
                                 </TableRow>
                             )) :

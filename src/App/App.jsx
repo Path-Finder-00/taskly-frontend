@@ -41,7 +41,7 @@ const App = () => {
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
               <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
               <Route path="/projects/createProject" element={user ? <CreateProject />: <Navigate replace to="/login" />} />
-              <Route path="/projects/projectDetails" element={user ? <ProjectDetails />: <Navigate replace to="/login" />} />
+              <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails />: <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Box>
