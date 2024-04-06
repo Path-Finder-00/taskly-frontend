@@ -44,6 +44,9 @@ const MyProjects = () => {
     const handleNavigateToProjectDetails = (projectId) => {
         navigate(`/projects/projectDetails/${projectId}`);
       };
+    const handleNavigateToEditProject = (projectId) => {
+        navigate(`/projects/editProject/${projectId}`);
+      };
 
     return (
         <Box sx={{ flexGrow: 1, p: 3, height: '100%' }}>
@@ -106,7 +109,7 @@ const MyProjects = () => {
                                         {project.description}
                                     </TableCell>
                                     <TableCell align="right">
-                                        <Button variant="contained" color="primary">{t('projects.manage')}</Button>
+                                        <Button variant="contained" color="primary" onClick={() => handleNavigateToEditProject(project.id)}>{t('projects.manage')}</Button>
                                         <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
                                     </TableCell>
                                 </TableRow>

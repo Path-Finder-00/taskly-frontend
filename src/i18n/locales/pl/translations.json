@@ -38,7 +38,9 @@
         "projectTickets": "Zgłoszenia do projektu",
         "projectTicketsInfo": "Skrócone informacje o zgłoszeniu",
         "projectPersonnel": "Pracownicy w Projekcie",
-        "projectPersonnelInfo": "Aktualni pracownicy w Projekcie"
+        "projectPersonnelInfo": "Aktualni pracownicy w Projekcie",
+        "edit": "Edytuj Projekt",
+        "loading": "Ładowanie szczegółów projektu..."
     },
     "users": {
         "name": "Imię i nazwisko",

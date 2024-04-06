@@ -16,6 +16,7 @@ import Dashboard from '@/App/Pages/Dashboard'
 import MyProjects from '@/App/Pages/Projects/MyProjects'
 import CreateProject from '@/App/Pages/Projects/CreateProject'
 import ProjectDetails from '@/App/Pages/Projects/ProjectDetails'
+import EditProject from '@/App/Pages/Projects/EditProject'
 import LoginForm from '@/App/Pages/Login'
 
 import './fontStyles.css'
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
               <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
               <Route path="/projects/createProject" element={user ? <CreateProject />: <Navigate replace to="/login" />} />
+              <Route path="/projects/editProject/:projectId" element={user ? <EditProject />: <Navigate replace to="/login" />} />
               <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails />: <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
