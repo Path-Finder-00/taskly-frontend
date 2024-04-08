@@ -29,6 +29,7 @@ import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import { sizes, color, font } from '@/shared/utils/styles';
 import Filter from './Filter'
 import projectService from '@/App/services/projects';
+import roleService from '@/App/services/roles';
 const EditProject = () => {
 
     const { t } = useTranslation("translations")
@@ -41,6 +42,7 @@ const EditProject = () => {
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [roles, setRoles] = useState([]);
     const { projectId } = useParams();
 
     const filterCount = teamList.filter(member =>
@@ -87,6 +89,13 @@ const EditProject = () => {
                     console.error('Error fetching project:', err);
                 });
         }
+        roleService.getRoles()
+            .then(data => {
+                setRoles(data)
+            })
+            .catch(err => {
+                console.error('Error fetching roles:', err)
+            })
     }, [projectId]);
     if (!project) {
         return <div>{t('projects.loading')}</div>;
@@ -144,8 +153,8 @@ const EditProject = () => {
                             onChange={(event) => setSelectedRole(event.target.value)}
                             label={t('projects.role')}
                         >
-                            {['PM', 'Developer', 'Graphic Designer'].map((role) => (
-                                <MenuItem key={role} value={role}>{role}</MenuItem>
+                            {roles.map((role) => (
+                                <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -214,8 +223,8 @@ const EditProject = () => {
                                                         onChange={(event) => handleRoleChange(member.name, event.target.value)}
                                                         label={t('projects.role')}
                                                     >
-                                                        {['PM', 'Developer', 'Graphic Designer'].map((role) => (
-                                                            <MenuItem key={role} value={role}>{role}</MenuItem>
+                                                        {roles.map((role) => (
+                                                            <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
                                                         ))}
                                                     </Select>
                                                 </TableCell>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -26,6 +26,7 @@ import {
 
 import { sizes, color, font } from '@/shared/utils/styles';
 import Filter from './Filter'
+import roleService from '@/App/services/roles';
 const CreateProject = () => {
 
     const [projectName, setProjectName] = useState('')
@@ -34,6 +35,7 @@ const CreateProject = () => {
     const [filter, setFilter] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
     const [teamList, setTeamList] = useState([]);
+    const [roles, setRoles] = useState([]);
 
     const { t } = useTranslation("translations")
     const filterCount = teamList.filter(member =>
@@ -42,14 +44,24 @@ const CreateProject = () => {
         member.role.toLowerCase().includes(filter.toLowerCase())
     ).length;
     const handleFilterChange = (event) => {
-        setFilter(event.target.value)
-    }
+        setFilter(event.target.value);
+    };
     const handleAddMemberClick = () => {
         const isAlreadyAdded = teamList.some(member => member.name === selectedMember);
         if (selectedMember && selectedRole && !isAlreadyAdded) {
             setTeamList([...teamList, { name: selectedMember, role: selectedRole }]);
         }
     };
+    useEffect(() => {
+        roleService.getRoles()
+            .then(data => {
+                setRoles(data)
+            })
+            .catch(err => {
+                console.error('Error fetching roles:', err)
+            })
+
+    }, []);
     return (
         <Grid container spacing={2} sx={{ m: 1 }}>
             <Grid item xs={4}>
@@ -101,8 +113,8 @@ const CreateProject = () => {
                             onChange={(event) => setSelectedRole(event.target.value)}
                             label={t('projects.role')}
                         >
-                            {['PM', 'Developer', 'Graphic Designer'].map((role) => (
-                                <MenuItem key={role} value={role}>{role}</MenuItem>
+                            {roles.map((role) => (
+                                <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
