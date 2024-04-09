@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom';
 
 import {
     Grid,
@@ -23,36 +24,71 @@ import {
     Select,
     MenuItem
 } from '@mui/material'
+import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 
 import { sizes, color, font } from '@/shared/utils/styles';
 import Filter from './Filter'
+import projectService from '@/App/services/projects';
 import roleService from '@/App/services/roles';
-const CreateProject = () => {
+const EditProject = () => {
 
-    const [projectName, setProjectName] = useState('')
-    const [projectDescription, setProjectDescription] = useState('')
+    const { t } = useTranslation("translations")
     const [selectedMember, setSelectedMember] = useState('')
     const [filter, setFilter] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
     const [teamList, setTeamList] = useState([]);
+    const [projectName, setProjectName] = useState('');
+    const [projectDescription, setProjectDescription] = useState('');
+    const [project, setProject] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [roles, setRoles] = useState([]);
+    const { projectId } = useParams();
 
-    const { t } = useTranslation("translations")
     const filterCount = teamList.filter(member =>
         member.name.toLowerCase().includes(filter.toLowerCase()) ||
         // member.email.toLowerCase().includes(filter.toLowerCase()) ||
         member.role.toLowerCase().includes(filter.toLowerCase())
     ).length;
+
     const handleFilterChange = (event) => {
-        setFilter(event.target.value);
-    };
+        setFilter(event.target.value)
+    }
     const handleAddMemberClick = () => {
         const isAlreadyAdded = teamList.some(member => member.name === selectedMember);
         if (selectedMember && selectedRole && !isAlreadyAdded) {
             setTeamList([...teamList, { name: selectedMember, role: selectedRole }]);
         }
     };
+    // TODO: change member name to id
+    const handleRemoveMemberClick = (memberNameToRemove) => {
+        setTeamList(teamList.filter(member => member.name !== memberNameToRemove));
+    };
+    const handleRoleChange = (memberName, newRole) => {
+        setTeamList(teamList.map(member =>
+            member.name === memberName ? { ...member, role: newRole } : member
+        ));
+    };
+    const handleNameChange = (event) => {
+        setProjectName(event.target.value);
+    };
+
+    const handleDescriptionChange = (event) => {
+        setProjectDescription(event.target.value);
+    };
+
     useEffect(() => {
+        if (projectId) {
+            projectService.getProjectById(projectId)
+                .then(data => {
+                    setProject(data);
+                    setProjectName(data.name);
+                    setProjectDescription(data.description);
+                })
+                .catch(err => {
+                    console.error('Error fetching project:', err);
+                });
+        }
         roleService.getRoles()
             .then(data => {
                 setRoles(data)
@@ -60,29 +96,33 @@ const CreateProject = () => {
             .catch(err => {
                 console.error('Error fetching roles:', err)
             })
-
-    }, []);
+    }, [projectId]);
+    if (!project) {
+        return <div>{t('projects.loading')}</div>;
+    }
     return (
         <Grid container spacing={2} sx={{ m: 1 }}>
             <Grid item xs={4}>
                 <Paper style={{ height: '100%', width: '100%' }} elevation={0}>
                     <Typography variant="h4" sx={{ color: `${color.textDark}`, marginBottom: 5 }}>
-                        {t('projects.createNew')}
+                        {t('projects.edit')}
                     </Typography>
                     <FormControl sx={{ width: '100%', marginBottom: 3 }} size="medium">
                         <InputLabel>{t('projects.name')}</InputLabel>
                         <OutlinedInput
-                            onChange={setProjectName}
+                            onChange={handleNameChange}
                             label={t('projects.name')}
+                            value={projectName}
                         />
                     </FormControl>
                     <TextField
-                        onChange={setProjectDescription}
+                        onChange={handleDescriptionChange}
                         label={t('projects.description')}
                         multiline
                         rows={5}
                         variant="outlined"
                         fullWidth
+                        value={projectDescription}
                     />
                     <Typography variant="h6" sx={{ color: `${color.textDark}`, marginTop: 8, marginBottom: 3 }}>
                         {t('projects.selectMember')}
@@ -148,9 +188,14 @@ const CreateProject = () => {
                                                 {t('users.email')}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                                 {t('users.role')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align='right'>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('projects.action')}
                                             </Typography>
                                         </TableCell>
                                     </TableRow>
@@ -167,15 +212,32 @@ const CreateProject = () => {
                                                     {member.name}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {/* {member.email} */}
+                                                    tomekblok2001@gmail.com
+                                                </TableCell>
+                                                <TableCell>
+                                                    <InputLabel id={`select-role-label-${member.id}`}></InputLabel>
+                                                    <Select
+                                                        labelId={`select-role-label-${member.id}`}
+                                                        id={`select-role-${member.id}`}
+                                                        value={member.role}
+                                                        onChange={(event) => handleRoleChange(member.name, event.target.value)}
+                                                        label={t('projects.role')}
+                                                    >
+                                                        {roles.map((role) => (
+                                                            <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
+                                                        ))}
+                                                    </Select>
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {member.role}
+                                                    <PersonRemoveOutlinedIcon
+                                                        onClick={() => handleRemoveMemberClick(member.name)}
+                                                        style={{ cursor: 'pointer' }}
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                         )) :
                                         <TableRow>
-                                            <TableCell colSpan={3} align="center">
+                                            <TableCell colSpan={4} align="center">
                                                 {t('projects.noProjectTeamMembers')}
                                             </TableCell>
                                         </TableRow>
@@ -186,7 +248,7 @@ const CreateProject = () => {
                     </Box>
                     <Box sx={{ mr: 2 }}>
                         <Button variant="contained" sx={{ width: '100%', mt: 2 }}>
-                            {t('projects.create')}
+                            {t('projects.edit')}
                         </Button>
                     </Box>
                 </Paper>
@@ -196,4 +258,4 @@ const CreateProject = () => {
     )
 }
 
-export default CreateProject
+export default EditProject

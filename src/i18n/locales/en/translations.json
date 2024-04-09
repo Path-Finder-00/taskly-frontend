@@ -38,7 +38,9 @@
         "projectTickets": "Tickets for this project",
         "projectTicketsInfo": "Condensed Ticket Details",
         "projectPersonnel": "Assigned Personnel",
-        "projectPersonnelInfo": "Current users on this project"
+        "projectPersonnelInfo": "Current users on this project",
+        "edit": "Edit Project",
+        "loading": "Loading project details..."
     },
     "users": {
         "name": "Name",
