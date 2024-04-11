@@ -95,7 +95,7 @@ const ProjectDetails = () => {
                                 <TableBody>
                                     {projectMembers.map((projectMember) => (
                                         <TableRow key={projectMember.id}>
-                                            <TableCell>{projectMember.user.name}</TableCell>
+                                            <TableCell>{`${projectMember.user.name} ${projectMember.user.surname}`}</TableCell>
                                             <TableCell>{projectMember.user.email}</TableCell>
                                             <TableCell>{roles.find(role => role.id === projectMember.employee_project.roleId)?.role || ''}</TableCell>
                                         </TableRow>
