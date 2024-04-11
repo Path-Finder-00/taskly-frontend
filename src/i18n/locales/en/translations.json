@@ -40,7 +40,9 @@
         "projectPersonnel": "Assigned Personnel",
         "projectPersonnelInfo": "Current users on this project",
         "edit": "Edit Project",
-        "loading": "Loading project details..."
+        "loading": "Loading project details...",
+        "fieldEmpty": "Field cannot be empty.",
+        "descLengthError": "Project description cannot exceed 150 characters."
     },
     "users": {
         "name": "Name",

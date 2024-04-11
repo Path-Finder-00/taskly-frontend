@@ -40,7 +40,9 @@
         "projectPersonnel": "Pracownicy w Projekcie",
         "projectPersonnelInfo": "Aktualni pracownicy w Projekcie",
         "edit": "Edytuj Projekt",
-        "loading": "Ładowanie szczegółów projektu..."
+        "loading": "Ładowanie szczegółów projektu...",
+        "fieldEmpty": "Pole nie może być puste.",
+        "descLengthError": "Opis projektu nie może przekroczyć 150 znaków."
     },
     "users": {
         "name": "Imię i nazwisko",

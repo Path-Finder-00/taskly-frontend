@@ -7,10 +7,11 @@ const getUserProjects = async () => {
 
     return response
 }
+
 const getProjectById = async (projectId) => {
   try {
       const url = `${baseUrl}/${projectId}`;
-      const response = api.get(url);
+      const response = await api.get(url);
       console.log(response);
       return response;
   } catch (error) {
@@ -19,5 +20,15 @@ const getProjectById = async (projectId) => {
   }
 };
 
-export default { getUserProjects, getProjectById }
+const createProject = async (projectPayload) => {
+    try {
+        const response = await api.post(baseUrl, projectPayload);
+        return response;
+    } catch (error) {
+        console.error('Error creating project:', error);
+        throw error;
+    }
+}
+
+export default { getUserProjects, getProjectById, createProject}
 
