@@ -21,15 +21,12 @@ import {
 
 
 const ProjectDetails = () => {
-    const mockTicketData = [
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'To kolejny rekord', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM'}
-    ];
 
     const { t } = useTranslation("translations")
     const { projectId } = useParams();
     const [project, setProject] = useState(null);
     const [projectMembers, setProjectMembers] = useState(null);
+    const [tickets, setTickets] = useState([]);
     const [roles, setRoles] = useState([]);
 
     useEffect(() => {
@@ -41,6 +38,7 @@ const ProjectDetails = () => {
             .then(data => {
                 setProject(data);
                 setProjectMembers(data.employees);
+                setTickets(data.tickets)
             })
             .catch(err => {
                 console.error('Error fetching project:', err);
@@ -127,15 +125,20 @@ const ProjectDetails = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {mockTicketData.map((ticket) => (
-                                        <TableRow key={ticket.title}>
-                                            <TableCell>{ticket.title}</TableCell>
-                                            <TableCell>{ticket.submitter}</TableCell>
-                                            <TableCell>{ticket.developer}</TableCell>
-                                            <TableCell>{ticket.status}</TableCell>
-                                            <TableCell>{ticket.created}</TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {tickets.map((ticket) => {
+                                        const latestHistory = ticket.ticket_histories[ticket.ticket_histories.length - 1];
+                                        const developer = projectMembers.find((member) => member.id === latestHistory.employeeId);
+
+                                        return (
+                                            <TableRow key={ticket.id}>
+                                                <TableCell>{ticket.title}</TableCell>
+                                                <TableCell>{ticket.submitter}</TableCell>
+                                                <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
+                                                <TableCell>{latestHistory.status.status}</TableCell>
+                                                <TableCell>{ticket.createdAt}</TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </TableContainer>
