@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react'
+import { sizes, color, font } from '@/shared/utils/styles';
+import projectService from '@/App/services/projects';
+import roleService from '@/App/services/roles';
 import {
     Box,
     Typography,
@@ -13,66 +16,37 @@ import {
     TableCell,
     TableBody
 } from '@mui/material'
-import projectService from '@/App/services/projects';
 
 
-import { sizes, color, font } from '@/shared/utils/styles';
+
 
 const ProjectDetails = () => {
-    const mockPersonnelData = [
-        { name: 'Jan Kowalski', email: 'jankowalski@email.com', role: 'Developer' },
-        { name: 'Jan Kowalski', email: 'jankowalski@email.com', role: 'Developer' },
-        { name: 'Jan Kowalski', email: 'jankowalski@email.com', role: 'Developer' },
-        { name: 'Jan Kowalski', email: 'jankowalski@email.com', role: 'Developer' },
-        { name: 'Jan Kowalski', email: 'jankowalski@email.com', role: 'Developer' },
-    ];
-
-    const mockTicketData = [
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'Aesthetics Please', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM' },
-        { title: 'To kolejny rekord', submitter: 'Jan Kowalski', developer: 'Demo Dev', status: 'Open', created: '26/04/2023 11:12:38 PM'}
-    ];
 
     const { t } = useTranslation("translations")
     const { projectId } = useParams();
     const [project, setProject] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [projectMembers, setProjectMembers] = useState(null);
+    const [tickets, setTickets] = useState([]);
+    const [roles, setRoles] = useState([]);
+
     useEffect(() => {
-        if (projectId) {
-            projectService.getProjectById(projectId)
-                .then(data => {
-                    setProject(data);
-                })
-                .catch(err => {
-                    console.error('Error fetching project:', err);
-                });
-        }
+        roleService.getRoles()
+            .then(data => {
+                setRoles(data)
+            })
+        projectService.getProjectById(projectId)
+            .then(data => {
+                setProject(data);
+                setProjectMembers(data.employees);
+                setTickets(data.tickets)
+            })
+            .catch(err => {
+                console.error('Error fetching project:', err);
+            });
     }, [projectId]);
 
     if (!project) {
-        return <div>Loading project details...</div>;
+        return <div>{t('projects.loading')}</div>;
     }
 
     return (
@@ -117,11 +91,11 @@ const ProjectDetails = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {mockPersonnelData.map((row) => (
-                                        <TableRow key={row.email}>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{row.email}</TableCell>
-                                            <TableCell>{row.role}</TableCell>
+                                    {projectMembers.map((projectMember) => (
+                                        <TableRow key={projectMember.id}>
+                                            <TableCell>{`${projectMember.user.name} ${projectMember.user.surname}`}</TableCell>
+                                            <TableCell>{projectMember.user.email}</TableCell>
+                                            <TableCell>{roles.find(role => role.id === projectMember.employee_project.roleId)?.role || ''}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -151,15 +125,20 @@ const ProjectDetails = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {mockTicketData.map((ticket) => (
-                                        <TableRow key={ticket.title}>
-                                            <TableCell>{ticket.title}</TableCell>
-                                            <TableCell>{ticket.submitter}</TableCell>
-                                            <TableCell>{ticket.developer}</TableCell>
-                                            <TableCell>{ticket.status}</TableCell>
-                                            <TableCell>{ticket.created}</TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {tickets.map((ticket) => {
+                                        const latestHistory = ticket.ticket_histories[ticket.ticket_histories.length - 1];
+                                        const developer = projectMembers.find((member) => member.id === latestHistory.employeeId);
+
+                                        return (
+                                            <TableRow key={ticket.id}>
+                                                <TableCell>{ticket.title}</TableCell>
+                                                <TableCell>{ticket.submitter}</TableCell>
+                                                <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
+                                                <TableCell>{latestHistory.status.status}</TableCell>
+                                                <TableCell>{ticket.createdAt}</TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </TableContainer>

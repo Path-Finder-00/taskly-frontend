@@ -1,12 +1,12 @@
 import api from '@/shared/utils/api'
 
-const baseUrl = '/api/roles'
+const baseUrl = '/api/teams/members'
 
-const getRoles = async () => {
+const getTeamMembers = async () => {
     const response = await api.get(baseUrl)
 
     return response
 }
 
-export default { getRoles }
+export default { getTeamMembers }
 

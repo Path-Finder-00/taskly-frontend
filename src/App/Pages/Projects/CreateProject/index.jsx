@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
+import { useNavigate } from 'react-router';
+import Filter from './Filter'
+import roleService from '@/App/services/roles';
+import teamService from '@/App/services/teams';
+import projectService from '@/App/services/projects';
+import { sizes, color, font } from '@/shared/utils/styles';
 import {
     Grid,
     Box,
@@ -17,6 +22,7 @@ import {
     OutlinedInput,
     FormControl,
     TextField,
+    FormHelperText,
     List,
     ListItem,
     ListItemText,
@@ -24,10 +30,10 @@ import {
     MenuItem
 } from '@mui/material'
 
-import { sizes, color, font } from '@/shared/utils/styles';
-import Filter from './Filter'
-import roleService from '@/App/services/roles';
+
 const CreateProject = () => {
+
+    const navigate = useNavigate();
 
     const [projectName, setProjectName] = useState('')
     const [projectDescription, setProjectDescription] = useState('')
@@ -36,22 +42,89 @@ const CreateProject = () => {
     const [selectedRole, setSelectedRole] = useState('')
     const [teamList, setTeamList] = useState([]);
     const [roles, setRoles] = useState([]);
-
+    const [teamMembers, setTeamMembers] = useState([]);
+    const [nameError, setNameError] = useState('');
+    const [descError, setDescError] = useState('');
     const { t } = useTranslation("translations")
+
     const filterCount = teamList.filter(member =>
         member.name.toLowerCase().includes(filter.toLowerCase()) ||
-        // member.email.toLowerCase().includes(filter.toLowerCase()) ||
+        member.email.toLowerCase().includes(filter.toLowerCase()) ||
         member.role.toLowerCase().includes(filter.toLowerCase())
     ).length;
+
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
     };
+
     const handleAddMemberClick = () => {
-        const isAlreadyAdded = teamList.some(member => member.name === selectedMember);
-        if (selectedMember && selectedRole && !isAlreadyAdded) {
-            setTeamList([...teamList, { name: selectedMember, role: selectedRole }]);
+        const memberToAdd = teamMembers.find((member) =>
+            member.employee.id === selectedMember
+        );
+
+        if (memberToAdd && !teamList.some(member => member.id === memberToAdd.employee.id)) {
+            setTeamList([
+                ...teamList,
+                {
+                    id: memberToAdd.employee.id,
+                    user_id: memberToAdd.employee.userId,
+                    name: `${memberToAdd.name} ${memberToAdd.surname}`,
+                    email: memberToAdd.email,
+                    role: selectedRole.role,
+                    role_id: selectedRole.id
+                }
+            ]);
         }
     };
+
+    const handleCreateProjectClick = async () => {
+        const isNameValid = validateName();
+        const isDescriptionValid = validateDescription();
+
+        if (!isNameValid || !isDescriptionValid){
+            return;
+        }
+        const projectPayload = {
+            name: projectName,
+            description: projectDescription,
+            employees: teamList.map(member => ({
+                id: member.id,
+                user_id: member.user_id,
+                role_id: member.role_id
+            }))
+        };
+
+        try {
+            const response = await projectService.createProject(projectPayload);
+            console.log('Project created:', response)
+            navigate('/projects', { replace: true } )
+        } catch (error) {
+            console.error('Error creating project:', error)
+        }
+    };
+
+    const isEmpty = (value) => {
+        if (!value.trim()) {
+            return t('projects.fieldEmpty')
+        }
+        return '';
+    }
+
+    const validateName = () => {
+        const errorMessage = isEmpty(projectName);
+        setNameError(errorMessage)
+        return !errorMessage
+    }
+
+    const validateDescription = () => {
+        let errorMessage = isEmpty(projectDescription);
+        if (!errorMessage && projectDescription.length > 150) {
+            errorMessage = t('projects.descLengthError');
+        }
+        setDescError(errorMessage)
+        return !errorMessage
+    }
+
     useEffect(() => {
         roleService.getRoles()
             .then(data => {
@@ -60,8 +133,16 @@ const CreateProject = () => {
             .catch(err => {
                 console.error('Error fetching roles:', err)
             })
+        teamService.getTeamMembers()
+            .then(data => {
+                setTeamMembers(data)
+            })
+            .catch(err => {
+                console.error('Error fetching members:', err)
+            })
 
     }, []);
+
     return (
         <Grid container spacing={2} sx={{ m: 1 }}>
             <Grid item xs={4}>
@@ -69,15 +150,19 @@ const CreateProject = () => {
                     <Typography variant="h4" sx={{ color: `${color.textDark}`, marginBottom: 5 }}>
                         {t('projects.createNew')}
                     </Typography>
-                    <FormControl sx={{ width: '100%', marginBottom: 3 }} size="medium">
+                    <FormControl error={!!nameError} sx={{ width: '100%', marginBottom: 3 }} size="medium">
                         <InputLabel>{t('projects.name')}</InputLabel>
                         <OutlinedInput
-                            onChange={setProjectName}
+                            error={!!nameError}
+                            onChange={(e) => setProjectName(e.target.value)}
                             label={t('projects.name')}
                         />
+                        {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
                     <TextField
-                        onChange={setProjectDescription}
+                        error={!!descError}
+                        helperText={descError}
+                        onChange={(e) => setProjectDescription(e.target.value)}
                         label={t('projects.description')}
                         multiline
                         rows={5}
@@ -96,8 +181,10 @@ const CreateProject = () => {
                             onChange={(event) => setSelectedMember(event.target.value)}
                             label={t('projects.teamMember')}
                         >
-                            {['Dwight Schrute', 'Pamela Beesly', 'Jim Halpert'].map((person) => (
-                                <MenuItem key={person} value={person}>{person}</MenuItem>
+                            {teamMembers.map((member) => (
+                                <MenuItem key={member.employee.id} value={member.employee.id}>
+                                    {`${member.name} ${member.surname}`}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -114,7 +201,7 @@ const CreateProject = () => {
                             label={t('projects.role')}
                         >
                             {roles.map((role) => (
-                                <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
+                                <MenuItem key={role.id} value={role}> {role.role} </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -159,7 +246,7 @@ const CreateProject = () => {
                                     {filterCount !== 0 ? teamList
                                         .filter(member =>
                                             member.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            // member.email.toLowerCase().includes(filter.toLowerCase()) ||
+                                            member.email.toLowerCase().includes(filter.toLowerCase()) ||
                                             member.role.toLowerCase().includes(filter.toLowerCase()))
                                         .map((member) => (
                                             <TableRow key={member.id}>
@@ -167,7 +254,7 @@ const CreateProject = () => {
                                                     {member.name}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {/* {member.email} */}
+                                                    {member.email}
                                                 </TableCell>
                                                 <TableCell align="right">
                                                     {member.role}
@@ -185,7 +272,9 @@ const CreateProject = () => {
                         </TableContainer>
                     </Box>
                     <Box sx={{ mr: 2 }}>
-                        <Button variant="contained" sx={{ width: '100%', mt: 2 }}>
+                        <Button variant="contained" sx={{ width: '100%', mt: 2 }}
+                            onClick={handleCreateProjectClick}
+                        >
                             {t('projects.create')}
                         </Button>
                     </Box>

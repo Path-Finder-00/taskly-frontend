@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom';
-
+import { sizes, color, font } from '@/shared/utils/styles';
+import Filter from './Filter'
+import projectService from '@/App/services/projects';
+import roleService from '@/App/services/roles';
+import teamService from '@/App/services/teams';
+import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 import {
     Grid,
     Box,
@@ -24,12 +29,8 @@ import {
     Select,
     MenuItem
 } from '@mui/material'
-import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 
-import { sizes, color, font } from '@/shared/utils/styles';
-import Filter from './Filter'
-import projectService from '@/App/services/projects';
-import roleService from '@/App/services/roles';
+
 const EditProject = () => {
 
     const { t } = useTranslation("translations")
@@ -39,67 +40,98 @@ const EditProject = () => {
     const [teamList, setTeamList] = useState([]);
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
+    const [teamMembers, setTeamMembers] = useState([]);
     const [project, setProject] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [roles, setRoles] = useState([]);
     const { projectId } = useParams();
 
     const filterCount = teamList.filter(member =>
         member.name.toLowerCase().includes(filter.toLowerCase()) ||
-        // member.email.toLowerCase().includes(filter.toLowerCase()) ||
+        member.email.toLowerCase().includes(filter.toLowerCase()) ||
         member.role.toLowerCase().includes(filter.toLowerCase())
     ).length;
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
     }
+
     const handleAddMemberClick = () => {
-        const isAlreadyAdded = teamList.some(member => member.name === selectedMember);
-        if (selectedMember && selectedRole && !isAlreadyAdded) {
-            setTeamList([...teamList, { name: selectedMember, role: selectedRole }]);
+        const memberToAdd = teamMembers.find((member) =>
+            member.employee.id === selectedMember
+        );
+
+        if (memberToAdd && !teamList.some(member => member.id === memberToAdd.employee.id)) {
+            setTeamList([
+                ...teamList,
+                {
+                    id: memberToAdd.employee.id,
+                    user_id: memberToAdd.employee.userId,
+                    name: `${memberToAdd.name} ${memberToAdd.surname}`,
+                    email: memberToAdd.email,
+                    role: selectedRole.role,
+                    role_id: selectedRole.id
+                }
+            ]);
         }
     };
-    // TODO: change member name to id
-    const handleRemoveMemberClick = (memberNameToRemove) => {
-        setTeamList(teamList.filter(member => member.name !== memberNameToRemove));
-    };
-    const handleRoleChange = (memberName, newRole) => {
-        setTeamList(teamList.map(member =>
-            member.name === memberName ? { ...member, role: newRole } : member
-        ));
-    };
-    const handleNameChange = (event) => {
-        setProjectName(event.target.value);
+
+    const handleRemoveMemberClick = (memberToRemove) => {
+        setTeamList(teamList.filter(member => member.id !== memberToRemove));
     };
 
-    const handleDescriptionChange = (event) => {
-        setProjectDescription(event.target.value);
+    const handleRoleChange = (memberId, newRole) => {
+        setTeamList(teamList.map(member =>
+            member.id === memberId ? { ...member, role: newRole } : member
+        ));
     };
 
     useEffect(() => {
-        if (projectId) {
-            projectService.getProjectById(projectId)
-                .then(data => {
-                    setProject(data);
-                    setProjectName(data.name);
-                    setProjectDescription(data.description);
-                })
-                .catch(err => {
-                    console.error('Error fetching project:', err);
-                });
-        }
-        roleService.getRoles()
+        const fetchRolesAndProject = async () => {
+            try {
+                const rolesData = await roleService.getRoles();
+                setRoles(rolesData);
+
+                if (projectId) {
+                    const projectData = await projectService.getProjectById(projectId);
+                    setProject(projectData);
+                    setProjectName(projectData.name);
+                    setProjectDescription(projectData.description);
+
+                    if (projectData.employees) {
+                        const mappedMembers = projectData.employees.map(emp => {
+                            const role = rolesData.find(role => role.id === emp.employee_project.roleId);
+                            return {
+                                id: emp.id,
+                                name: `${emp.user.name} ${emp.user.surname}`,
+                                email: emp.user.email,
+                                role: role ? role.role : '',
+                                user_id: emp.user_id,
+                            };
+                        });
+                        setTeamList(mappedMembers);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        
+        teamService.getTeamMembers()
             .then(data => {
-                setRoles(data)
+                setTeamMembers(data)
             })
             .catch(err => {
-                console.error('Error fetching roles:', err)
+                console.error('Error fetching members:', err)
             })
+
+        fetchRolesAndProject();
+    
     }, [projectId]);
+
     if (!project) {
         return <div>{t('projects.loading')}</div>;
     }
+
     return (
         <Grid container spacing={2} sx={{ m: 1 }}>
             <Grid item xs={4}>
@@ -110,13 +142,13 @@ const EditProject = () => {
                     <FormControl sx={{ width: '100%', marginBottom: 3 }} size="medium">
                         <InputLabel>{t('projects.name')}</InputLabel>
                         <OutlinedInput
-                            onChange={handleNameChange}
+                            onChange={(e) => setProjectName(e.target.value)}
                             label={t('projects.name')}
                             value={projectName}
                         />
                     </FormControl>
                     <TextField
-                        onChange={handleDescriptionChange}
+                        onChange={(e) => setProjectDescription(e.target.value)}
                         label={t('projects.description')}
                         multiline
                         rows={5}
@@ -136,8 +168,10 @@ const EditProject = () => {
                             onChange={(event) => setSelectedMember(event.target.value)}
                             label={t('projects.teamMember')}
                         >
-                            {['Dwight Schrute', 'Pamela Beesly', 'Jim Halpert'].map((person) => (
-                                <MenuItem key={person} value={person}>{person}</MenuItem>
+                            {teamMembers.map((member) => (
+                                <MenuItem key={member.employee.id} value={member.employee.id}>
+                                    {`${member.name} ${member.surname}`}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -154,7 +188,7 @@ const EditProject = () => {
                             label={t('projects.role')}
                         >
                             {roles.map((role) => (
-                                <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
+                                <MenuItem key={role.id} value={role}> {role.role} </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -204,7 +238,7 @@ const EditProject = () => {
                                     {filterCount !== 0 ? teamList
                                         .filter(member =>
                                             member.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            // member.email.toLowerCase().includes(filter.toLowerCase()) ||
+                                            member.email.toLowerCase().includes(filter.toLowerCase()) ||
                                             member.role.toLowerCase().includes(filter.toLowerCase()))
                                         .map((member) => (
                                             <TableRow key={member.id}>
@@ -212,7 +246,7 @@ const EditProject = () => {
                                                     {member.name}
                                                 </TableCell>
                                                 <TableCell>
-                                                    tomekblok2001@gmail.com
+                                                    {member.email}
                                                 </TableCell>
                                                 <TableCell>
                                                     <InputLabel id={`select-role-label-${member.id}`}></InputLabel>
@@ -220,7 +254,7 @@ const EditProject = () => {
                                                         labelId={`select-role-label-${member.id}`}
                                                         id={`select-role-${member.id}`}
                                                         value={member.role}
-                                                        onChange={(event) => handleRoleChange(member.name, event.target.value)}
+                                                        onChange={(event) => handleRoleChange(member.id, event.target.value)}
                                                         label={t('projects.role')}
                                                     >
                                                         {roles.map((role) => (
@@ -230,7 +264,7 @@ const EditProject = () => {
                                                 </TableCell>
                                                 <TableCell align="right">
                                                     <PersonRemoveOutlinedIcon
-                                                        onClick={() => handleRemoveMemberClick(member.name)}
+                                                        onClick={() => handleRemoveMemberClick(member.id)}
                                                         style={{ cursor: 'pointer' }}
                                                     />
                                                 </TableCell>
