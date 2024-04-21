@@ -54,6 +54,14 @@
         "submitter": "Zgłaszający",
         "developer": "Deweloper",
         "status": "Status",
-        "created": "Data utworzenia"
+        "created": "Data utworzenia",
+        "descLengthError": "Opis zgłoszenia nie może przekroczyć 200 znaków.",
+        "newTicket": "Nowe Zgłoszenie",
+        "addNewTicket": "Dodaj Nowe Zgłoszenie",
+        "description": "Opis",
+        "assigned": "Osoba Przydzielona",
+        "priority": "Priorytet",
+        "type": "Typ",
+        "submit": "Zatwierdź"
     }
 }

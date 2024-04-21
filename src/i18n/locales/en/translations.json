@@ -54,6 +54,14 @@
         "submitter": "Submitter",
         "developer": "Developer",
         "status": "Status",
-        "created": "Created"
+        "created": "Created",
+        "descLengthError": "Ticket description cannot exceed 200 characters.",
+        "newTicket": "New Ticket",
+        "addNewTicket": "Add New Ticket",
+        "description": "Description",
+        "assigned": "Assigned",
+        "priority": "Priority",
+        "type": "Type",
+        "submit": "Submit"
     }
 }
