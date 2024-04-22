@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
-import Filter from './Filter'
+import Filter from '@/shared/components/Filter'
 import projectService from '@/App/services/projects';
 import roleService from '@/App/services/roles';
 import teamService from '@/App/services/teams';

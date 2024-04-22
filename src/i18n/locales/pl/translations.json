@@ -54,6 +54,13 @@
         "submitter": "Zgłaszający",
         "developer": "Deweloper",
         "status": "Status",
-        "created": "Data utworzenia"
+        "created": "Data Utworzenia",
+        "projectName": "Nazwa projektu",
+        "priority": "Priorytet",
+        "type": "Typ",
+        "allMyTickets": "Wszystkie moje zgłoszenia",
+        "allMyTicketsInfo": "Informacje o zgłoszeniach",
+        "addTicket": "Dodaj Zgłoszenie",
+        "noTickets": "Brak zgłoszeń do wyświetlenia"
     }
 }

@@ -1,6 +1,6 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import { sizes, color, font } from '@/shared/utils/styles';
 import projectService from '@/App/services/projects';
 import roleService from '@/App/services/roles';
@@ -104,7 +104,7 @@ const ProjectDetails = () => {
                     </Paper>
                 </Box>
                 <Box sx={{ width: '50%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
-                    <Paper>
+                    <Paper elevation={0} >
                         <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                             <Typography variant="h6" gutterBottom component="div">
                                 {t('projects.projectTickets')}
@@ -125,7 +125,7 @@ const ProjectDetails = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {tickets.map((ticket) => {
+                                    {tickets.length !== 0 ? tickets.map((ticket) => {
                                         const latestHistory = ticket.ticket_histories[ticket.ticket_histories.length - 1];
                                         const developer = projectMembers.find((member) => member.id === latestHistory.employeeId);
 
@@ -138,7 +138,13 @@ const ProjectDetails = () => {
                                                 <TableCell>{ticket.createdAt}</TableCell>
                                             </TableRow>
                                         );
-                                    })}
+                                    }) :
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">
+                                                {t('tickets.noTickets')}
+                                            </TableCell>
+                                        </TableRow>
+                                    }
                                 </TableBody>
                             </Table>
                         </TableContainer>
