@@ -54,6 +54,13 @@
         "submitter": "Submitter",
         "developer": "Developer",
         "status": "Status",
-        "created": "Created"
+        "created": "Created",
+        "projectName": "Project Name",
+        "priority": "Priority",
+        "type": "Type",
+        "allMyTickets": "All of my tickets",
+        "allMyTicketsInfo": "Information about tickets",
+        "addTicket": "Add Ticket",
+        "noTickets": "No tickets to display"
     }
 }
