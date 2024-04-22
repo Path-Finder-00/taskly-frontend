@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
-const Filter = ({ handleFilterChange }) => {
+const Filter = ({ handleFilterChange, color }) => {
 
     const { t } = useTranslation("translations")
 
@@ -18,6 +18,7 @@ const Filter = ({ handleFilterChange }) => {
             <OutlinedInput
                 onChange={handleFilterChange}
                 label={t('projects.search')}
+                sx={{ backgroundColor: `${color}` }}
                 endAdornment={
                     <InputAdornment position="end">
                         <SearchIcon />

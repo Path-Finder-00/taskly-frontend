@@ -15,7 +15,7 @@ import {
     TableBody
 } from '@mui/material'
 
-import Filter from './Filter'
+import Filter from '@/shared/components/Filter'
 import projectService from '@/App/services/projects'
 
 import { sizes, color, font } from '@/shared/utils/styles';
@@ -43,10 +43,10 @@ const MyProjects = () => {
 
     const handleNavigateToProjectDetails = (projectId) => {
         navigate(`/projects/projectDetails/${projectId}`);
-      };
+    };
     const handleNavigateToEditProject = (projectId) => {
         navigate(`/projects/editProject/${projectId}`);
-      };
+    };
 
     return (
         <Box sx={{ flexGrow: 1, p: 3, height: '100%' }}>

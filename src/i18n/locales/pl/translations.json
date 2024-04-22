@@ -60,8 +60,12 @@
         "addNewTicket": "Dodaj Nowe Zgłoszenie",
         "description": "Opis",
         "assigned": "Osoba Przydzielona",
-        "priority": "Priorytet",
-        "type": "Typ",
-        "submit": "Zatwierdź"
+        "submit": "Zatwierdź",
+        "created": "Data Utworzenia",
+        "projectName": "Nazwa projektu",
+        "allMyTickets": "Wszystkie moje zgłoszenia",
+        "allMyTicketsInfo": "Informacje o zgłoszeniach",
+        "addTicket": "Dodaj Zgłoszenie",
+        "noTickets": "Brak zgłoszeń do wyświetlenia"
     }
 }

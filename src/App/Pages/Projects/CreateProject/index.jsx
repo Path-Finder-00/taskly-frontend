@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router';
-import Filter from './Filter'
+import Filter from '@/shared/components/Filter'
 import roleService from '@/App/services/roles';
 import teamService from '@/App/services/teams';
 import projectService from '@/App/services/projects';

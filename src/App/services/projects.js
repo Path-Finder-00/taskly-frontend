@@ -9,15 +9,15 @@ const getUserProjects = async () => {
 }
 
 const getProjectById = async (projectId) => {
-  try {
-      const url = `${baseUrl}/${projectId}`;
-      const response = await api.get(url);
-      console.log(response);
-      return response;
-  } catch (error) {
-      console.error('Error fetching project details:', error);
-      throw error;
-  }
+    try {
+        const url = `${baseUrl}/${projectId}`;
+        const response = await api.get(url);
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching project details:', error);
+        throw error;
+    } 
 };
 
 const createProject = async (projectPayload) => {
