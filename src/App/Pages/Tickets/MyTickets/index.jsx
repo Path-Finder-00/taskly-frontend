@@ -159,6 +159,7 @@ const MyTickets = () => {
         ticketsService.getMyTickets()
             .then(data => {
                 setTickets(tickets.concat(data))
+                console.log(tickets)
                 ticketsNumberRef.current = tickets.length
             })
             .catch(err => {
@@ -174,6 +175,8 @@ const MyTickets = () => {
         ).length;
 
         ticketsNumberRef.current = count;
+
+        console.log(tickets)
 
         const maxPage = Math.ceil(ticketsNumberRef.current / 10) - 1;
         console.log("Max page " + maxPage)
@@ -265,7 +268,7 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon/>
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                    <Button variant="contained" onClick={() => navigate('/tickets/createTicket')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
