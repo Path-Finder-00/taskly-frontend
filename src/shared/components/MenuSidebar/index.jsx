@@ -41,7 +41,8 @@ const MenuSidebar = () => {
     function RenderMenuItem({ text, path }) {
         const navigate = useNavigate();
         const location = useLocation();
-        const isActive = location.pathname.includes(path);
+        // const isActive = location.pathname.includes(path);
+        const isActive = location.pathname === path;
     
         return (
             <StyledListItem button active={isActive ? 1 : 0} onClick={() => navigate(path)}>
@@ -60,7 +61,7 @@ const MenuSidebar = () => {
                 <RenderMenuItem text={t('sidebar.myProjects')} path="/projects" />
                 <RenderMenuItem text={t('sidebar.myTickets')} path="/tickets" />
                 <RenderMenuItem text={t('sidebar.userProfile')} path="/profile" />
-                <RenderMenuItem text='Utwórz Zgłoszenie' path="/tickets/createTicket" />
+                <RenderMenuItem text={t('sidebar.createTicket')} path="/tickets/createTicket" />
             </List>
         </StyledBox>
         // <Sidebar>

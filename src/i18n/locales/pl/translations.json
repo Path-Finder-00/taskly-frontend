@@ -5,7 +5,8 @@
         "projectUsers": "Zarządzaj Członkami Projektów",
         "myProjects": "Moje Projekty",
         "myTickets": "Moje Zgłoszenia",
-        "userProfile": "Profil Użytkownika"
+        "userProfile": "Profil Użytkownika",
+        "createTicket": "Utwórz Zgłoszenie"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -61,7 +62,8 @@
         "description": "Opis",
         "assigned": "Osoba Przydzielona",
         "submit": "Zatwierdź",
-        "created": "Data Utworzenia",
+        "priority": "Priorytet",
+        "type": "Typ",
         "projectName": "Nazwa projektu",
         "allMyTickets": "Wszystkie moje zgłoszenia",
         "allMyTicketsInfo": "Informacje o zgłoszeniach",

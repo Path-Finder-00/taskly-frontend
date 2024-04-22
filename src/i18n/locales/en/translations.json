@@ -5,7 +5,8 @@
         "projectUsers": "Manage Project Users",
         "myProjects": "My Projects",
         "myTickets": "My Tickets",
-        "userProfile": "User Profile"
+        "userProfile": "User Profile",
+        "createTicket": "Create Ticket"
     },
     "dropdown": {
         "empty": "There are no options available."
