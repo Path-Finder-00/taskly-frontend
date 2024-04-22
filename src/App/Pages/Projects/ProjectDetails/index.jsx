@@ -39,6 +39,7 @@ const ProjectDetails = () => {
                 setProject(data);
                 setProjectMembers(data.employees);
                 setTickets(data.tickets)
+                console.log(data.tickets)
             })
             .catch(err => {
                 console.error('Error fetching project:', err);
@@ -128,11 +129,11 @@ const ProjectDetails = () => {
                                     {tickets.length !== 0 ? tickets.map((ticket) => {
                                         const latestHistory = ticket.ticket_histories[ticket.ticket_histories.length - 1];
                                         const developer = projectMembers.find((member) => member.id === latestHistory.employeeId);
-
+                                        const submitter = projectMembers.find((member) => member.userId === ticket.user_tickets[0].userId);
                                         return (
                                             <TableRow key={ticket.id}>
                                                 <TableCell>{ticket.title}</TableCell>
-                                                <TableCell>{ticket.submitter}</TableCell>
+                                                <TableCell>{submitter ? `${submitter.user.name} ${submitter.user.surname}` : "Submitter not found"}</TableCell>
                                                 <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
                                                 <TableCell>{latestHistory.status.status}</TableCell>
                                                 <TableCell>{ticket.createdAt}</TableCell>
