@@ -5,6 +5,7 @@ import { sizes, color, font } from '@/shared/utils/styles';
 import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
+import ticketService from '@/App/services/tickets';
 import {
     Grid,
     Box,
@@ -15,6 +16,7 @@ import {
     Select,
     MenuItem,
     FormHelperText,
+    InputLabel
 } from '@mui/material'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
@@ -42,7 +44,7 @@ const CreateTicket = () => {
     const [priorityError, setPriorityError] = useState('');
     const [typeError, setTypeError] = useState('');
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const isNameValid = validateName();
         const isDescriptionValid = validateDescription();
         const isProjectValid = validateProject();
@@ -52,7 +54,17 @@ const CreateTicket = () => {
         if (!isNameValid || !isDescriptionValid || !isProjectValid || !isPriorityValid || !isTypeValid) {
             return;
         }
+        if (ticket.assigned === ''){
+            ticket.assigned = null
+        }
         console.log(ticket);
+        try {
+            const response = await ticketService.createTicket(ticket)
+            navigate(`/projects/projectDetails/${ticket.project}`, { replace: true });
+            console.log(response)
+        } catch (error) {
+            console.error('Error creating ticket:', error)
+        }
     };
 
     const handleChange = (prop) => (event) => {
@@ -141,43 +153,43 @@ const CreateTicket = () => {
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
                 <Grid item md={6}>
-                    <Typography variant='h5'>{t('tickets.title')}</Typography>
+                    {/* <Typography variant='h5'>{t('tickets.title')}</Typography> */}
                     <FormControl fullWidth error={!!nameError}>
-                        {/* <InputLabel htmlFor="title">Title</InputLabel> */}
+                        <InputLabel htmlFor="title">{t('tickets.title')}</InputLabel>
                         <OutlinedInput
                             error={!!nameError}
                             id="title"
                             value={ticket.title}
                             onChange={handleChange('title')}
-                        // label="Title"
+                            label="Title"
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography variant='h5'>{t('tickets.description')}</Typography>
+                    {/* <Typography variant='h5'>{t('tickets.description')}</Typography> */}
                     <FormControl fullWidth error={!!descError}>
-                        {/* <InputLabel htmlFor="description">Description</InputLabel> */}
+                        <InputLabel htmlFor="description">{t('tickets.description')}</InputLabel>
                         <OutlinedInput
                             error={!!descError}
                             id="description"
                             value={ticket.description}
                             onChange={handleChange('description')}
-                        // label="Description"
+                            label="Description"
                         />
                         {descError && <FormHelperText>{descError}</FormHelperText>}
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography variant='h8'>{t('dashboards.project')}</Typography>
+                    {/* <Typography variant='h8'>{t('dashboards.project')}</Typography> */}
                     <FormControl fullWidth error={!!projectError}>
-                        {/* <InputLabel id="project-label">Project</InputLabel> */}
+                        <InputLabel id="project-label">{t('dashboards.project')}</InputLabel>
                         <Select
                             labelId="project-label"
                             id="project"
                             value={ticket.project}
                             onChange={handleChange('project')}
-                        // label="Project"
+                            label="Project"
                         >
                             {projects.map((project) => (
                                 <MenuItem
@@ -192,15 +204,15 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography variant='h8'>{t('tickets.assigned')}</Typography>
+                    {/* <Typography variant='h8'>{t('tickets.assigned')}</Typography> */}
                     <FormControl fullWidth>
-                        {/* <InputLabel id="assigned-label">Assigned</InputLabel> */}
+                        <InputLabel id="assigned-label">{t('tickets.assigned')}</InputLabel>
                         <Select
                             labelId="assigned-label"
                             id="assigned"
                             value={ticket.assigned}
                             onChange={handleChange('assigned')}
-                        // label="Assigned"
+                            label="Assigned"
                         >
                             {projectMembers?.map((members) => (
                                 <MenuItem
@@ -214,15 +226,15 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography variant='h8'>{t('tickets.priority')}</Typography>
+                    {/* <Typography variant='h8'>{t('tickets.priority')}</Typography> */}
                     <FormControl fullWidth error={!!priorityError}>
-                        {/* <InputLabel id="priority-label">Ticket Priority</InputLabel> */}
+                        <InputLabel id="priority-label">{t('tickets.priority')}</InputLabel>
                         <Select
                             labelId="priority-label"
                             id="priority"
                             value={ticket.priority}
                             onChange={handleChange('priority')}
-                        // label="Ticket Priority"
+                            label="Ticket Priority"
                         >
                             {priorities.map((priority) => (
                                 <MenuItem
@@ -237,15 +249,15 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography variant='h8'>{t('tickets.type')}</Typography>
+                    {/* <Typography variant='h8'>{t('tickets.type')}</Typography> */}
                     <FormControl fullWidth error={!!typeError}>
-                        {/* <InputLabel id="type-label">Ticket Type</InputLabel> */}
+                        <InputLabel id="type-label">{t('tickets.type')}</InputLabel>
                         <Select
                             labelId="type-label"
                             id="type"
                             value={ticket.type}
                             onChange={handleChange('type')}
-                        // label="Ticket Type"
+                            label="Ticket Type"
                         >
                             {types.map((type) => (
                                 <MenuItem

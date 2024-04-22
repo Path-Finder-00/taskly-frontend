@@ -8,5 +8,15 @@ const getMyTickets = async () => {
     return response
 }
 
-export default { getMyTickets }
+const createTicket = async (ticketPayload) => {
+    try {
+        const response = await api.post(baseUrl, ticketPayload)
+        return response
+    } catch (error) {
+        console.error('Error creating ticket:', error);
+        throw error
+    }
+}
+
+export default { getMyTickets, createTicket }
 
