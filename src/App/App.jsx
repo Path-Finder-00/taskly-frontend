@@ -20,6 +20,7 @@ import EditProject from '@/App/Pages/Projects/EditProject'
 import MyTickets from '@/App/Pages/Tickets/MyTickets'
 import LoginForm from '@/App/Pages/Login'
 import CreateTicket from '@/App/Pages/Tickets/CreateTicket'
+import TicketDetails from '@/App/Pages/Tickets/TicketDetails'
 
 import './fontStyles.css'
 
@@ -48,6 +49,7 @@ const App = () => {
               <Route path="/projects/editProject/:projectId" element={user ? <EditProject />: <Navigate replace to="/login" />} />
               <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails />: <Navigate replace to="/login" />} />
               <Route path="/tickets/createTicket" element={user ? <CreateTicket />: <Navigate replace to="/login" />} />
+              <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails />: <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Box>

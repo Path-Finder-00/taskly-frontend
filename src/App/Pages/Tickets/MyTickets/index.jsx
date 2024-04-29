@@ -14,6 +14,8 @@ import {
     TableCell,
     TableBody
 } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
@@ -168,7 +170,7 @@ const MyTickets = () => {
 
     useEffect(() => {
         // Ensure we don't run this on initial render unless necessary
-        const count = tickets.filter(ticket => 
+        const count = tickets.filter(ticket =>
             ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
             ticket.projectName.toLowerCase().includes(filter.toLowerCase())
         ).length;
@@ -186,11 +188,11 @@ const MyTickets = () => {
             setIsNextDisabled(page >= maxPage);
         }
         console.log("Filtered Tickets Count:", ticketsNumberRef.current);  // Logs the updated count
-        
+
     }, [filter, tickets, page]);
 
     const handleFilterChange = (event) => {
-        setFilter(event.target.value) 
+        setFilter(event.target.value)
         // ticketsNumberRef.current = tickets.filter(ticket => 
         //     ticket.title.toLowerCase().includes(updatedFilter.toLowerCase()) ||
         //     ticket.projectName.toLowerCase().includes(updatedFilter.toLowerCase())
@@ -206,7 +208,11 @@ const MyTickets = () => {
         setPage(current => current - 1)
     }
 
-    return(
+    const handleNavigateToTicketDetails = (ticketId) => {
+        navigate(`/tickets/ticketDetails/${ticketId}`);
+    };
+
+    return (
         <Box sx={{ width: '100%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
             <Paper>
                 <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5, backgroundColor: `${color.third}`, color: `${color.mainBackground}` }}>
@@ -222,21 +228,22 @@ const MyTickets = () => {
                         <Filter handleFilterChange={handleFilterChange} color={color.mainBackground} />
                     </Box>
                 </Box>
-                <TableContainer>
-                    <Table aria-label="simple table">
+                <TableContainer sx={{ width: "100%" }}>
+                    <Table aria-label="simple table" sx={{ width: "100%" }}>
                         <TableHead>
-                            <TableRow>
-                                <TableCell>{t('tickets.title')}</TableCell>
-                                <TableCell>{t('tickets.projectName')}</TableCell>
-                                <TableCell>{t('tickets.developer')}</TableCell>
-                                <TableCell>{t('tickets.priority')}</TableCell>
-                                <TableCell>{t('tickets.status')}</TableCell>
-                                <TableCell>{t('tickets.type')}</TableCell>
-                                <TableCell>{t('tickets.created')}</TableCell>
+                            <TableRow >
+                                <TableCell width="25%">{t('tickets.title')}</TableCell>
+                                <TableCell width="15%">{t('tickets.projectName')}</TableCell>
+                                <TableCell width="15%">{t('tickets.developer')}</TableCell>
+                                <TableCell width="10%">{t('tickets.priority')}</TableCell>
+                                <TableCell width="10%">{t('tickets.status')}</TableCell>
+                                <TableCell width="10%">{t('tickets.type')}</TableCell>
+                                <TableCell width="15%">{t('tickets.created')}</TableCell>
+                                <TableCell width="5%">Akcje</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {ticketsNumberRef !== 0 ? tickets.filter(ticket => 
+                            {ticketsNumberRef !== 0 ? tickets.filter(ticket =>
                                 ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
                                 ticket.projectName.toLowerCase().includes(filter.toLowerCase())
                             ).map((ticket) => {
@@ -249,6 +256,16 @@ const MyTickets = () => {
                                         <TableCell>{ticket.status}</TableCell>
                                         <TableCell>{ticket.type}</TableCell>
                                         <TableCell>{ticket.createdAt}</TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
+                                                <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
+                                                    <InfoIcon />
+                                                </Button>
+                                                <Button onClick={() => handleNavigateToTicketEdit(ticket.id)}>
+                                                    <EditIcon />
+                                                </Button>
+                                            </Box>
+                                        </TableCell>
                                     </TableRow>
                                 );
                             }).slice(0 + page * 10, 10 + page * 10) :
@@ -263,13 +280,13 @@ const MyTickets = () => {
                 </TableContainer>
                 <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5 }}>
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
-                        <NavigateBeforeIcon/>
+                        <NavigateBeforeIcon />
                     </Button>
                     <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
-                        <NavigateNextIcon/>
+                        <NavigateNextIcon />
                     </Button>
                 </Box>
             </Paper>
