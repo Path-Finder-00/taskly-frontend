@@ -30,5 +30,16 @@ const getTicketById = async (ticketId) => {
     }
 }
 
-export default { getMyTickets, createTicket, getTicketById }
+const editTicket = async (ticketId, ticketPayload) => {
+    try {
+        const url = `${baseUrl}/${ticketId}`;
+        const response = await api.put(url, ticketPayload)
+        return response
+    } catch (error) {
+        console.error('Error editing ticket:', error);
+        throw error
+    }
+}
+
+export default { getMyTickets, createTicket, getTicketById, editTicket }
 

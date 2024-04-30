@@ -212,6 +212,10 @@ const MyTickets = () => {
         navigate(`/tickets/ticketDetails/${ticketId}`);
     };
 
+    const handleNavigateToTicketEdit = (ticketId) => {
+        navigate(`/tickets/editTicket/${ticketId}`);
+    };
+
     return (
         <Box sx={{ width: '100%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
             <Paper>

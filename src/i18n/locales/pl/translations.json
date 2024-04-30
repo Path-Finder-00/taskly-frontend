@@ -78,6 +78,7 @@
         "property": "Zmiana",
         "oldValue": "Stara wartość",
         "newValue": "Nowa wartość",
-        "dateChanged": "Data zmiany"
+        "dateChanged": "Data zmiany",
+        "editInfo": "Edytuj wlaściwości zgłoszenia"
     }
 }

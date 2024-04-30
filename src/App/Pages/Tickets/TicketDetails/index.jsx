@@ -118,6 +118,10 @@ const TicketDetails = () => {
         setPage(current => current - 1)
     }
 
+    const handleNavigateToTicketEdit = (ticketId) => {
+        navigate(`/tickets/editTicket/${ticketId}`);
+    };
+
     if (!ticket) {
         return <div>{t('tickets.loading')}</div>
     }
@@ -135,7 +139,7 @@ const TicketDetails = () => {
                                 <Button variant="contained" onClick={() => navigate('/tickets')}>
                                     {t('tickets.backToList')}
                                 </Button>
-                                <Button variant="contained" onClick={() => navigate('/tickets/myTickets')}>
+                                <Button variant="contained" onClick={() => handleNavigateToTicketEdit(ticket.id)}>
                                     {t('tickets.edit')}
                                 </Button>
                             </Box>
@@ -169,7 +173,7 @@ const TicketDetails = () => {
                                         {t('tickets.developer')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {getEmployeeNameById(ticket.employeeId)}
+                                        {getEmployeeNameById(ticket.ticket_histories[ticket.ticket_histories.length - 1].employeeId)}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>

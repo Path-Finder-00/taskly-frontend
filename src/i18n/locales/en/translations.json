@@ -78,6 +78,7 @@
         "property": "Property",
         "oldValue": "Old Value",
         "newValue": "New Value",
-        "dateChanged": "Date changed"
+        "dateChanged": "Date changed",
+        "editInfo": "Change Ticket properties"
     }
 }
