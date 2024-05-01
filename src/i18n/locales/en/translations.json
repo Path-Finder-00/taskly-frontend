@@ -5,7 +5,8 @@
         "projectUsers": "Manage Project Users",
         "myProjects": "My Projects",
         "myTickets": "My Tickets",
-        "userProfile": "User Profile"
+        "userProfile": "User Profile",
+        "createTicket": "Create Ticket"
     },
     "dropdown": {
         "empty": "There are no options available."
@@ -67,6 +68,17 @@
         "allMyTickets": "All of my tickets",
         "allMyTicketsInfo": "Information about tickets",
         "addTicket": "Add Ticket",
-        "noTickets": "No tickets to display"
+        "noTickets": "No tickets to display",
+        "details": "Ticket Details",
+        "backToList": "Back to list",
+        "edit": "Edit Ticket",
+        "updated": "Updated",
+        "history": "Ticket History",
+        "historyInfo": "All history information for this ticket",
+        "property": "Property",
+        "oldValue": "Old Value",
+        "newValue": "New Value",
+        "dateChanged": "Date changed",
+        "editInfo": "Change Ticket properties"
     }
 }
