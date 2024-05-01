@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
 import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
@@ -21,7 +21,7 @@ import {
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 
-const CreateTicket = () => {
+const EditTicket = () => {
 
     const navigate = useNavigate();
 
@@ -43,6 +43,7 @@ const CreateTicket = () => {
     const [projectError, setProjectError] = useState('');
     const [priorityError, setPriorityError] = useState('');
     const [typeError, setTypeError] = useState('');
+    const { ticketId } = useParams();
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
@@ -54,16 +55,16 @@ const CreateTicket = () => {
         if (!isNameValid || !isDescriptionValid || !isProjectValid || !isPriorityValid || !isTypeValid) {
             return;
         }
-        if (ticket.assigned === ''){
+        if (ticket.assigned === '') {
             ticket.assigned = null
         }
         console.log(ticket);
         try {
-            const response = await ticketService.createTicket(ticket)
-            navigate(`/projects/projectDetails/${ticket.project}`, { replace: true });
+            const response = await ticketService.editTicket(ticketId, ticket)
+            navigate(`/tickets/ticketDetails/${ticketId}`, { replace: true });
             console.log(response)
         } catch (error) {
-            console.error('Error creating ticket:', error)
+            console.error('Error editing ticket:', error)
         }
     };
 
@@ -113,6 +114,19 @@ const CreateTicket = () => {
     };
 
     useEffect(() => {
+        ticketService.getTicketById(ticketId)
+            .then(ticket => {
+                setTicket(
+                    {
+                        title: ticket.title,
+                        description: ticket.description,
+                        project: ticket.projectId,
+                        assigned: ticket.ticket_histories[ticket.ticket_histories.length - 1].employeeId,
+                        priority: ticket.ticket_histories[ticket.ticket_histories.length - 1].priorityId,
+                        type: ticket.typeId
+                    }
+                )
+            })
         projectService
             .getUserProjects()
             .then(projects => {
@@ -126,7 +140,7 @@ const CreateTicket = () => {
             .then(types => {
                 setTypes(types)
             })
-    }, []);
+    }, [ticketId]);
 
     useEffect(() => {
         if (ticket.project) {
@@ -145,10 +159,10 @@ const CreateTicket = () => {
         <Box sx={{ width: '100%', boxShadow: 3 }} >
             <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                 <Typography variant="h6" component="div">
-                    {t('tickets.newTicket')}
+                    {t('tickets.edit')}
                 </Typography>
                 <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                    {t('tickets.addNewTicket')}
+                    {t('tickets.editInfo')}
                 </Typography>
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
@@ -292,4 +306,4 @@ const CreateTicket = () => {
     )
 }
 
-export default CreateTicket
+export default EditTicket

@@ -5,7 +5,8 @@
         "projectUsers": "Zarządzaj Członkami Projektów",
         "myProjects": "Moje Projekty",
         "myTickets": "Moje Zgłoszenia",
-        "userProfile": "Profil Użytkownika"
+        "userProfile": "Profil Użytkownika",
+        "createTicket": "Utwórz Zgłoszenie"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -61,11 +62,23 @@
         "description": "Opis",
         "assigned": "Osoba Przydzielona",
         "submit": "Zatwierdź",
-        "created": "Data Utworzenia",
+        "priority": "Priorytet",
+        "type": "Typ",
         "projectName": "Nazwa projektu",
         "allMyTickets": "Wszystkie moje zgłoszenia",
         "allMyTicketsInfo": "Informacje o zgłoszeniach",
         "addTicket": "Dodaj Zgłoszenie",
-        "noTickets": "Brak zgłoszeń do wyświetlenia"
+        "noTickets": "Brak zgłoszeń do wyświetlenia",
+        "details": "Szczegóły Zgłoszenia",
+        "backToList": "Powrót do listy",
+        "edit": "Edytuj Zgłoszenie",
+        "updated": "Zaktualizowano",
+        "history": "Historia Zgłoszenia",
+        "historyInfo": "Wszystkie informacje o historii zgłoszenia",
+        "property": "Zmiana",
+        "oldValue": "Stara wartość",
+        "newValue": "Nowa wartość",
+        "dateChanged": "Data zmiany",
+        "editInfo": "Edytuj wlaściwości zgłoszenia"
     }
 }
