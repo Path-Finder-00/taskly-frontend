@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
 
 import {
@@ -30,6 +30,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { color, mixin } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
 import ticketsService from '@/App/services/tickets';
+import commentsService from '@/App/services/comments';
 import attachmentsService from '@/App/services/attachments';
 
 const CommentsAttachments = () => {
@@ -38,20 +39,32 @@ const CommentsAttachments = () => {
     const navigate = useNavigate();
 
     const [filter, setFilter] = useState('');
-    const [comment, setComment] = useState([]);
+    const [comment, setComment] = useState('');
+    const [comments, setComments] = useState([]);
     const [commentError, setCommentError] = useState('');
-    const [teamList, setTeamList] = useState([]);
     const [file, setFile] = useState(null);
+
+    const { ticketId } = useParams()
+
+    useEffect(() => {
+        commentsService.getTicketComments(ticketId)
+            .then(data => {
+                setComments(data)
+            })
+            .catch(err => {
+                console.error('Error fetching comments:', err);
+            })
+    }, [ticketId]);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0])
-    }
+    };
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
     };
 
-    const addComment = (event) => {
+    const changeComment = (event) => {
         setComment(event.target.value)
     };
 
@@ -61,16 +74,17 @@ const CommentsAttachments = () => {
             return t('tickets.commentEmpty')
         }
         return '';
-    }
+    };
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = async (event) => {
         if (event.key === 'Enter' && validateComment()) {
-          event.preventDefault()
-        //   document.getElementById('addComment').submit()
+            event.preventDefault()
+            const newComment = await commentsService.createComment(ticketId, comment)
+            console.log(newComment)
+            setComments(prevComments => [...prevComments, newComment])
             setComment('')
-            console.log("DUPA")
         }
-      };
+    };
 
     const validateComment = () => {
         const errorMessage = isEmpty(comment);
@@ -78,10 +92,10 @@ const CommentsAttachments = () => {
         return !errorMessage
     };
 
-    const filterCount = teamList.filter(member =>
-        member.name.toLowerCase().includes(filter.toLowerCase()) ||
-        member.email.toLowerCase().includes(filter.toLowerCase()) ||
-        member.role.toLowerCase().includes(filter.toLowerCase())
+    const filterCount = comments.filter(comment =>
+        comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
+        comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
+        comment.comment.toLowerCase().includes(filter.toLowerCase())
     ).length;
 
     return(
@@ -119,21 +133,21 @@ const CommentsAttachments = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filterCount !== 0 ? teamList
-                                        .filter(member =>
-                                            member.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            member.email.toLowerCase().includes(filter.toLowerCase()) ||
-                                            member.role.toLowerCase().includes(filter.toLowerCase()))
-                                        .map((member) => (
-                                            <TableRow key={member.id}>
+                                    {filterCount !== 0 ? comments
+                                        .filter(comment =>
+                                            comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
+                                            comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
+                                            comment.comment.toLowerCase().includes(filter.toLowerCase()))
+                                        .map((comment) => (
+                                            <TableRow key={comment.id}>
                                                 <TableCell component="th" scope="row">
-                                                    {member.name}
+                                                    {comment.user.name} {comment.user.surname}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {member.email}
+                                                    {comment.comment}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {member.role}
+                                                    {new Date(comment.createdAt).toLocaleString('pl-PL')}
                                                 </TableCell>
                                             </TableRow>
                                         )) :
@@ -156,7 +170,7 @@ const CommentsAttachments = () => {
                                             error={!!commentError}
                                             id="addComment"
                                             value={comment}
-                                            onChange={addComment}
+                                            onChange={changeComment}
                                             label={t('tickets.addComment')}
                                             onKeyDown={handleKeyDown}
                                         />
@@ -213,21 +227,21 @@ const CommentsAttachments = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filterCount !== 0 ? teamList
-                                        .filter(member =>
-                                            member.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            member.email.toLowerCase().includes(filter.toLowerCase()) ||
-                                            member.role.toLowerCase().includes(filter.toLowerCase()))
-                                        .map((member) => (
-                                            <TableRow key={member.id}>
+                                    {/* {filterCount !== 0 ? comments
+                                        .filter(comment =>
+                                            comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
+                                            comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
+                                            comment.comment.toLowerCase().includes(filter.toLowerCase()))
+                                        .map((comment) => (
+                                            <TableRow key={comment.id}>
                                                 <TableCell component="th" scope="row">
-                                                    {member.name}
+                                                    {comment.user.name} {comment.user.surname}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {member.email}
+                                                    {comment.comment}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {member.role}
+                                                    {comment.createdAt}
                                                 </TableCell>
                                             </TableRow>
                                         )) :
@@ -236,7 +250,7 @@ const CommentsAttachments = () => {
                                                 {t('tickets.attachments.noAttachments')}
                                             </TableCell>
                                         </TableRow>
-                                    }
+                                    } */}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -274,30 +288,34 @@ const CommentsAttachments = () => {
                                                     error={!!commentError}
                                                     id="add-comment"
                                                     value={comment}
-                                                    onChange={addComment}
-                                                    label={t('tickets.addComment')}
+                                                    onChange={changeComment}
+                                                    label={t('tickets.attachments.addDescription')}
                                                     onKeyDown={handleKeyDown}
                                                 />
                                                 {commentError && <FormHelperText>{commentError}</FormHelperText>}
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={2}>
-                                            <input
-                                                id="file-upload"
-                                                type="file"
-                                                onChange={handleFileChange}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <label htmlFor="file-upload">
-                                                <Button variant='contained' component='span' sx={{ width: '100%', height: '100%' }}>
-                                                    <PublishOutlinedIcon sx={{ color: `${color.mainBackground}` }}/>
-                                                </Button>
-                                            </label>
+                                            <Button 
+                                                type='submit'
+                                                variant='contained'
+                                                disabled={!file}
+                                                sx={{ width: '100%', height: '100%' }}
+                                            >
+                                                <PublishOutlinedIcon sx={{ color: `${color.mainBackground}` }}/>
+                                            </Button>
                                         </Grid>
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </Box>
+                        {file && 
+                            <Box sx={{ m: 2, mt: 0 }}>
+                                <Typography variant="h8" sx={{ color: `${color.textDark}` }}>
+                                    {t('tickets.attachments.selectedFile')}: {file.name}
+                                </Typography>
+                            </Box>
+                        }
                     </Box>
                     {/* <Box sx={{ mr: 2 }}>
                         <Button variant="contained" sx={{ width: '100%', mt: 2 }}

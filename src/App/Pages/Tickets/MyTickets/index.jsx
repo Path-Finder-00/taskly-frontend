@@ -25,129 +25,7 @@ import ticketsService from '@/App/services/tickets';
 
 const MyTickets = () => {
 
-    const [tickets, setTickets] = useState([
-        {
-            "id": 2,
-            "title": "Update Documentation",
-            "projectName": "Project Delta",
-            "name": "Alice",
-            "surname": "Smith",
-            "priority": "Low",
-            "status": "In Progress",
-            "type": "Task",
-            "createdAt": "2024-04-12"
-        },
-        {
-            "id": 3,
-            "title": "Refactor Core Module",
-            "projectName": "Project Epsilon",
-            "name": "Bob",
-            "surname": "Johnson",
-            "priority": "High",
-            "status": "Open",
-            "type": "Improvement",
-            "createdAt": "2024-04-11"
-        },
-        {
-            "id": 4,
-            "title": "Add New Features",
-            "projectName": "Project Zeta",
-            "name": "Carol",
-            "surname": "Brown",
-            "priority": "Medium",
-            "status": "Closed",
-            "type": "Feature",
-            "createdAt": "2024-04-10"
-        },
-        {
-            "id": 5,
-            "title": "Fix Logout Issue",
-            "projectName": "Project Theta",
-            "name": "James",
-            "surname": "Wilson",
-            "priority": "High",
-            "status": "In Review",
-            "type": "Bug",
-            "createdAt": "2024-04-09"
-        },
-        {
-            "id": 6,
-            "title": "Optimize Database Queries",
-            "projectName": "Project Iota",
-            "name": "Jane",
-            "surname": "Doe",
-            "priority": "High",
-            "status": "Open",
-            "type": "Enhancement",
-            "createdAt": "2024-04-08"
-        },
-        {
-            "id": 7,
-            "title": "Improve Security Protocols",
-            "projectName": "Project Kappa",
-            "name": "Aaron",
-            "surname": "Lee",
-            "priority": "Urgent",
-            "status": "Open",
-            "type": "Task",
-            "createdAt": "2024-04-07"
-        },
-        {
-            "id": 8,
-            "title": "Upgrade Server Hardware",
-            "projectName": "Project Lambda",
-            "name": "Eva",
-            "surname": "Green",
-            "priority": "Medium",
-            "status": "Planned",
-            "type": "Upgrade",
-            "createdAt": "2024-04-06"
-        },
-        {
-            "id": 9,
-            "title": "Refactor Authentication System",
-            "projectName": "Project Mu",
-            "name": "Dan",
-            "surname": "Abrams",
-            "priority": "Low",
-            "status": "In Progress",
-            "type": "Improvement",
-            "createdAt": "2024-04-05"
-        },
-        {
-            "id": 10,
-            "title": "Enhance Data Analytics",
-            "projectName": "Project Nu",
-            "name": "Mia",
-            "surname": "Wong",
-            "priority": "Medium",
-            "status": "Testing",
-            "type": "Feature",
-            "createdAt": "2024-04-04"
-        },
-        {
-            "id": 11,
-            "title": "Streamline User Interface",
-            "projectName": "Project Xi",
-            "name": "Oliver",
-            "surname": "Twist",
-            "priority": "High",
-            "status": "Deployed",
-            "type": "UI Task",
-            "createdAt": "2024-04-03"
-        },
-        {
-            "id": 12,
-            "title": "Solve Memory Leak",
-            "projectName": "Project Omicron",
-            "name": "Lily",
-            "surname": "Evans",
-            "priority": "Critical",
-            "status": "Open",
-            "type": "Bug",
-            "createdAt": "2024-04-02"
-        }
-    ]);
+    const [tickets, setTickets] = useState([]);
     const [page, setPage] = useState(0);
     const ticketsNumberRef = useRef(0);
     const [filter, setFilter] = useState('');
@@ -161,7 +39,6 @@ const MyTickets = () => {
         ticketsService.getMyTickets()
             .then(data => {
                 setTickets(tickets.concat(data))
-                console.log(tickets)
                 ticketsNumberRef.current = tickets.length
             })
             .catch(err => {
@@ -246,7 +123,7 @@ const MyTickets = () => {
                                 <TableCell width="10%">{t('tickets.status')}</TableCell>
                                 <TableCell width="10%">{t('tickets.type')}</TableCell>
                                 <TableCell width="15%">{t('tickets.created')}</TableCell>
-                                <TableCell width="5%">Akcje</TableCell>
+                                <TableCell width="5%">{t('tickets.actions')}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -289,7 +166,7 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon />
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments/19')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >

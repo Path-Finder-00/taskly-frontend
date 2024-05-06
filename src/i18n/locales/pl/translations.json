@@ -87,6 +87,7 @@
         "noComments": "Zgłoszenie nie ma jeszcze zadnych komentarzy",
         "addComment": "Dodaj komentarz",
         "commentEmpty": "Komentarz nie moze być pusty",
+        "actions": "Akcje",
         "attachments": {
             "attachments": "Załączniki do Zgłoszenia",
             "file": "Plik",
@@ -95,7 +96,8 @@
             "created": "Data utworzenia",
             "noAttachments": "Zgłoszenie nie ma jeszcze załączników",
             "chooseFile": "Wybierz Plik",
-            "addDescription": "Dodaj Opis"
+            "addDescription": "Dodaj Opis",
+            "selectedFile": "Wybrany Plik"
         }
     }
 }
