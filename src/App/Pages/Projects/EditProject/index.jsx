@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter'
 import projectService from '@/App/services/projects';
@@ -34,6 +34,7 @@ import {
 const EditProject = () => {
 
     const { t } = useTranslation("translations")
+    const navigate = useNavigate();
     const [selectedMember, setSelectedMember] = useState('')
     const [filter, setFilter] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
@@ -43,6 +44,8 @@ const EditProject = () => {
     const [teamMembers, setTeamMembers] = useState([]);
     const [project, setProject] = useState(null);
     const [roles, setRoles] = useState([]);
+    const [nameError, setNameError] = useState('');
+    const [descError, setDescError] = useState('');
     const { projectId } = useParams();
 
     const filterCount = teamList.filter(member =>
@@ -79,11 +82,62 @@ const EditProject = () => {
         setTeamList(teamList.filter(member => member.id !== memberToRemove));
     };
 
-    const handleRoleChange = (memberId, newRole) => {
+    const handleRoleChange = (memberId, newRoleId) => {
+        const role = roles.find(role => role.id === newRoleId)
         setTeamList(teamList.map(member =>
-            member.id === memberId ? { ...member, role: newRole } : member
+            member.id === memberId ? { ...member, role: role.role, role_id: role.id } : member
         ));
     };
+
+    const handleSubmit = async () => {
+        const isNameValid = validateName();
+        const isDescriptionValid = validateDescription();
+
+        if (!isNameValid || !isDescriptionValid) {
+            return;
+        }
+        const projectPayload = {
+            name: projectName,
+            description: projectDescription,
+            employees: teamList.map(member => ({
+                id: member.id,
+                user_id: member.user_id,
+                role_id: member.role_id
+            }))
+        };
+
+        console.log(projectPayload)
+
+        try {
+            const response = await projectService.editProject(projectId, projectPayload);
+            console.log('Project edited:', response)
+            navigate(`/projects/projectDetails/${projectId}`, { replace: true } )
+        } catch (error) {
+            console.error('Error creating project:', error)
+        }
+    }
+
+    const isEmpty = (value) => {
+        if (!value.trim()) {
+            return t('projects.fieldEmpty')
+        }
+        return '';
+    }
+
+    const validateName = () => {
+        const errorMessage = isEmpty(projectName);
+        setNameError(errorMessage)
+        return !errorMessage
+    }
+
+    const validateDescription = () => {
+        let errorMessage = isEmpty(projectDescription);
+        if (!errorMessage && projectDescription.length > 150) {
+            errorMessage = t('projects.descLengthError');
+        }
+        setDescError(errorMessage)
+        return !errorMessage
+    }
 
     useEffect(() => {
         const fetchRolesAndProject = async () => {
@@ -97,6 +151,8 @@ const EditProject = () => {
                     setProjectName(projectData.name);
                     setProjectDescription(projectData.description);
 
+                    console.log(projectData.employees)
+
                     if (projectData.employees) {
                         const mappedMembers = projectData.employees.map(emp => {
                             const role = rolesData.find(role => role.id === emp.employee_project.roleId);
@@ -105,7 +161,8 @@ const EditProject = () => {
                                 name: `${emp.user.name} ${emp.user.surname}`,
                                 email: emp.user.email,
                                 role: role ? role.role : '',
-                                user_id: emp.user_id,
+                                user_id: emp.userId,
+                                role_id: emp.employee_project.roleId
                             };
                         });
                         setTeamList(mappedMembers);
@@ -115,7 +172,7 @@ const EditProject = () => {
                 console.error('Error fetching data:', error);
             }
         };
-        
+
         teamService.getTeamMembers()
             .then(data => {
                 setTeamMembers(data)
@@ -125,7 +182,7 @@ const EditProject = () => {
             })
 
         fetchRolesAndProject();
-    
+
     }, [projectId]);
 
     if (!project) {
@@ -139,15 +196,19 @@ const EditProject = () => {
                     <Typography variant="h4" sx={{ color: `${color.textDark}`, marginBottom: 5 }}>
                         {t('projects.edit')}
                     </Typography>
-                    <FormControl sx={{ width: '100%', marginBottom: 3 }} size="medium">
+                    <FormControl error={!!nameError} sx={{ width: '100%', marginBottom: 3 }} size="medium">
                         <InputLabel>{t('projects.name')}</InputLabel>
                         <OutlinedInput
+                            error={!!nameError}
                             onChange={(e) => setProjectName(e.target.value)}
                             label={t('projects.name')}
                             value={projectName}
                         />
+                        {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
                     <TextField
+                        error={!!descError}
+                        helperText={descError}
                         onChange={(e) => setProjectDescription(e.target.value)}
                         label={t('projects.description')}
                         multiline
@@ -253,12 +314,12 @@ const EditProject = () => {
                                                     <Select
                                                         labelId={`select-role-label-${member.id}`}
                                                         id={`select-role-${member.id}`}
-                                                        value={member.role}
+                                                        value={member.role_id}
                                                         onChange={(event) => handleRoleChange(member.id, event.target.value)}
                                                         label={t('projects.role')}
                                                     >
                                                         {roles.map((role) => (
-                                                            <MenuItem key={role.id} value={role.role}> {role.role} </MenuItem>
+                                                            <MenuItem key={role.id} value={role.id}> {role.role} </MenuItem>
                                                         ))}
                                                     </Select>
                                                 </TableCell>
@@ -281,7 +342,9 @@ const EditProject = () => {
                         </TableContainer>
                     </Box>
                     <Box sx={{ mr: 2 }}>
-                        <Button variant="contained" sx={{ width: '100%', mt: 2 }}>
+                        <Button variant="contained" sx={{ width: '100%', mt: 2 }}
+                            onClick={handleSubmit}
+                        >
                             {t('projects.edit')}
                         </Button>
                     </Box>

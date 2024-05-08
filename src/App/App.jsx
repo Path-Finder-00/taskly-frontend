@@ -23,6 +23,7 @@ import CreateTicket from '@/App/Pages/Tickets/CreateTicket'
 import CommentsAttachments from '@/App/Pages/Tickets/CommentsAttachments'
 import TicketDetails from '@/App/Pages/Tickets/TicketDetails'
 import EditTicket from '@/App/Pages/Tickets/EditTicket'
+import CreateUser from '@/App/Pages/Users/CreateUser'
 
 import './fontStyles.css'
 
@@ -41,7 +42,7 @@ const App = () => {
 
         </MenuSidebar> }
         <ThemeProvider theme={mainTheme}>
-          <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
+          <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
             <Routes>
               <Route path="/login" element={ <LoginForm setUser={setUser} /> } /> 
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
@@ -54,6 +55,7 @@ const App = () => {
               <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/commentsAttachments" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
+              <Route path="/users/createUser" element={user ? <CreateUser /> : <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Box>

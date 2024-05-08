@@ -6,7 +6,8 @@
         "myProjects": "Moje Projekty",
         "myTickets": "Moje Zgłoszenia",
         "userProfile": "Profil Użytkownika",
-        "createTicket": "Utwórz Zgłoszenie"
+        "createTicket": "Utwórz Zgłoszenie",
+        "createUser": "Utwórz Użytkownika"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -46,9 +47,23 @@
         "descLengthError": "Opis projektu nie może przekroczyć 150 znaków."
     },
     "users": {
-        "name": "Imię i nazwisko",
+        "name": "Imię",
         "email": "Email",
-        "role": "Rola"
+        "role": "Rola",
+        "surname": "Nazwisko",
+        "newUser": "Utwórz Użytkownika",
+        "newUserInfo": "Utwórz nowego Użytkownika",
+        "password": "Hasło",
+        "phone": "Numer telefonu",
+        "technologies": "Technologie",
+        "disabled": "Wyłączony",
+        "admin": "Admin",
+        "passwordTooShort": "Hasło musi mieć conajmniej 8 znaków",
+        "phoneInvalid": "Niepoprawny numer telefonu",
+        "emailInvalid": "Niepoprawny adres e-mail",
+        "surnameTooLong": "Nazwisko nie może przekroczyć 40 znaków",
+        "nameTooLong": "Imię nie może przekroczyć 40 znaków",
+        "client": "Klient"
     },
     "tickets": {
         "title": "Tytuł",
@@ -80,5 +95,12 @@
         "newValue": "Nowa wartość",
         "dateChanged": "Data zmiany",
         "editInfo": "Edytuj wlaściwości zgłoszenia"
+    },
+    "organizations": {
+        "organization": "Organizacja"
+    },
+    "teams": {
+        "team": "Zespół",
+        "teamLead": "Team Leader"
     }
 }

@@ -6,7 +6,8 @@
         "myProjects": "My Projects",
         "myTickets": "My Tickets",
         "userProfile": "User Profile",
-        "createTicket": "Create Ticket"
+        "createTicket": "Create Ticket",
+        "createUser": "Create User"
     },
     "dropdown": {
         "empty": "There are no options available."
@@ -48,7 +49,21 @@
     "users": {
         "name": "Name",
         "email": "Email",
-        "role": "Role"
+        "role": "Role",
+        "surname": "Surname",
+        "newUser": "Create User",
+        "newUserInfo": "Create new User",
+        "password": "Password",
+        "phone": "Phone number",
+        "technologies": "Technologies",
+        "disabled": "Disabled",
+        "admin": "Admin",
+        "passwordTooShort": "Password has to be at least 8 characters long",
+        "phoneInvalid": "Invalid phone number",
+        "emailInvalid": "Invalid e-mail address",
+        "surnameTooLong": "Surname cannot exceed 40 characters",
+        "nameTooLong": "Name cannot exceed 40 characters",
+        "client": "Client"
     },
     "tickets": {
         "title": "Title",
@@ -80,5 +95,12 @@
         "newValue": "New Value",
         "dateChanged": "Date changed",
         "editInfo": "Change Ticket properties"
+    },
+    "organizations": {
+        "organization": "Organizacja"
+    },
+    "teams": {
+        "team": "Zespół",
+        "teamLead": "Team Leader"
     }
 }

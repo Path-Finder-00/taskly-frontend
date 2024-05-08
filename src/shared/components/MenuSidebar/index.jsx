@@ -14,6 +14,7 @@ const MenuSidebar = () => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        position: 'fixed',
         width: sizes.sidebarWidth,
         padding: '30px 16px 0 16px',
         background: color.sidebar
@@ -62,6 +63,7 @@ const MenuSidebar = () => {
                 <RenderMenuItem text={t('sidebar.myTickets')} path="/tickets" />
                 <RenderMenuItem text={t('sidebar.userProfile')} path="/profile" />
                 <RenderMenuItem text={t('sidebar.createTicket')} path="/tickets/createTicket" />
+                <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" />
             </List>
         </StyledBox>
         // <Sidebar>
