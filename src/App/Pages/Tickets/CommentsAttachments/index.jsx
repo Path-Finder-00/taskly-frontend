@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import {
     Box,
@@ -13,7 +13,6 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Container,
     Grid,
     FormHelperText,
     FormControl,
@@ -25,11 +24,9 @@ import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import { styled } from '@mui/material/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { color, mixin } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
-import ticketsService from '@/App/services/tickets';
 import commentsService from '@/App/services/comments';
 import attachmentsService from '@/App/services/attachments';
 
@@ -38,13 +35,23 @@ const CommentsAttachments = () => {
     const { t } = useTranslation("translations");
     const navigate = useNavigate();
 
-    const [filter, setFilter] = useState('');
+    const [commentFilter, setCommentFilter] = useState('');
+    const [attachmentFilter, setAttachmentFilter] = useState('');
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState([]);
     const [commentError, setCommentError] = useState('');
+    const [attachments, setAttachments] = useState([]);
+    const [description, setDescription] = useState('');
+    const [commentPage, setCommentPage] = useState(0);
+    const [attachmentPage, setAttachmentPage] = useState(0);
     const [file, setFile] = useState(null);
+    const [isNextCommentDisabled, setIsNextCommentDisabled] = useState(false);
+    const [isPrevCommentDisabled, setIsPrevCommentDisabled] = useState(true);
+    const [isNextAttachmentDisabled, setIsNextAttachmentDisabled] = useState(false);
+    const [isPrevAttachmentDisabled, setIsPrevAttachmentDisabled] = useState(true);
 
     const { ticketId } = useParams()
+    const commentsNumberRef = useRef(0);
 
     useEffect(() => {
         commentsService.getTicketComments(ticketId)
@@ -54,18 +61,53 @@ const CommentsAttachments = () => {
             .catch(err => {
                 console.error('Error fetching comments:', err);
             })
+        attachmentsService.getTicketAttachments
     }, [ticketId]);
+
+    useEffect(() => {
+        const filterCount = comments.filter(comment =>
+            comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
+            comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
+            comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
+        ).length;
+
+        commentsNumberRef.current = filterCount;
+        const maxPage = Math.ceil(commentsNumberRef.current / 10) - 1;
+        if (commentPage > maxPage && maxPage !== -1) {
+            setCommentPage(maxPage > 0 ? maxPage : 0);
+        } else {
+            setIsPrevCommentDisabled(commentPage <= 0);
+            setIsNextCommentDisabled(commentPage >= maxPage);
+        }
+
+    }, [commentFilter, comments, commentPage]);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0])
     };
 
-    const handleFilterChange = (event) => {
-        setFilter(event.target.value)
+    const handleCommentFilterChange = (event) => {
+        setCommentFilter(event.target.value)
+    };
+
+    const handleAttachmentFilterChange = (event) => {
+        setAttachmentFilter(event.target.value)
+    };
+
+    const handleCommentPageChangeForward = () => {
+        setCommentPage(current => current + 1)
+    };
+
+    const handleCommentPageChangeBackward = () => {
+        setCommentPage(current => current - 1)
     };
 
     const changeComment = (event) => {
         setComment(event.target.value)
+    };
+
+    const changeDescription = (event) => {
+        setDescription(event.target.value)
     };
 
     const isEmpty = (value) => {
@@ -81,7 +123,7 @@ const CommentsAttachments = () => {
             event.preventDefault()
             const newComment = await commentsService.createComment(ticketId, comment)
             console.log(newComment)
-            setComments(prevComments => [...prevComments, newComment])
+            setComments(prevComments => [newComment, ...prevComments])
             setComment('')
         }
     };
@@ -92,10 +134,16 @@ const CommentsAttachments = () => {
         return !errorMessage
     };
 
-    const filterCount = comments.filter(comment =>
-        comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
-        comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
-        comment.comment.toLowerCase().includes(filter.toLowerCase())
+    const commentFilterCount = comments.filter(comment =>
+        comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
+        comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
+        comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
+    ).length;
+
+    const attachmentFilterCount = comments.filter(comment =>
+        comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
+        comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
+        comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
     ).length;
 
     return(
@@ -108,7 +156,7 @@ const CommentsAttachments = () => {
                                 {t('tickets.comments')}
                             </Typography>
                             <Box display='flex' alignItems='center'>
-                                <Filter handleFilterChange={handleFilterChange} color={color.mainBackground} />
+                                <Filter handleFilterChange={handleCommentFilterChange} color={color.mainBackground} />
                             </Box>
                         </Box>
                         <TableContainer component={Paper} elevation={0} sx={{ width: '100%', height: '100%' }}>
@@ -133,24 +181,26 @@ const CommentsAttachments = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filterCount !== 0 ? comments
+                                    {commentFilterCount !== 0 ? comments
                                         .filter(comment =>
-                                            comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
-                                            comment.comment.toLowerCase().includes(filter.toLowerCase()))
+                                            comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
+                                            comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
+                                            comment.comment.toLowerCase().includes(commentFilter.toLowerCase()))
                                         .map((comment) => (
                                             <TableRow key={comment.id}>
                                                 <TableCell component="th" scope="row">
                                                     {comment.user.name} {comment.user.surname}
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell
+                                                    style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
+                                                >
                                                     {comment.comment}
                                                 </TableCell>
                                                 <TableCell align="right">
                                                     {new Date(comment.createdAt).toLocaleString('pl-PL')}
                                                 </TableCell>
                                             </TableRow>
-                                        )) :
+                                        )).slice(0 + commentPage * 10, 10 + commentPage * 10) :
                                         <TableRow>
                                             <TableCell colSpan={3} align="center">
                                                 {t('tickets.noComments')}
@@ -160,31 +210,29 @@ const CommentsAttachments = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        <Box display="flex" justifyContent="space-between" sx={{ p: 2, mb: -2 }}>
+                            <Button disabled={isPrevCommentDisabled} variant="contained" onClick={handleCommentPageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                                <NavigateBeforeIcon />
+                            </Button>
+                            <Button disabled={isNextCommentDisabled} onClick={handleCommentPageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                                <NavigateNextIcon />
+                            </Button>
+                        </Box>
                         <Box sx={{ m: 2 }}>
-                            {/* <Typography variant='h7'>{t('tickets.addComment')}</Typography> */}
-                            {/* <Grid container spacing={2}>
-                                <Grid item xs={9}> */}
-                                    <FormControl fullWidth error={!!commentError}>
-                                        <InputLabel htmlFor="addComment">{t('tickets.addComment')}</InputLabel>
-                                        <OutlinedInput
-                                            error={!!commentError}
-                                            id="addComment"
-                                            value={comment}
-                                            onChange={changeComment}
-                                            label={t('tickets.addComment')}
-                                            onKeyDown={handleKeyDown}
-                                        />
-                                        {commentError && <FormHelperText>{commentError}</FormHelperText>}
-                                    </FormControl>
-                                {/* </Grid> */}
-                                {/* <Grid item xs={3}>
-                                    <Button variant="contained" sx={{ width: '100%', height: '100%' }}
-                                        onClick={null}
-                                    >
-                                        chuj
-                                    </Button>
-                                </Grid> */}
-                            {/* </Grid> */}
+                            <FormControl fullWidth error={!!commentError}>
+                                <InputLabel htmlFor="addComment">{t('tickets.addComment')}</InputLabel>
+                                <OutlinedInput
+                                    error={!!commentError}
+                                    id="addComment"
+                                    value={comment}
+                                    onChange={changeComment}
+                                    label={t('tickets.addComment')}
+                                    onKeyDown={handleKeyDown}
+                                    multiline
+                                    rows={4}
+                                />
+                                {commentError && <FormHelperText>{commentError}</FormHelperText>}
+                            </FormControl>
                         </Box>
                     </Box>
                 </Paper>
@@ -197,7 +245,7 @@ const CommentsAttachments = () => {
                                 {t('tickets.attachments.attachments')}
                             </Typography>
                             <Box display='flex' alignItems='center'>
-                                <Filter handleFilterChange={handleFilterChange} color={color.mainBackground} />
+                                <Filter handleFilterChange={handleAttachmentFilterChange} color={color.mainBackground} />
                             </Box>
                         </Box>
                         <TableContainer component={Paper} elevation={0} sx={{ width: '100%', height: '100%' }}>
@@ -227,30 +275,32 @@ const CommentsAttachments = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {/* {filterCount !== 0 ? comments
+                                    {attachmentFilterCount !== 0 ? attachments
                                         .filter(comment =>
-                                            comment.user.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                            comment.user.surname.toLowerCase().includes(filter.toLowerCase()) ||
-                                            comment.comment.toLowerCase().includes(filter.toLowerCase()))
+                                            comment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                            comment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                            comment.comment.toLowerCase().includes(attachmentFilter.toLowerCase()))
                                         .map((comment) => (
                                             <TableRow key={comment.id}>
                                                 <TableCell component="th" scope="row">
                                                     {comment.user.name} {comment.user.surname}
                                                 </TableCell>
-                                                <TableCell>
+                                                <TableCell
+                                                    style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
+                                                >
                                                     {comment.comment}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {comment.createdAt}
+                                                    {new Date(comment.createdAt).toLocaleString('pl-PL')}
                                                 </TableCell>
                                             </TableRow>
-                                        )) :
+                                        )).slice(0 + attachmentPage * 10, 10 + attachmentPage * 10) :
                                         <TableRow>
-                                            <TableCell colSpan={4} align="center">
-                                                {t('tickets.attachments.noAttachments')}
+                                            <TableCell colSpan={3} align="center">
+                                                {t('tickets.noComments')}
                                             </TableCell>
                                         </TableRow>
-                                    } */}
+                                    }
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -282,17 +332,15 @@ const CommentsAttachments = () => {
                                 <Grid item xs={7}>
                                     <Grid container spacing={1}>
                                         <Grid item xs={9}>
-                                            <FormControl fullWidth error={!!commentError}>
-                                                <InputLabel htmlFor="addComment">{t('tickets.attachments.addDescription')}</InputLabel>
+                                            <FormControl fullWidth>
+                                                <InputLabel htmlFor="addDescription">{t('tickets.attachments.addDescription')}</InputLabel>
                                                 <OutlinedInput
-                                                    error={!!commentError}
-                                                    id="add-comment"
-                                                    value={comment}
-                                                    onChange={changeComment}
+                                                    id="add-description"
+                                                    value={description}
+                                                    onChange={changeDescription}
                                                     label={t('tickets.attachments.addDescription')}
                                                     onKeyDown={handleKeyDown}
                                                 />
-                                                {commentError && <FormHelperText>{commentError}</FormHelperText>}
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={2}>
@@ -317,13 +365,6 @@ const CommentsAttachments = () => {
                             </Box>
                         }
                     </Box>
-                    {/* <Box sx={{ mr: 2 }}>
-                        <Button variant="contained" sx={{ width: '100%', mt: 2 }}
-                            onClick={null}
-                        >
-                            {t('projects.create')}
-                        </Button>
-                    </Box> */}
                 </Paper>
             </Grid>
         </Grid>

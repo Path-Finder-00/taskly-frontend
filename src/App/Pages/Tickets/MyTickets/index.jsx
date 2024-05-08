@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import {
     Box,
@@ -47,7 +47,6 @@ const MyTickets = () => {
     }, []);
 
     useEffect(() => {
-        // Ensure we don't run this on initial render unless necessary
         const count = tickets.filter(ticket =>
             ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
             ticket.projectName.toLowerCase().includes(filter.toLowerCase())
@@ -55,29 +54,18 @@ const MyTickets = () => {
 
         ticketsNumberRef.current = count;
 
-        console.log(tickets)
-
         const maxPage = Math.ceil(ticketsNumberRef.current / 10) - 1;
-        console.log("Max page " + maxPage)
-        console.log("Page " + page)
-        if (page > maxPage) {
+        if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
         } else {
-            // Update button states based on current page and filtered tickets count
             setIsPrevDisabled(page <= 0);
             setIsNextDisabled(page >= maxPage);
         }
-        console.log("Filtered Tickets Count:", ticketsNumberRef.current);  // Logs the updated count
 
     }, [filter, tickets, page]);
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
-        // ticketsNumberRef.current = tickets.filter(ticket => 
-        //     ticket.title.toLowerCase().includes(updatedFilter.toLowerCase()) ||
-        //     ticket.projectName.toLowerCase().includes(updatedFilter.toLowerCase())
-        // ).length
-        // console.log(ticketsNumberRef)
     }
 
     const handlePageChangeForward = () => {
@@ -115,15 +103,47 @@ const MyTickets = () => {
                 <TableContainer sx={{ width: "100%" }}>
                     <Table aria-label="simple table" sx={{ width: "100%" }}>
                         <TableHead>
-                            <TableRow >
-                                <TableCell width="25%">{t('tickets.title')}</TableCell>
-                                <TableCell width="15%">{t('tickets.projectName')}</TableCell>
-                                <TableCell width="15%">{t('tickets.developer')}</TableCell>
-                                <TableCell width="10%">{t('tickets.priority')}</TableCell>
-                                <TableCell width="10%">{t('tickets.status')}</TableCell>
-                                <TableCell width="10%">{t('tickets.type')}</TableCell>
-                                <TableCell width="15%">{t('tickets.created')}</TableCell>
-                                <TableCell width="5%">{t('tickets.actions')}</TableCell>
+                            <TableRow>
+                                <TableCell width="25%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.title')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.projectName')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.developer')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.priority')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.status')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.type')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.created')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="5%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.actions')}
+                                    </Typography>
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

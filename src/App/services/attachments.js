@@ -2,6 +2,12 @@ import api from '@/shared/utils/api'
 
 const baseUrl = '/api/attachments'
 
+const getTicketAttachments = async (ticketId) => {
+    const response = api.get(`${baseUrl}/${ticketId}`)
+
+    return response
+}
+
 const uploadFile = async (formData) => {
     try {
         const response = await api.post(baseUrl, formData);
@@ -12,5 +18,5 @@ const uploadFile = async (formData) => {
     }
 }
 
-export default { uploadFile }
+export default { getTicketAttachments, uploadFile }
 
