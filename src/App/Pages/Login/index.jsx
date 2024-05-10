@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import loginService from '@/App/services/login.js'
 import { storeAuthToken } from '@/shared/utils/authToken'
+import { storeUserId } from '@/shared/utils/storeUserId'
 import './login.css'
 import logo from '../../assets/taskly_logo.png'
 
@@ -30,6 +31,7 @@ const LoginForm = ({ setUser }) => {
             })
 
             storeAuthToken(user.token)
+            storeUserId(user.id)
         
             console.log(user.token)
             setUser(user)

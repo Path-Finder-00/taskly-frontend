@@ -6,7 +6,9 @@
         "myProjects": "My Projects",
         "myTickets": "My Tickets",
         "userProfile": "User Profile",
-        "createTicket": "Create Ticket"
+        "createTicket": "Create Ticket",
+        "createUser": "Create User",
+        "createTeam": "Create Team"
     },
     "dropdown": {
         "empty": "There are no options available."
@@ -48,7 +50,29 @@
     "users": {
         "name": "Name",
         "email": "Email",
-        "role": "Role"
+        "role": "Role",
+        "surname": "Surname",
+        "newUser": "Create User",
+        "newUserInfo": "Create new User",
+        "password": "Password",
+        "phone": "Phone number",
+        "technologies": "Technologies",
+        "disabled": "Disabled",
+        "admin": "Admin",
+        "passwordTooShort": "Password has to be at least 8 characters long",
+        "phoneInvalid": "Invalid phone number",
+        "emailInvalid": "Invalid e-mail address",
+        "surnameTooLong": "Surname cannot exceed 40 characters",
+        "nameTooLong": "Name cannot exceed 40 characters",
+        "client": "Client",
+        "personal": "Personal Info",
+        "jobDetails": "Job Details",
+        "id": "ID",
+        "present": "Present",
+        "skills": "Skills",
+        "jobHistory": "Job history",
+        "projectHistory": "Project history",
+        "editUser": "Edit User profile"
     },
     "tickets": {
         "title": "Title",
@@ -79,6 +103,18 @@
         "oldValue": "Old Value",
         "newValue": "New Value",
         "dateChanged": "Date changed",
+        "editInfo": "Change Ticket properties"
+    },
+    "organizations": {
+        "organization": "Organization"
+    },
+    "teams": {
+        "team": "Team",
+        "teamLead": "Team Leader",
+        "name": "Team name",
+        "newTeam": "New Team",
+        "newTeamInfo": "Create new Team",
+        "nameTooLong": "Team Name cannot exceed 50 characters"
         "editInfo": "Change Ticket properties",
         "comments": "Ticket's comments",
         "commenter": "Commenter",
