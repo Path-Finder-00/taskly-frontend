@@ -97,7 +97,8 @@
             "noAttachments": "Zgłoszenie nie ma jeszcze załączników",
             "chooseFile": "Wybierz Plik",
             "addDescription": "Dodaj Opis",
-            "selectedFile": "Wybrany Plik"
+            "selectedFile": "Wybrany Plik",
+            "download": "Pobierz"
         }
     }
 }

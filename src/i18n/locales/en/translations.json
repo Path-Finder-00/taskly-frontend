@@ -97,7 +97,8 @@
             "noAttachments": "Ticket doesn't yet have any attachments",
             "chooseFile": "Choose File",
             "addDescription": "Add a Description",
-            "selectedFile": "Selected File"
+            "selectedFile": "Selected File",
+            "download": "Download"
         }
     }
 }

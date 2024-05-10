@@ -24,6 +24,7 @@ import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import { styled } from '@mui/material/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import DownloadIcon from '@mui/icons-material/Download';
 
 import { color, mixin } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
@@ -50,8 +51,9 @@ const CommentsAttachments = () => {
     const [isNextAttachmentDisabled, setIsNextAttachmentDisabled] = useState(false);
     const [isPrevAttachmentDisabled, setIsPrevAttachmentDisabled] = useState(true);
 
-    const { ticketId } = useParams()
+    const { ticketId } = useParams();
     const commentsNumberRef = useRef(0);
+    const attachmentsNumberRef = useRef(0);
 
     useEffect(() => {
         commentsService.getTicketComments(ticketId)
@@ -61,26 +63,48 @@ const CommentsAttachments = () => {
             .catch(err => {
                 console.error('Error fetching comments:', err);
             })
-        attachmentsService.getTicketAttachments
+        attachmentsService.getTicketAttachments(ticketId)
+            .then(data => {
+                setAttachments(data)
+            })
+            .catch(err => {
+                console.error('Error fetching attachments:', err)
+            })
     }, [ticketId]);
 
     useEffect(() => {
-        const filterCount = comments.filter(comment =>
+        const commentFilterCount = comments.filter(comment =>
             comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
             comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
             comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
         ).length;
+    
+        const attachmentFilterCount = attachments.filter(attachment =>
+            attachment.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+            attachment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+            attachment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+            attachment.description.toLowerCase().includes(attachmentFilter.toLowerCase())
+        ).length;
 
-        commentsNumberRef.current = filterCount;
-        const maxPage = Math.ceil(commentsNumberRef.current / 10) - 1;
-        if (commentPage > maxPage && maxPage !== -1) {
-            setCommentPage(maxPage > 0 ? maxPage : 0);
+        commentsNumberRef.current = commentFilterCount;
+        const maxCommentPage = Math.ceil(commentsNumberRef.current / 8) - 1;
+        if (commentPage > maxCommentPage && maxCommentPage !== -1) {
+            setCommentPage(maxCommentPage > 0 ? maxCommentPage : 0);
         } else {
             setIsPrevCommentDisabled(commentPage <= 0);
-            setIsNextCommentDisabled(commentPage >= maxPage);
+            setIsNextCommentDisabled(commentPage >= maxCommentPage);
         }
 
-    }, [commentFilter, comments, commentPage]);
+        attachmentsNumberRef.current = attachmentFilterCount;
+        const maxAttachmentPage = Math.ceil(attachmentsNumberRef.current / 8) - 1;
+        if (attachmentPage > maxAttachmentPage && maxAttachmentPage !== -1) {
+            setAttachmentPage(maxAttachmentPage > 0 ? maxAttachmentPage : 0);
+        } else {
+            setIsPrevAttachmentDisabled(attachmentPage <= 0);
+            setIsNextAttachmentDisabled(attachmentPage >= maxAttachmentPage);
+        }
+
+    }, [commentFilter, comments, commentPage, attachmentFilter, attachments, attachmentPage]);
 
     const handleFileChange = (event) => {
         setFile(event.target.files[0])
@@ -102,6 +126,14 @@ const CommentsAttachments = () => {
         setCommentPage(current => current - 1)
     };
 
+    const handleAttachmentPageChangeForward = () => {
+        setAttachmentPage(current => current + 1)
+    };
+
+    const handleAttachmentPageChangeBackward = () => {
+        setAttachmentPage(current => current - 1)
+    };
+
     const changeComment = (event) => {
         setComment(event.target.value)
     };
@@ -109,6 +141,19 @@ const CommentsAttachments = () => {
     const changeDescription = (event) => {
         setDescription(event.target.value)
     };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('name', file.name)
+        formData.append('description', description)
+
+        const newAttachment = await attachmentsService.uploadFile(ticketId, formData)
+        setAttachments(prevAttachments => [newAttachment, ...prevAttachments])
+        setFile(null)
+        setDescription('')
+    }
 
     const isEmpty = (value) => {
         const stringValue = value && value.toString().trim()
@@ -122,7 +167,6 @@ const CommentsAttachments = () => {
         if (event.key === 'Enter' && validateComment()) {
             event.preventDefault()
             const newComment = await commentsService.createComment(ticketId, comment)
-            console.log(newComment)
             setComments(prevComments => [newComment, ...prevComments])
             setComment('')
         }
@@ -134,16 +178,21 @@ const CommentsAttachments = () => {
         return !errorMessage
     };
 
+    const downloadAttachment = async (name) => {
+        return await attachmentsService.getAttachment(ticketId, name)
+    }
+
     const commentFilterCount = comments.filter(comment =>
         comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
         comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
         comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
     ).length;
 
-    const attachmentFilterCount = comments.filter(comment =>
-        comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
-        comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
-        comment.comment.toLowerCase().includes(commentFilter.toLowerCase())
+    const attachmentFilterCount = attachments.filter(attachment =>
+        attachment.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+        attachment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+        attachment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+        attachment.description.toLowerCase().includes(attachmentFilter.toLowerCase())
     ).length;
 
     return(
@@ -200,7 +249,7 @@ const CommentsAttachments = () => {
                                                     {new Date(comment.createdAt).toLocaleString('pl-PL')}
                                                 </TableCell>
                                             </TableRow>
-                                        )).slice(0 + commentPage * 10, 10 + commentPage * 10) :
+                                        )).slice(0 + commentPage * 8, 8 + commentPage * 8) :
                                         <TableRow>
                                             <TableCell colSpan={3} align="center">
                                                 {t('tickets.noComments')}
@@ -262,100 +311,121 @@ const CommentsAttachments = () => {
                                                 {t('tickets.attachments.uploader')}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                                 {t('tickets.attachments.description')}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell>
                                             <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.attachments.created')}
+                                                {t('tickets.attachments.download')}
                                             </Typography>
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {attachmentFilterCount !== 0 ? attachments
-                                        .filter(comment =>
-                                            comment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
-                                            comment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
-                                            comment.comment.toLowerCase().includes(attachmentFilter.toLowerCase()))
-                                        .map((comment) => (
-                                            <TableRow key={comment.id}>
+                                        .filter(attachment =>
+                                            attachment.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                            attachment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                            attachment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                            attachment.description.toLowerCase().includes(attachmentFilter.toLowerCase()))
+                                        .map((attachment) => (
+                                            <TableRow key={attachment.id}>
                                                 <TableCell component="th" scope="row">
-                                                    {comment.user.name} {comment.user.surname}
+                                                    {attachment.name}
+                                                </TableCell>
+                                                <TableCell component="th" scope="row">
+                                                    {attachment.user.name} {attachment.user.surname}
                                                 </TableCell>
                                                 <TableCell
                                                     style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
                                                 >
-                                                    {comment.comment}
+                                                    {attachment.description}
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                    {new Date(comment.createdAt).toLocaleString('pl-PL')}
+                                                    {/* {new Date(attachment.createdAt).toLocaleString('pl-PL')} */}
+                                                    <Button
+                                                        onClick={() => downloadAttachment(attachment.name)}
+                                                        variant='contained'
+                                                        sx={{ width: '100%', height: '100%' }}
+                                                    >
+                                                        <DownloadIcon sx={{ color: `${color.mainBackground}` }}/>
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
-                                        )).slice(0 + attachmentPage * 10, 10 + attachmentPage * 10) :
+                                        )).slice(0 + attachmentPage * 8, 8 + attachmentPage * 8) :
                                         <TableRow>
-                                            <TableCell colSpan={3} align="center">
-                                                {t('tickets.noComments')}
+                                            <TableCell colSpan={4} align="center">
+                                                {t('tickets.attachments.noAttachments')}
                                             </TableCell>
                                         </TableRow>
                                     }
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        <Box sx={{ m: 2 }}>
-                            <Grid container spacing={9}>
-                                <Grid item xs={5}>
-                                    <input
-                                        id="file-upload"
-                                        type="file"
-                                        onChange={handleFileChange}
-                                        style={{ display: 'none' }}
-                                    />
-                                    <label htmlFor="file-upload">
-                                        <Button variant='contained'
-                                                component='span'
-                                                sx={{ 
-                                                    width: '100%', 
-                                                    height: '100%', 
-                                                    backgroundColor: `${color.sidebar}`, 
-                                                    color: `${color.third}`,
-                                                    '&:hover': {
-                                                        background: mixin.lighten(color.sidebar, 0.15)
-                                                    }
-                                                }}>
-                                            <InsertDriveFileOutlinedIcon sx={{ mr: 0.5 }} /> {t('tickets.attachments.chooseFile')}
-                                        </Button>
-                                    </label>
-                                </Grid>
-                                <Grid item xs={7}>
-                                    <Grid container spacing={1}>
-                                        <Grid item xs={9}>
-                                            <FormControl fullWidth>
-                                                <InputLabel htmlFor="addDescription">{t('tickets.attachments.addDescription')}</InputLabel>
-                                                <OutlinedInput
-                                                    id="add-description"
-                                                    value={description}
-                                                    onChange={changeDescription}
-                                                    label={t('tickets.attachments.addDescription')}
-                                                    onKeyDown={handleKeyDown}
-                                                />
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <Button 
-                                                type='submit'
-                                                variant='contained'
-                                                disabled={!file}
-                                                sx={{ width: '100%', height: '100%' }}
-                                            >
-                                                <PublishOutlinedIcon sx={{ color: `${color.mainBackground}` }}/>
+                        <Box display="flex" justifyContent="space-between" sx={{ p: 2, mb: -2 }}>
+                            <Button disabled={isPrevAttachmentDisabled} variant="contained" onClick={handleAttachmentPageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                                <NavigateBeforeIcon />
+                            </Button>
+                            <Button disabled={isNextAttachmentDisabled} onClick={handleAttachmentPageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                                <NavigateNextIcon />
+                            </Button>
+                        </Box>
+                        <Box sx={{ m: 2, mr: -2 }}>
+                            <form onSubmit={handleSubmit} encType="multipart/form-data">
+                                <Grid container spacing={9}>
+                                    <Grid item xs={5}>
+                                        <input
+                                            id="file-upload"
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                        <label htmlFor="file-upload">
+                                            <Button variant='contained'
+                                                    component='span'
+                                                    sx={{ 
+                                                        width: '100%', 
+                                                        height: '100%', 
+                                                        backgroundColor: `${color.sidebar}`, 
+                                                        color: `${color.third}`,
+                                                        '&:hover': {
+                                                            background: mixin.lighten(color.sidebar, 0.15)
+                                                        }
+                                                    }}>
+                                                <InsertDriveFileOutlinedIcon sx={{ mr: 0.5 }} /> {t('tickets.attachments.chooseFile')}
                                             </Button>
+                                        </label>
+                                    </Grid>
+                                    <Grid item xs={7}>
+                                        <Grid container spacing={1}>
+                                            <Grid item xs={9}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel htmlFor="addDescription">{t('tickets.attachments.addDescription')}</InputLabel>
+                                                    <OutlinedInput
+                                                        id="add-description"
+                                                        value={description}
+                                                        onChange={changeDescription}
+                                                        label={t('tickets.attachments.addDescription')}
+                                                        onKeyDown={handleKeyDown}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={2}>
+                                                <Button 
+                                                    type='submit'
+                                                    variant='contained'
+                                                    disabled={!file}
+                                                    sx={{ width: '100%', height: '100%' }}
+                                                >
+                                                    <PublishOutlinedIcon sx={{ color: `${color.mainBackground}` }}/>
+                                                </Button>
+                                            </Grid>
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </form>
                         </Box>
                         {file && 
                             <Box sx={{ m: 2, mt: 0 }}>
