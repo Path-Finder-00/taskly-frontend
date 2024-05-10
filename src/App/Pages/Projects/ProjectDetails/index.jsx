@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { sizes, color, font } from '@/shared/utils/styles';
 import projectService from '@/App/services/projects';
@@ -16,18 +16,21 @@ import {
     TableCell,
     TableBody
 } from '@mui/material'
-
-
-
+import InfoIcon from '@mui/icons-material/Info';
 
 const ProjectDetails = () => {
 
     const { t } = useTranslation("translations")
+    const navigate = useNavigate();
     const { projectId } = useParams();
     const [project, setProject] = useState(null);
     const [projectMembers, setProjectMembers] = useState(null);
     const [tickets, setTickets] = useState([]);
     const [roles, setRoles] = useState([]);
+
+    const handleNavigateToTicketDetails = (ticketId) => {
+        navigate(`/tickets/ticketDetails/${ticketId}`);
+    };
 
     useEffect(() => {
         roleService.getRoles()
@@ -123,6 +126,7 @@ const ProjectDetails = () => {
                                         <TableCell>{t('tickets.developer')}</TableCell>
                                         <TableCell>{t('tickets.status')}</TableCell>
                                         <TableCell>{t('tickets.created')}</TableCell>
+                                        <TableCell>{t('tickets.actions')}</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -137,6 +141,13 @@ const ProjectDetails = () => {
                                                 <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
                                                 <TableCell>{latestHistory.status.status}</TableCell>
                                                 <TableCell>{ticket.createdAt}</TableCell>
+                                                <TableCell>
+                                                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+                                                        <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
+                                                            <InfoIcon />
+                                                        </Button>
+                                                    </Box>
+                                                </TableCell>
                                             </TableRow>
                                         );
                                     }) :
