@@ -134,7 +134,6 @@
         "name": "Team name",
         "newTeam": "New Team",
         "newTeamInfo": "Create new Team",
-        "nameTooLong": "Team Name cannot exceed 50 characters",
-        "editInfo": "Change Ticket properties"
+        "nameTooLong": "Team Name cannot exceed 50 characters"
     }
 }
