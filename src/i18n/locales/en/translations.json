@@ -7,7 +7,8 @@
         "myTickets": "My Tickets",
         "userProfile": "User Profile",
         "createTicket": "Create Ticket",
-        "createUser": "Create User"
+        "createUser": "Create User",
+        "createTeam": "Create Team"
     },
     "dropdown": {
         "empty": "There are no options available."
@@ -63,7 +64,15 @@
         "emailInvalid": "Invalid e-mail address",
         "surnameTooLong": "Surname cannot exceed 40 characters",
         "nameTooLong": "Name cannot exceed 40 characters",
-        "client": "Client"
+        "client": "Client",
+        "personal": "Personal Info",
+        "jobDetails": "Job Details",
+        "id": "ID",
+        "present": "Present",
+        "skills": "Skills",
+        "jobHistory": "Job history",
+        "projectHistory": "Project history",
+        "editUser": "Edit User profile"
     },
     "tickets": {
         "title": "Title",
@@ -97,10 +106,14 @@
         "editInfo": "Change Ticket properties"
     },
     "organizations": {
-        "organization": "Organizacja"
+        "organization": "Organization"
     },
     "teams": {
-        "team": "Zespół",
-        "teamLead": "Team Leader"
+        "team": "Team",
+        "teamLead": "Team Leader",
+        "name": "Team name",
+        "newTeam": "New Team",
+        "newTeamInfo": "Create new Team",
+        "nameTooLong": "Team Name cannot exceed 50 characters"
     }
 }

@@ -8,5 +8,17 @@ const getOrganizations = async () => {
     return response
 }
 
-export default { getOrganizations }
+const getOrganizationByTeamId = async (teamId) => {
+    try {
+        const url = `${baseUrl}/${teamId}`;
+        const response = await api.get(url);
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching employment histories:', error);
+        throw error;
+    } 
+};
+
+export default { getOrganizations, getOrganizationByTeamId }
 

@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 import { AppBar, Toolbar, IconButton, Typography, Box, CssBaseline } from '@mui/material'
@@ -24,27 +24,45 @@ import CommentsAttachments from '@/App/Pages/Tickets/CommentsAttachments'
 import TicketDetails from '@/App/Pages/Tickets/TicketDetails'
 import EditTicket from '@/App/Pages/Tickets/EditTicket'
 import CreateUser from '@/App/Pages/Users/CreateUser'
+import CreateTeam from '@/App/Pages/Teams/CreateTeam'
+import UserProfile from '@/App/Pages/Users/UserProfile'
+import EditUser from '@/App/Pages/Users/EditUser'
 
 import './fontStyles.css'
 
 const App = () => {
 
   const [user, setUser] = useState(null)
+  // preventing the user from changing the id in session storage
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.storageArea === sessionStorage) {
+        console.log('Session storage has changed, logging out', event.key, event.newValue);
+        setUser(null)
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', height: '100vh' }}>
         <CssBaseline />
-        { user && <MenuTopbar>
+        {user && <MenuTopbar>
 
-        </MenuTopbar> }
-        { user && <MenuSidebar>
+        </MenuTopbar>}
+        {user && <MenuSidebar>
 
-        </MenuSidebar> }
+        </MenuSidebar>}
         <ThemeProvider theme={mainTheme}>
           <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
             <Routes>
-              <Route path="/login" element={ <LoginForm setUser={setUser} /> } /> 
+              <Route path="/login" element={<LoginForm setUser={setUser} />} />
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
               <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
               <Route path="/tickets" element={user ? <MyTickets /> : <Navigate replace to="/login" />} />
@@ -56,7 +74,10 @@ const App = () => {
               <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/commentsAttachments" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
               <Route path="/users/createUser" element={user ? <CreateUser /> : <Navigate replace to="/login" />} />
-              <Route path="*" element={ <Navigate to="/login" replace /> } />
+              <Route path="/teams/createTeam" element={user ? <CreateTeam /> : <Navigate replace to="/login" />} />
+              <Route path="/profile/" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
+              <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </Box>
         </ThemeProvider>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { sizes, color, font } from '@/shared/utils/styles';
 import {
     Grid,
@@ -26,15 +26,16 @@ import technologiesService from '@/App/services/technologies';
 import organizationsService from '@/App/services/organizations';
 import organizationTeamsService from '@/App/services/organization_teams';
 import projectsService from '@/App/services/projects';
-import rolesService from '@/App/services/roles';
 import usersService from '@/App/services/users';
+import employmentHistoriesService from '@/App/services/employment_histories';
+import clientsService from '@/App/services/clients';
 
 
-const CreateUser = () => {
+const EditUser = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
-
+    const userId = useParams().userId;
     const { t } = useTranslation("translations")
     const [user, setUser] = useState({
         name: "",
@@ -55,9 +56,8 @@ const CreateUser = () => {
     const [surnameError, setSurnameError] = useState('');
     const [technologies, setTechnologies] = useState([]);
     const [organizations, setOrganizations] = useState([]);
-    const [roles, setRoles] = useState([]);
-    const [projects, setProjects] = useState([]);
     const [teams, setTeams] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
@@ -73,7 +73,7 @@ const CreateUser = () => {
         const isPhoneValid = validatePhone();
         const isPasswordValid = validatePassword();
         let formValid = isNameValid && isSurnameValid && isEmailValid && isPhoneValid && isPasswordValid;
-        
+
         setOrganizationError('');
         setTeamError('');
         setProjectError('');
@@ -99,12 +99,12 @@ const CreateUser = () => {
                 formValid = false;
             }
         }
-
+        
         console.log(user)
         if (formValid) {
             try {
-                const response = await usersService.createUser(user)
-                navigate(`/dashboard`, { replace: true });
+                const response = await usersService.editUser(userId, user)
+                navigate(`/profile`, { replace: true });
                 console.log(response)
             } catch (error) {
                 console.error('Error creating ticket:', error)
@@ -215,6 +215,51 @@ const CreateUser = () => {
     };
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userData = await usersService.getUserById(userId)
+                if (!userData.employee) {
+                    const clientData = await clientsService.getClientByUserId(userId)
+                    setUser(
+                        {
+                            password: '',
+                            name: userData.name,
+                            surname: userData.surname,
+                            email: userData.email,
+                            phone: userData.phone,
+                            organization: clientData.organization.id,
+                            project: clientData.client_projects[clientData.client_projects.length - 1].projectId,
+                            is_client: true
+                        }
+                    )
+                } else {
+                    const employmentHistoriesData = await employmentHistoriesService.getEmploymentHistoriesByUserId(userId)
+                    const organizationData = await organizationsService.getOrganizationByTeamId(employmentHistoriesData[employmentHistoriesData.length - 1].teamId)
+                    setUser(
+                        {
+                            password: '',
+                            name: userData.name,
+                            surname: userData.surname,
+                            email: userData.email,
+                            phone: userData.phone,
+                            technologies: userData.employee.technologies.map(tech => tech.id),
+                            team: employmentHistoriesData[employmentHistoriesData.length - 1].team.id,
+                            organization: organizationData.id,
+                            is_client: false
+                        }
+                    )
+
+                }
+            } catch (err) {
+                console.error("Error fetching data: ", err);
+            }
+        };
+
+        fetchData();
+
+    }, [userId]);
+
+    useEffect(() => {
         technologiesService
             .getTechnologies()
             .then(technologies => {
@@ -225,12 +270,7 @@ const CreateUser = () => {
             .then(organizations => {
                 setOrganizations(organizations)
             })
-        rolesService
-            .getRoles()
-            .then(roles => {
-                setRoles(roles)
-            })
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         if (user.organization) {
@@ -240,15 +280,6 @@ const CreateUser = () => {
                 })
         }
     }, [user.organization]);
-
-    useEffect(() => {
-        if (user.team) {
-            projectsService.getProjectsByTeamId(user.team)
-                .then(projects => {
-                    setProjects(projects);
-                })
-        }
-    }, [user.team]);
 
     useEffect(() => {
         if (user.is_client && user.organization) {
@@ -263,11 +294,11 @@ const CreateUser = () => {
         <Box sx={{ width: '100%', boxShadow: 3 }} >
             <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                 <Typography variant="h6" component="div">
-                    {t('users.newUser')}
+                    {t('users.editUser')}
                 </Typography>
-                <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                    {t('users.newUserInfo')}
-                </Typography>
+                {/* <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
+                    {t('users.editUserInfo')}
+                </Typography> */}
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
                 <Grid item md={6}>
@@ -349,7 +380,8 @@ const CreateUser = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <FormControl fullWidth error={!!organizationError}>
+                    <FormControl fullWidth error={!!organizationError} disabled>
+                        {/* <FormControl fullWidth error={!!organizationError}> */}
                         <InputLabel id="organization-label">{t('organizations.organization')}</InputLabel>
                         <Select
                             labelId="organization-label"
@@ -370,90 +402,80 @@ const CreateUser = () => {
                         {organizationError && <FormHelperText>{organizationError}</FormHelperText>}
                     </FormControl>
                 </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth disabled={user.is_client} error={!!teamError}>
-                        <InputLabel id="team-label">{t('teams.team')}</InputLabel>
-                        <Select
-                            labelId="team-label"
-                            id="team"
-                            value={user.team}
-                            onChange={handleChange('team')}
-                            label="Team"
-                        >
-                            {teams?.map((teams) => (
-                                <MenuItem
-                                    key={teams.team.id}
-                                    value={teams.team.id}
-                                >
-                                    {teams.team.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {teamError && <FormHelperText>{teamError}</FormHelperText>}
-                    </FormControl>
+                {user.is_client && (
+                    <Grid item md={6}>
+                        <FormControl fullWidth error={!!projectError} disabled>
+                            <InputLabel id="project-label">{t('dashboards.project')}</InputLabel>
+                            <Select
+                                labelId="project-label"
+                                id="project"
+                                value={user.project}
+                                onChange={handleChange('project')}
+                                label="Project"
+                            >
+                                {projects?.map((projects) => (
+                                    <MenuItem
+                                        key={projects.id}
+                                        value={projects.id}
+                                    >
+                                        {projects.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {projectError && <FormHelperText>{projectError}</FormHelperText>}
+                        </FormControl>
+                    </Grid>
+                )}
+                {!user.is_client && (
+                    <Grid item md={6}>
+                        <FormControl fullWidth disabled error={!!teamError}>
+                            {/* <FormControl fullWidth disabled={user.is_client} error={!!teamError}> */}
+                            <InputLabel id="team-label">{t('teams.team')}</InputLabel>
+                            <Select
+                                labelId="team-label"
+                                id="team"
+                                value={user.team}
+                                onChange={handleChange('team')}
+                                label="Team"
+                            >
+                                {teams?.map((teams) => (
+                                    <MenuItem
+                                        key={teams.team.id}
+                                        value={teams.team.id}
+                                    >
+                                        {teams.team.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            {teamError && <FormHelperText>{teamError}</FormHelperText>}
+                        </FormControl>
+                    </Grid>
+                )}
+                {!user.is_client && (
+                    <Grid item md={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="technologies-label">{t('users.technologies')}</InputLabel>
+                            <Select
+                                labelId="technologies-label"
+                                id="technologies"
+                                multiple
+                                value={user.technologies}
+                                onChange={handleChange('technologies')}
+                                renderValue={renderTechnologyNames}
+                                label="Technologies"
+                            >
+                                {technologies.map((technology) => (
+                                    <MenuItem key={technology.id} value={technology.id}>
+                                        {technology.technology}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                 </Grid>
+                )}
                 <Grid item md={6}>
-                    <FormControl fullWidth error={!!projectError}>
-                        <InputLabel id="project-label">{t('dashboards.project')}</InputLabel>
-                        <Select
-                            labelId="project-label"
-                            id="project"
-                            value={user.project}
-                            onChange={handleChange('project')}
-                            label="Project"
-                        >
-                            {projects?.map((projects) => (
-                                <MenuItem
-                                    key={projects.id}
-                                    value={projects.id}
-                                >
-                                    {projects.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {projectError && <FormHelperText>{projectError}</FormHelperText>}
-                    </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth disabled={user.is_client}>
-                        <InputLabel id="technologies-label">{t('users.technologies')}</InputLabel>
-                        <Select
-                            labelId="technologies-label"
-                            id="technologies"
-                            multiple
-                            value={user.technologies}
-                            onChange={handleChange('technologies')}
-                            renderValue={renderTechnologyNames}
-                            label="Technologies"
-                        >
-                            {technologies.map((technology) => (
-                                <MenuItem key={technology.id} value={technology.id}>
-                                    {technology.technology}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth disabled={user.is_client}>
-                        <InputLabel id="role-label">{t('projects.role')}</InputLabel>
-                        <Select
-                            labelId="role-label"
-                            id="role"
-                            value={user.role}
-                            onChange={handleChange('role')}
-                            label="Role"
-                        >
-                            {roles.map((role) => (
-                                <MenuItem key={role.id} value={role.id}>
-                                    {role.role}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControlLabel disabled={user.is_client}
+                    <FormControlLabel disabled
+                        // <FormControlLabel disabled={user.is_client}
                         control={
                             <Checkbox
                                 checked={user.admin}
@@ -465,8 +487,9 @@ const CreateUser = () => {
                         label={t('users.admin')}
                     />
                 </Grid>
-                <Grid item md={3}>
-                    <FormControlLabel disabled={user.is_client}
+                <Grid item md={6}>
+                    <FormControlLabel disabled
+                        // <FormControlLabel disabled={user.is_client}
                         control={
                             <Checkbox
                                 checked={user.team_lead}
@@ -479,7 +502,7 @@ const CreateUser = () => {
                     />
                 </Grid>
                 <Grid item md={6}>
-                    <FormControlLabel
+                    <FormControlLabel disabled
                         control={
                             <Checkbox
                                 checked={user.is_client}
@@ -491,8 +514,10 @@ const CreateUser = () => {
                         label={t('users.client')}
                     />
                 </Grid>
-                <Grid item md={6}>
-                </Grid>
+                {!user.is_client && (
+                    <Grid item md={6}>
+                    </Grid>
+                )}
                 <Grid item md={6}>
                     <Button
                         onClick={() => navigate(-1)}
@@ -514,4 +539,4 @@ const CreateUser = () => {
     )
 }
 
-export default CreateUser
+export default EditUser

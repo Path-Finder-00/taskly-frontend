@@ -12,5 +12,27 @@ const createUser = async (userPayload) => {
     }
 }
 
-export default { createUser }
+const getUserById = async (userId) => {
+    try {
+        const url = `${baseUrl}/${userId}`;
+        const response = await api.get(url)
+        return response
+    } catch (error) {
+        console.log('Error fetching user:'. error)
+        throw error
+    }
+}
+
+const editUser = async (userId, userPayload) => {
+    try {
+        const url = `${baseUrl}/${userId}`;
+        const response = await api.put(url, userPayload)
+        return response
+    } catch (error) {
+        console.error('Error editing user:', error);
+        throw error
+    }
+}
+
+export default { createUser, getUserById, editUser }
 

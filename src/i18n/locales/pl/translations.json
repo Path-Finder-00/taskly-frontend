@@ -7,7 +7,8 @@
         "myTickets": "Moje Zgłoszenia",
         "userProfile": "Profil Użytkownika",
         "createTicket": "Utwórz Zgłoszenie",
-        "createUser": "Utwórz Użytkownika"
+        "createUser": "Utwórz Użytkownika",
+        "createTeam": "Utwórz zespół"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -63,7 +64,15 @@
         "emailInvalid": "Niepoprawny adres e-mail",
         "surnameTooLong": "Nazwisko nie może przekroczyć 40 znaków",
         "nameTooLong": "Imię nie może przekroczyć 40 znaków",
-        "client": "Klient"
+        "client": "Klient",
+        "personal": "Informacje osobiste",
+        "jobDetails": "Szczegóły pracy",
+        "id": "Identyfikator",
+        "present": "Obecnie",
+        "skills": "Umiejętności",
+        "jobHistory": "Historia pracy",
+        "projectHistory": "Historia projektów",
+        "editUser": "Edytuj profil Użytkownika"
     },
     "tickets": {
         "title": "Tytuł",
@@ -101,6 +110,10 @@
     },
     "teams": {
         "team": "Zespół",
-        "teamLead": "Team Leader"
+        "teamLead": "Team Leader",
+        "name": "Nazwa zespołu",
+        "newTeam": "Utwórz zespół",
+        "newTeamInfo": "Utwórz nowy zespół",
+        "nameTooLong": "Nazwa zespołu nie może przekroczyć 50 znaków"
     }
 }
