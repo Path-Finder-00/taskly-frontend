@@ -103,18 +103,6 @@
         "oldValue": "Old Value",
         "newValue": "New Value",
         "dateChanged": "Date changed",
-        "editInfo": "Change Ticket properties"
-    },
-    "organizations": {
-        "organization": "Organization"
-    },
-    "teams": {
-        "team": "Team",
-        "teamLead": "Team Leader",
-        "name": "Team name",
-        "newTeam": "New Team",
-        "newTeamInfo": "Create new Team",
-        "nameTooLong": "Team Name cannot exceed 50 characters"
         "editInfo": "Change Ticket properties",
         "comments": "Ticket's comments",
         "commenter": "Commenter",
@@ -136,5 +124,17 @@
             "selectedFile": "Selected File",
             "download": "Download"
         }
+    },
+    "organizations": {
+        "organization": "Organization"
+    },
+    "teams": {
+        "team": "Team",
+        "teamLead": "Team Leader",
+        "name": "Team name",
+        "newTeam": "New Team",
+        "newTeamInfo": "Create new Team",
+        "nameTooLong": "Team Name cannot exceed 50 characters",
+        "editInfo": "Change Ticket properties"
     }
 }

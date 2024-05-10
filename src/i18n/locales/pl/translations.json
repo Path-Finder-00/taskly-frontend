@@ -103,18 +103,6 @@
         "oldValue": "Stara wartość",
         "newValue": "Nowa wartość",
         "dateChanged": "Data zmiany",
-        "editInfo": "Edytuj wlaściwości zgłoszenia"
-    },
-    "organizations": {
-        "organization": "Organizacja"
-    },
-    "teams": {
-        "team": "Zespół",
-        "teamLead": "Team Leader",
-        "name": "Nazwa zespołu",
-        "newTeam": "Utwórz zespół",
-        "newTeamInfo": "Utwórz nowy zespół",
-        "nameTooLong": "Nazwa zespołu nie może przekroczyć 50 znaków"
         "editInfo": "Edytuj wlaściwości zgłoszenia",
         "comments": "Komentarze do Zgłoszenia",
         "commenter": "Komentujący",
@@ -136,5 +124,16 @@
             "selectedFile": "Wybrany Plik",
             "download": "Pobierz"
         }
+    },
+    "organizations": {
+        "organization": "Organizacja"
+    },
+    "teams": {
+        "team": "Zespół",
+        "teamLead": "Team Leader",
+        "name": "Nazwa zespołu",
+        "newTeam": "Utwórz zespół",
+        "newTeamInfo": "Utwórz nowy zespół",
+        "nameTooLong": "Nazwa zespołu nie może przekroczyć 50 znaków"
     }
 }
