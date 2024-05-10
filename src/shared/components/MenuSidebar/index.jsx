@@ -15,6 +15,7 @@ const MenuSidebar = () => {
         flexDirection: 'column',
         height: '100%',
         width: sizes.sidebarWidth,
+        minWidth: sizes.sidebarWidth,
         padding: '30px 16px 0 16px',
         background: color.sidebar
     }))

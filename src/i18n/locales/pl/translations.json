@@ -79,6 +79,26 @@
         "oldValue": "Stara wartość",
         "newValue": "Nowa wartość",
         "dateChanged": "Data zmiany",
-        "editInfo": "Edytuj wlaściwości zgłoszenia"
+        "editInfo": "Edytuj wlaściwości zgłoszenia",
+        "comments": "Komentarze do Zgłoszenia",
+        "commenter": "Komentujący",
+        "comment": "Komentarz",
+        "submitted": "Dodano",
+        "noComments": "Zgłoszenie nie ma jeszcze zadnych komentarzy",
+        "addComment": "Dodaj komentarz",
+        "commentEmpty": "Komentarz nie moze być pusty",
+        "actions": "Akcje",
+        "attachments": {
+            "attachments": "Załączniki do Zgłoszenia",
+            "file": "Plik",
+            "uploader": "Autor",
+            "description": "Opis",
+            "created": "Data utworzenia",
+            "noAttachments": "Zgłoszenie nie ma jeszcze załączników",
+            "chooseFile": "Wybierz Plik",
+            "addDescription": "Dodaj Opis",
+            "selectedFile": "Wybrany Plik",
+            "download": "Pobierz"
+        }
     }
 }

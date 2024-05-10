@@ -80,7 +80,7 @@ const TicketDetails = () => {
         const maxPage = Math.ceil(ticketsNumberRef.current / 2) - 1;
         console.log("Max page " + maxPage)
         console.log("Page " + page)
-        if (page > maxPage) {
+        if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
         } else {
             setIsPrevDisabled(page <= 0);

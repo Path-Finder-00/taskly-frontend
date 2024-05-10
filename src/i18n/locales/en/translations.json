@@ -79,6 +79,26 @@
         "oldValue": "Old Value",
         "newValue": "New Value",
         "dateChanged": "Date changed",
-        "editInfo": "Change Ticket properties"
+        "editInfo": "Change Ticket properties",
+        "comments": "Ticket's comments",
+        "commenter": "Commenter",
+        "comment": "Comment",
+        "submitted": "Submitted",
+        "noComments": "Ticket doesn't have any comments yet",
+        "addComment": "Add a comment",
+        "commentEmpty": "Comment cannot be empty",
+        "actions": "Actions",
+        "attachments": {
+            "attachments": "Ticket's attachments",
+            "file": "File",
+            "uploader": "Author",
+            "description": "Description",
+            "created": "Created at",
+            "noAttachments": "Ticket doesn't yet have any attachments",
+            "chooseFile": "Choose File",
+            "addDescription": "Add a Description",
+            "selectedFile": "Selected File",
+            "download": "Download"
+        }
     }
 }

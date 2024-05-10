@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import {
     Box,
@@ -25,129 +25,7 @@ import ticketsService from '@/App/services/tickets';
 
 const MyTickets = () => {
 
-    const [tickets, setTickets] = useState([
-        {
-            "id": 2,
-            "title": "Update Documentation",
-            "projectName": "Project Delta",
-            "name": "Alice",
-            "surname": "Smith",
-            "priority": "Low",
-            "status": "In Progress",
-            "type": "Task",
-            "createdAt": "2024-04-12"
-        },
-        {
-            "id": 3,
-            "title": "Refactor Core Module",
-            "projectName": "Project Epsilon",
-            "name": "Bob",
-            "surname": "Johnson",
-            "priority": "High",
-            "status": "Open",
-            "type": "Improvement",
-            "createdAt": "2024-04-11"
-        },
-        {
-            "id": 4,
-            "title": "Add New Features",
-            "projectName": "Project Zeta",
-            "name": "Carol",
-            "surname": "Brown",
-            "priority": "Medium",
-            "status": "Closed",
-            "type": "Feature",
-            "createdAt": "2024-04-10"
-        },
-        {
-            "id": 5,
-            "title": "Fix Logout Issue",
-            "projectName": "Project Theta",
-            "name": "James",
-            "surname": "Wilson",
-            "priority": "High",
-            "status": "In Review",
-            "type": "Bug",
-            "createdAt": "2024-04-09"
-        },
-        {
-            "id": 6,
-            "title": "Optimize Database Queries",
-            "projectName": "Project Iota",
-            "name": "Jane",
-            "surname": "Doe",
-            "priority": "High",
-            "status": "Open",
-            "type": "Enhancement",
-            "createdAt": "2024-04-08"
-        },
-        {
-            "id": 7,
-            "title": "Improve Security Protocols",
-            "projectName": "Project Kappa",
-            "name": "Aaron",
-            "surname": "Lee",
-            "priority": "Urgent",
-            "status": "Open",
-            "type": "Task",
-            "createdAt": "2024-04-07"
-        },
-        {
-            "id": 8,
-            "title": "Upgrade Server Hardware",
-            "projectName": "Project Lambda",
-            "name": "Eva",
-            "surname": "Green",
-            "priority": "Medium",
-            "status": "Planned",
-            "type": "Upgrade",
-            "createdAt": "2024-04-06"
-        },
-        {
-            "id": 9,
-            "title": "Refactor Authentication System",
-            "projectName": "Project Mu",
-            "name": "Dan",
-            "surname": "Abrams",
-            "priority": "Low",
-            "status": "In Progress",
-            "type": "Improvement",
-            "createdAt": "2024-04-05"
-        },
-        {
-            "id": 10,
-            "title": "Enhance Data Analytics",
-            "projectName": "Project Nu",
-            "name": "Mia",
-            "surname": "Wong",
-            "priority": "Medium",
-            "status": "Testing",
-            "type": "Feature",
-            "createdAt": "2024-04-04"
-        },
-        {
-            "id": 11,
-            "title": "Streamline User Interface",
-            "projectName": "Project Xi",
-            "name": "Oliver",
-            "surname": "Twist",
-            "priority": "High",
-            "status": "Deployed",
-            "type": "UI Task",
-            "createdAt": "2024-04-03"
-        },
-        {
-            "id": 12,
-            "title": "Solve Memory Leak",
-            "projectName": "Project Omicron",
-            "name": "Lily",
-            "surname": "Evans",
-            "priority": "Critical",
-            "status": "Open",
-            "type": "Bug",
-            "createdAt": "2024-04-02"
-        }
-    ]);
+    const [tickets, setTickets] = useState([]);
     const [page, setPage] = useState(0);
     const ticketsNumberRef = useRef(0);
     const [filter, setFilter] = useState('');
@@ -161,7 +39,6 @@ const MyTickets = () => {
         ticketsService.getMyTickets()
             .then(data => {
                 setTickets(tickets.concat(data))
-                console.log(tickets)
                 ticketsNumberRef.current = tickets.length
             })
             .catch(err => {
@@ -170,7 +47,6 @@ const MyTickets = () => {
     }, []);
 
     useEffect(() => {
-        // Ensure we don't run this on initial render unless necessary
         const count = tickets.filter(ticket =>
             ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
             ticket.projectName.toLowerCase().includes(filter.toLowerCase())
@@ -178,29 +54,18 @@ const MyTickets = () => {
 
         ticketsNumberRef.current = count;
 
-        console.log(tickets)
-
         const maxPage = Math.ceil(ticketsNumberRef.current / 10) - 1;
-        console.log("Max page " + maxPage)
-        console.log("Page " + page)
-        if (page > maxPage) {
+        if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
         } else {
-            // Update button states based on current page and filtered tickets count
             setIsPrevDisabled(page <= 0);
             setIsNextDisabled(page >= maxPage);
         }
-        console.log("Filtered Tickets Count:", ticketsNumberRef.current);  // Logs the updated count
 
     }, [filter, tickets, page]);
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
-        // ticketsNumberRef.current = tickets.filter(ticket => 
-        //     ticket.title.toLowerCase().includes(updatedFilter.toLowerCase()) ||
-        //     ticket.projectName.toLowerCase().includes(updatedFilter.toLowerCase())
-        // ).length
-        // console.log(ticketsNumberRef)
     }
 
     const handlePageChangeForward = () => {
@@ -238,15 +103,47 @@ const MyTickets = () => {
                 <TableContainer sx={{ width: "100%" }}>
                     <Table aria-label="simple table" sx={{ width: "100%" }}>
                         <TableHead>
-                            <TableRow >
-                                <TableCell width="25%">{t('tickets.title')}</TableCell>
-                                <TableCell width="15%">{t('tickets.projectName')}</TableCell>
-                                <TableCell width="15%">{t('tickets.developer')}</TableCell>
-                                <TableCell width="10%">{t('tickets.priority')}</TableCell>
-                                <TableCell width="10%">{t('tickets.status')}</TableCell>
-                                <TableCell width="10%">{t('tickets.type')}</TableCell>
-                                <TableCell width="15%">{t('tickets.created')}</TableCell>
-                                <TableCell width="5%">Akcje</TableCell>
+                            <TableRow>
+                                <TableCell width="25%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.title')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.projectName')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.developer')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.priority')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.status')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.type')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="15%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.created')}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell width="5%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('tickets.actions')}
+                                    </Typography>
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -289,7 +186,7 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon />
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments/19')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
