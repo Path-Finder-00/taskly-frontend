@@ -78,6 +78,8 @@ const App = () => {
               <Route path="/profile/" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
               <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
+              <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           </Box>
         </ThemeProvider>

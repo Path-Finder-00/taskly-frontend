@@ -6,19 +6,19 @@ import history from '@/browserHistory'
 const defaultParams = {
     baseUrl: 'http://localhost:5173',
     headers: () => ({
-        'Content-Type': 'application/json',
-        Authorization: getStoredAuthToken() ? `Bearer ${getStoredAuthToken()}` : undefined
+        'Content-Type': 'application/json'
     })
 }
 
-const api = (method, url, variables) =>
+const api = (method, url, variables, headers = defaultParams.headers(), type = undefined) =>
     new Promise((resolve, reject) => {
         axios({
             url: `${defaultParams.baseUrl}${url}`,
             method,
-            headers: defaultParams.headers(),
+            headers: Object.assign(headers, {Authorization: getStoredAuthToken() ? `Bearer ${getStoredAuthToken()}` : undefined}),
             params: method === 'get' ? variables : undefined,
-            data: method !== 'get' ? variables : undefined
+            data: method !== 'get' ? variables : undefined,
+            responseType: type
         }).then(
             response => {
                 resolve(response.data)

@@ -16,6 +16,7 @@ const MenuSidebar = () => {
         height: '100%',
         position: 'fixed',
         width: sizes.sidebarWidth,
+        minWidth: sizes.sidebarWidth,
         padding: '30px 16px 0 16px',
         background: color.sidebar
     }))

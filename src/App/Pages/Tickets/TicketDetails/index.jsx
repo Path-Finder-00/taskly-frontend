@@ -80,7 +80,7 @@ const TicketDetails = () => {
         const maxPage = Math.ceil(ticketsNumberRef.current / 2) - 1;
         console.log("Max page " + maxPage)
         console.log("Page " + page)
-        if (page > maxPage) {
+        if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
         } else {
             setIsPrevDisabled(page <= 0);
@@ -122,6 +122,10 @@ const TicketDetails = () => {
         navigate(`/tickets/editTicket/${ticketId}`);
     };
 
+    const handleNavigateToCommentsAttachments = (ticketId) => {
+        navigate(`/tickets/commentsAttachments/${ticketId}`);
+    };
+    
     if (!ticket) {
         return <div>{t('tickets.loading')}</div>
     }
@@ -141,6 +145,9 @@ const TicketDetails = () => {
                                 </Button>
                                 <Button variant="contained" onClick={() => handleNavigateToTicketEdit(ticket.id)}>
                                     {t('tickets.edit')}
+                                </Button>
+                                <Button variant="contained" onClick={() => handleNavigateToCommentsAttachments(ticket.id)}>
+                                    {t('tickets.comments')}
                                 </Button>
                             </Box>
                         </Typography>
