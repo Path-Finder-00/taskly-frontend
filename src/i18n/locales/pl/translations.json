@@ -11,8 +11,15 @@
     "dropdown": {
         "empty": "Brak dostępnych opcji."
     },
-    "dashboards": {
-        "project": "Projekt"
+    "dashboard": {
+        "project": "Projekt",
+        "low": "Niski",
+        "normal": "Normalny",
+        "high": "Wysoki",
+        "critical": "Krytyczny",
+        "open": "Otwarty",
+        "assigned": "W Trakcie",
+        "closed": "Zamknięty"
     },
     "projects": {
         "title": "Moje Projekty",
