@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router';
+import { useSnackbar } from '@/shared/components/Snackbar';
 import { sizes, color, font } from '@/shared/utils/styles';
 import {
     Grid,
@@ -30,6 +31,7 @@ const CreateTeam = () => {
     const [nameError, setNameError] = useState('');
     const [organizations, setOrganizations] = useState([]);
     const [organizationError, setOrganizationError] = useState('');
+    const { openSnackbar } = useSnackbar();
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
@@ -37,13 +39,14 @@ const CreateTeam = () => {
         let formValid = (isNameValid && isOrganizationValid);
 
         if (formValid) {
-            // console.log(team)
             try {
                 const response = await teamsService.createTeam(team)
+                console.log('Team created:', response)
+                openSnackbar(t('teams.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
-                console.log(response)
             } catch (error) {
-                console.error('Error creating ticket:', error)
+                console.error('Error creating team:', error)
+                openSnackbar(t('teams.creationError'), 'error');
             }
         }
     };
