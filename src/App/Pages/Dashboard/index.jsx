@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 
 import projectService from '@/App/services/projects'
@@ -20,6 +21,7 @@ import { BarChart } from '@mui/x-charts/BarChart';
 const Dashboard = () => {
 
     const { t } = useTranslation("translations")
+    const navigate = useNavigate();
 
     const [projects, setProjects] = useState([])
     const [tickets, setTickets] = useState([])
@@ -41,15 +43,36 @@ const Dashboard = () => {
         projectService
             .getUserProjects()
             .then(projects => {
-                setProjects(projects)})
+                setProjects(projects)
+            })
     }, [])
+
+    // useEffect(() => {
+    //     if (projects.length > 0) {
+    //         projectService.getProjectById(projects[0].id)
+    //             .then(project => {
+    //                 setTickets(project.tickets);
+    //             })
+    //         setSelectedProject(projects[0])
+    //     }
+    // }, [projects])
+
+    useEffect(() => {
+        if (projects.length > 0) {
+            projectService.getProjectTickets(projects[0].id)
+                .then(tickets => {
+                    setTickets(tickets)
+                })
+            setSelectedProject(projects[0])
+        }
+    }, [projects])
 
     useEffect(() => {
         if (selectedProject) {
             projectService
-                .getProjectById(selectedProject.id)
-                .then(project => {
-                    setTickets(project.tickets)
+                .getProjectTickets(selectedProject.id)
+                .then(tickets => {
+                    setTickets(tickets)
                 })
         }
     }, [selectedProject])
@@ -71,35 +94,36 @@ const Dashboard = () => {
     const handleSelectChange = async (event) => {
         setSelectedProject(event.target.value)
     }
+    
+    const handleChartClick = async (filterAttribute, attributeId) => {
+        navigate(`/projects/projectTickets/${selectedProject.id}`, {
+            state: { filterAttribute, attributeId }
+        })
+    }
 
     const getPrioritiesBarChartData = () => {
-        const mapping = { 1: t('dashboard.low'), 2: t('dashboard.normal'), 3: t('dashboard.high'), 4: t('dashboard.critical') }
+        const mapping = { "Low": t('dashboard.low'), "Normal": t('dashboard.normal'), "High": t('dashboard.high'), "Critical": t('dashboard.critical') }
         const priorities = tickets.map(ticket =>
-            ticket.ticket_histories
-                .reduce((max, ticket) => (ticket.id > max.id ? ticket : max), ticket.ticket_histories[0])
-                .priorityId
+            ticket.priority
         )
 
         const countOccurrences = priorities.reduce((acc, id) => {
             acc[id] = (acc[id] || 0) + 1;
             return acc;
-        }, {});
+        }, {})
 
         const data = Object.keys(mapping).map((key) => ({
-            id: parseInt(key, 10),
+            id: key,
             value: countOccurrences[key] || 0,
             label: mapping[key]
         })); 
-
-        console.log(data)
 
         setPriorities(data)
     }
 
     const getTypesPieChartData = () => {
-        const mapping = { 1: "bug", 2: "feature", 3: "task", 4: "improvement" }
         const types = tickets.map(ticket =>
-            ticket.typeId
+            ticket.type
         )
         
         const countOccurrences = types.reduce((acc, id) => {
@@ -107,23 +131,26 @@ const Dashboard = () => {
             return acc;
         }, {});
 
-        const data = Object.keys(countOccurrences).map((key) => ({
-            id: parseInt(key, 10),
-            value: countOccurrences[key],
-            label: mapping[key]
-        }));
+        const data = Object.entries(countOccurrences).map(([label, value], index) => ({
+            id: index,
+            value,
+            label
+        }))
 
         setTypes(data)
         setTypesChartKey((prevKey) => prevKey + 1)
     }
 
     const getStatusesBarChartData = () => {
-        const mapping = { 1: t('dashboard.open'), 2: t('dashboard.assigned'), 3: t('dashboard.closed') }
-        const statuses = tickets.map(ticket =>
-            ticket.ticket_histories
-                .reduce((max, ticket) => (ticket.id > max.id ? ticket : max), ticket.ticket_histories[0])
-                .statusId
-        )
+        const mapping = { "Open": t('dashboard.open'), "Assigned": t('dashboard.assigned'), "Closed": t('dashboard.closed') }
+        // const statuses = tickets.map(ticket =>
+        //     ticket.ticket_histories
+        //         .reduce((max, ticket) => (ticket.id > max.id ? ticket : max), ticket.ticket_histories[0])
+        //         .statusId
+        // )
+
+        const statuses = tickets
+            .map(ticket => ticket.status)
 
         const countOccurrences = statuses.reduce((acc, id) => {
             acc[id] = (acc[id] || 0) + 1;
@@ -131,29 +158,19 @@ const Dashboard = () => {
         }, {});
 
         const data = Object.keys(mapping).map((key) => ({
-            id: parseInt(key, 10),
+            id: key,
             value: countOccurrences[key] || 0,
             label: mapping[key]
         })); 
-
-        console.log(data)
 
         setStatuses(data)
     }
 
     const getAsigneesPieChartData = () => {
-        const getLatestTicketHistory = (ticketHistories) =>
-            ticketHistories.reduce((latest, history) => (history.id > latest.id ? history : latest), ticketHistories[0]);
-            
+
         const assignees = tickets
-            .map(ticket => getLatestTicketHistory(ticket.ticket_histories))
-            .filter(latestHistory => latestHistory.employee !== null)
-            .map(latestHistory => `${latestHistory.employee.user.name} ${latestHistory.employee.user.surname}`);
-
-        const uniqueNames = [...new Set(assignees)]
-
-        console.log(assignees)
-        console.log(uniqueNames)
+            .filter(ticket => ticket.name !== null && ticket.surname !== null)
+            .map(ticket => ticket.name + " " + ticket.surname)
 
         const countOccurrences = assignees.reduce((acc, name) => {
             acc[name] = (acc[name] || 0) + 1;
@@ -195,104 +212,121 @@ const Dashboard = () => {
             <Box sx={{ flexGrow: 1, padding: 2 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={6}>
-                    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                            <BarChart
-                                xAxis={[{ 
-                                    scaleType: 'band', 
-                                    data: [t('dashboard.low'), t('dashboard.normal'), t('dashboard.high'), t('dashboard.critical')],
-                                    colorMap: {
-                                        type: 'ordinal',
-                                        colors: colors
-                                    }
-                                }]}
-                                series={[
-                                    { data: priorities.map(priority => priority.value) }
-                                ]}
-                            />
-                        </Box>
-                        <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                        <Typography variant="body2" align="center" color="white">
-                            Tickets by Priority
-                        </Typography>
-                        </Box>
-                    </Paper>
+                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                <BarChart
+                                    xAxis={[{ 
+                                        scaleType: 'band', 
+                                        data: [t('dashboard.low'), t('dashboard.normal'), t('dashboard.high'), t('dashboard.critical')],
+                                        colorMap: {
+                                            type: 'ordinal',
+                                            colors: colors
+                                        }
+                                    }]}
+                                    series={[
+                                        { data: priorities.map(priority => priority.value) }
+                                    ]}
+                                    slotProps={{
+                                        noDataOverlay: { message: t('dashboard.noData')}
+                                    }}
+                                    onItemClick={(event, d) => handleChartClick('priorities', priorities[d.dataIndex].id)}
+                                />
+                            </Box>
+                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                <Typography variant="body1" align="center" color="white">
+                                    {t('dashboard.priorities')}
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                            <PieChart
-                                key={typesChartKey}
-                                colors={colors}
-                                series={[
-                                    {
-                                        data: types,
-                                        innerRadius: 50,
-                                        outerRadius: 120,
-                                        paddingAngle: 5,
-                                        cornerRadius: 5,
-                                        cx: 150,
-                                        cy: 150
-                                    }
-                                ]}
-                            />
-                        </Box>
-                        <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                        <Typography variant="body2" align="center" color="white">
-                            Tickets by Type
-                        </Typography>
-                        </Box>
-                    </Paper>
+                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                <PieChart
+                                    key={typesChartKey}
+                                    colors={colors}
+                                    series={[
+                                        {
+                                            data: types,
+                                            innerRadius: 50,
+                                            outerRadius: 120,
+                                            paddingAngle: 5,
+                                            cornerRadius: 5,
+                                            cx: 150,
+                                            cy: 150
+                                        }
+                                    ]}
+                                    slotProps={{
+                                        noDataOverlay: { message: t('dashboard.noData')}
+                                    }}
+                                    onItemClick={(event, d) => handleChartClick('types', types[d.dataIndex].label)}
+                                />
+                            </Box>
+                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                <Typography variant="body1" align="center" color="white">
+                                    {t('dashboard.types')}
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                            <BarChart
-                                colors={colors}
-                                xAxis={[{ 
-                                    scaleType: 'band', 
-                                    data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.closed')],
-                                    colorMap: {
-                                        type: 'ordinal',
-                                        colors: colors
-                                    } 
-                                }]}
-                                series={[
-                                    { data: statuses.map(status => status.value) }
-                                ]}
-                            />
-                        </Box>
-                        <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                        <Typography variant="body2" align="center" color="white">
-                            Tickets by Status
-                        </Typography>
-                        </Box>
-                    </Paper>
+                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                <BarChart
+                                    colors={colors}
+                                    xAxis={[{ 
+                                        scaleType: 'band', 
+                                        data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.closed')],
+                                        colorMap: {
+                                            type: 'ordinal',
+                                            colors: colors
+                                        } 
+                                    }]}
+                                    series={[
+                                        { data: statuses.map(status => status.value) }
+                                    ]}
+                                    slotProps={{
+                                        noDataOverlay: { message: t('dashboard.noData')}
+                                    }}
+                                    onItemClick={(event, d) => handleChartClick('statuses', statuses[d.dataIndex].id)}
+                                />
+                            </Box>
+                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                <Typography variant="body1" align="center" color="white">
+                                    {t('dashboard.statuses')}
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                            <PieChart
-                                colors={colors}
-                                series={[
-                                    {
-                                        data: assignees,
-                                        innerRadius: 50,
-                                        outerRadius: 120,
-                                        paddingAngle: 5,
-                                        cornerRadius: 5,
-                                        cx: 150,
-                                        cy: 150
-                                    }
-                                ]}
-                            />
-                        </Box>
-                        <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                        <Typography variant="body2" align="center" color="white">
-                            Tickets by Person
-                        </Typography>
-                        </Box>
-                    </Paper>
+                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                <PieChart
+                                    colors={colors}
+                                    series={[
+                                        {
+                                            id: 'assignees',
+                                            data: assignees,
+                                            innerRadius: 50,
+                                            outerRadius: 120,
+                                            paddingAngle: 5,
+                                            cornerRadius: 5,
+                                            cx: 150,
+                                            cy: 150
+                                        }
+                                    ]}
+                                    slotProps={{
+                                        noDataOverlay: { message: t('dashboard.noData')}
+                                    }}
+                                    onItemClick={(event, d) => handleChartClick('assignees', assignees[d.dataIndex].label)}
+                                />
+                            </Box>
+                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                <Typography variant="body1" align="center" color="white">
+                                    {t('dashboard.persons')}
+                                </Typography>
+                            </Box>
+                        </Paper>
                     </Grid>
                 </Grid>
                 </Box>

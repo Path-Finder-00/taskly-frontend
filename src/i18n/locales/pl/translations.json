@@ -19,7 +19,12 @@
         "critical": "Krytyczny",
         "open": "Otwarty",
         "assigned": "W Trakcie",
-        "closed": "Zamknięty"
+        "closed": "Zamknięty",
+        "priorities": "Zgłoszenia według Priorytetu",
+        "types": "Zgłoszenia według Typu",
+        "statuses": "Zgłoszenia według Statusu",
+        "persons": "Zgłoszenia według Osoby",
+        "noData": "Wybierz projekt, by wyświetlić dane"
     },
     "projects": {
         "title": "Moje Projekty",

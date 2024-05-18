@@ -19,7 +19,12 @@
         "critical": "Critical",
         "open": "Open",
         "assigned": "In Progress",
-        "closed": "Closed"
+        "closed": "Closed",
+        "priorities": "Tickets by Priority",
+        "types": "Tickets by Type",
+        "statuses": "Tickets by Status",
+        "persons": "Tickets by Person",
+        "noData": "Select a project first"
     },
     "projects": {
         "title": "My Projects",

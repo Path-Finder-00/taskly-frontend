@@ -23,6 +23,7 @@ import CreateTicket from '@/App/Pages/Tickets/CreateTicket'
 import CommentsAttachments from '@/App/Pages/Tickets/CommentsAttachments'
 import TicketDetails from '@/App/Pages/Tickets/TicketDetails'
 import EditTicket from '@/App/Pages/Tickets/EditTicket'
+import AllTickets from '@/App/Pages/Projects/AllTickets'
 
 import './fontStyles.css'
 
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/projects/createProject" element={user ? <CreateProject /> : <Navigate replace to="/login" />} />
               <Route path="/projects/editProject/:projectId" element={user ? <EditProject /> : <Navigate replace to="/login" />} />
               <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/projectTickets/:projectId" element={user ? <AllTickets /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/createTicket" element={user ? <CreateTicket /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />

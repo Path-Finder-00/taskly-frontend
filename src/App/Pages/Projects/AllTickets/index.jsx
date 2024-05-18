@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 
 import {
@@ -14,36 +14,61 @@ import {
     TableCell,
     TableBody
 } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import EditIcon from '@mui/icons-material/Edit';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import InfoIcon from '@mui/icons-material/Info'
+import EditIcon from '@mui/icons-material/Edit'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
 
-import { color } from '@/shared/utils/styles';
-import Filter from '@/shared/components/Filter';
-import ticketsService from '@/App/services/tickets';
+import { color } from '@/shared/utils/styles'
+import Filter from '@/shared/components/Filter'
+import projectService from '@/App/services/projects'
 
-const MyTickets = () => {
+const AllTickets = () => {
 
-    const [tickets, setTickets] = useState([]);
-    const [page, setPage] = useState(0);
-    const ticketsNumberRef = useRef(0);
-    const [filter, setFilter] = useState('');
-    const [isNextDisabled, setIsNextDisabled] = useState(false);
-    const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const [tickets, setTickets] = useState([])
+    const [page, setPage] = useState(0)
+    const ticketsNumberRef = useRef(0)
+    const [filter, setFilter] = useState('')
+    const [isNextDisabled, setIsNextDisabled] = useState(false)
+    const [isPrevDisabled, setIsPrevDisabled] = useState(true)
+    const [header, setHeader] = useState('')
+    const { projectId } = useParams()
+    const location = useLocation()
+    const { filterAttribute, attributeId } = location.state || {}
 
-    const { t } = useTranslation("translations");
-    const navigate = useNavigate();
+    const { t } = useTranslation("translations")
+    const navigate = useNavigate()
 
     useEffect(() => {
-        ticketsService.getMyTickets()
-            .then(data => {
-                setTickets(data)
-                ticketsNumberRef.current = tickets.length
+        projectService.getProjectTickets(projectId)
+            .then(tickets => {
+                switch(filterAttribute) {
+                    case "assignees":
+                        setTickets(tickets.filter(ticket =>
+                            ticket.name + " " + ticket.surname === attributeId
+                        ))
+                        setHeader(t('dashboard.persons'))
+                        break
+                    case "priorities":
+                        setTickets(tickets.filter(ticket =>
+                            ticket.priority === attributeId
+                        ))
+                        setHeader(t('dashboard.priorities'))
+                        break
+                    case "types":
+                        setTickets(tickets.filter(ticket =>
+                            ticket.type === attributeId
+                        ))
+                        setHeader(t('dashboard.types'))
+                        break
+                    case "statuses":
+                        setTickets(tickets.filter(ticket =>
+                            ticket.status === attributeId
+                        ))
+                        setHeader(t('dashboard.statuses'))
+                        break
+                }
             })
-            .catch(err => {
-                console.error('Error fetching tickets:', err);
-            });
     }, []);
 
     useEffect(() => {
@@ -87,13 +112,10 @@ const MyTickets = () => {
     return (
         <Box sx={{ width: '100%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
             <Paper>
-                <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5, backgroundColor: `${color.third}`, color: `${color.mainBackground}` }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ p: 2, mt: 5, backgroundColor: `${color.third}`, color: `${color.mainBackground}` }}>
                     <Box>
-                        <Typography variant="h6" gutterBottom component="div">
-                            {t('tickets.allMyTickets')}
-                        </Typography>
-                        <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                            {t('tickets.allMyTicketsInfo')}
+                        <Typography variant="h6" component="div">
+                            {header}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
@@ -186,9 +208,6 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon />
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments/19')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
-                        {t('tickets.addTicket')}
-                    </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateNextIcon />
                     </Button>
@@ -198,4 +217,4 @@ const MyTickets = () => {
     )
 }
 
-export default MyTickets
+export default AllTickets
