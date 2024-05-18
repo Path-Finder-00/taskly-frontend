@@ -47,16 +47,6 @@ const Dashboard = () => {
             })
     }, [])
 
-    // useEffect(() => {
-    //     if (projects.length > 0) {
-    //         projectService.getProjectById(projects[0].id)
-    //             .then(project => {
-    //                 setTickets(project.tickets);
-    //             })
-    //         setSelectedProject(projects[0])
-    //     }
-    // }, [projects])
-
     useEffect(() => {
         if (projects.length > 0) {
             projectService.getProjectTickets(projects[0].id)
@@ -143,11 +133,6 @@ const Dashboard = () => {
 
     const getStatusesBarChartData = () => {
         const mapping = { "Open": t('dashboard.open'), "Assigned": t('dashboard.assigned'), "Closed": t('dashboard.closed') }
-        // const statuses = tickets.map(ticket =>
-        //     ticket.ticket_histories
-        //         .reduce((max, ticket) => (ticket.id > max.id ? ticket : max), ticket.ticket_histories[0])
-        //         .statusId
-        // )
 
         const statuses = tickets
             .map(ticket => ticket.status)
@@ -329,7 +314,7 @@ const Dashboard = () => {
                         </Paper>
                     </Grid>
                 </Grid>
-                </Box>
+            </Box>
         </Box>
     )
 }
