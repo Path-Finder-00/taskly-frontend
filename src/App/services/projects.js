@@ -20,6 +20,30 @@ const getProjectById = async (projectId) => {
     } 
 }
 
+const getProjectsByTeamId = async (teamId) => {
+    try {
+        const url = `${baseUrl}/availableProjectsByTeamId/${teamId}`;
+        const response = await api.get(url);
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching project details:', error);
+        throw error;
+    } 
+};
+
+const getProjectsByOrgId = async (orgId) => {
+    try {
+        const url = `${baseUrl}/availableProjectsByOrganizationId/${orgId}`;
+        const response = await api.get(url);
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error('Error fetching project details:', error);
+        throw error;
+    } 
+};
+
 const createProject = async (projectPayload) => {
     try {
         const response = await api.post(baseUrl, projectPayload)
@@ -41,5 +65,15 @@ const getProjectTickets = async (projectId) => {
     }
 }
 
-export default { getUserProjects, getProjectById, createProject, getProjectTickets }
+const editProject = async (projectId, projectPayload) => {
+    try {
+        const url = `${baseUrl}/${projectId}`;
+        const response = await api.put(url, projectPayload)
+        return response
+    } catch (error) {
+        console.error('Error editing project:', error);
+        throw error
+    }
+}
 
+export default { getUserProjects, getProjectById, createProject, getProjectsByTeamId, getProjectsByOrgId, editProject, getProjectTickets }

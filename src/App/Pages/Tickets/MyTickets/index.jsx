@@ -186,7 +186,7 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon />
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/tickets/commentsAttachments/19')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                    <Button variant="contained" onClick={() => navigate('/tickets/createTicket/')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
