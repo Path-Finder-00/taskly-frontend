@@ -131,7 +131,7 @@ const ProjectDetails = () => {
                                 </TableHead>
                                 <TableBody>
                                     {tickets.length !== 0 ? tickets.map((ticket) => {
-                                        const latestHistory = ticket.ticket_histories[ticket.ticket_histories.length - 1];
+                                        const latestHistory = ticket.ticket_histories[0];
                                         const developer = projectMembers.find((member) => member.id === latestHistory.employeeId);
                                         const submitter = projectMembers.find((member) => member.userId === ticket.user_tickets[0].userId);
                                         return (
