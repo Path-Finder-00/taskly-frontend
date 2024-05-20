@@ -13,8 +13,20 @@
     "dropdown": {
         "empty": "There are no options available."
     },
-    "dashboards": {
-        "project": "Project"
+    "dashboard": {
+        "project": "Project",
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "critical": "Critical",
+        "open": "Open",
+        "assigned": "In Progress",
+        "closed": "Closed",
+        "priorities": "Tickets by Priority",
+        "types": "Tickets by Type",
+        "statuses": "Tickets by Status",
+        "persons": "Tickets by Person",
+        "noData": "Select a project first"
     },
     "projects": {
         "title": "My Projects",

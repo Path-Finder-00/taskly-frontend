@@ -24,6 +24,7 @@ import CreateTicket from '@/App/Pages/Tickets/CreateTicket'
 import CommentsAttachments from '@/App/Pages/Tickets/CommentsAttachments'
 import TicketDetails from '@/App/Pages/Tickets/TicketDetails'
 import EditTicket from '@/App/Pages/Tickets/EditTicket'
+import AllTickets from '@/App/Pages/Projects/AllTickets'
 import CreateUser from '@/App/Pages/Users/CreateUser'
 import CreateTeam from '@/App/Pages/Teams/CreateTeam'
 import UserProfile from '@/App/Pages/Users/UserProfile'
@@ -76,25 +77,26 @@ const AppContent = ({ user, setUser }) => {
       <ThemeProvider theme={mainTheme}>
         <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
           <Routes>
-            <Route path="/login" element={<LoginForm setUser={setUser} />} />
-            <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
-            <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
-            <Route path="/tickets" element={user ? <MyTickets /> : <Navigate replace to="/login" />} />
-            <Route path="/projects/createProject" element={user ? <CreateProject /> : <Navigate replace to="/login" />} />
-            <Route path="/projects/editProject/:projectId" element={user ? <EditProject /> : <Navigate replace to="/login" />} />
-            <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails /> : <Navigate replace to="/login" />} />
-            <Route path="/tickets/createTicket" element={user ? <CreateTicket /> : <Navigate replace to="/login" />} />
-            <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails /> : <Navigate replace to="/login" />} />
-            <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />
-            <Route path="/tickets/commentsAttachments" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
-            <Route path="/users/createUser" element={user ? <CreateUser /> : <Navigate replace to="/login" />} />
-            <Route path="/teams/createTeam" element={user ? <CreateTeam /> : <Navigate replace to="/login" />} />
-            <Route path="/profile/" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
-            <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-            <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
+              <Route path="/login" element={<LoginForm setUser={setUser} />} />
+              <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
+              <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
+              <Route path="/tickets" element={user ? <MyTickets /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/createProject" element={user ? <CreateProject /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/editProject/:projectId" element={user ? <EditProject /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails /> : <Navigate replace to="/login" />} />
+              <Route path="/projects/projectTickets/:projectId" element={user ? <AllTickets /> : <Navigate replace to="/login" />} />
+              <Route path="/tickets/createTicket" element={user ? <CreateTicket /> : <Navigate replace to="/login" />} />
+              <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails /> : <Navigate replace to="/login" />} />
+              <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />
+              <Route path="/tickets/commentsAttachments" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
+              <Route path="/users/createUser" element={user ? <CreateUser /> : <Navigate replace to="/login" />} />
+              <Route path="/teams/createTeam" element={user ? <CreateTeam /> : <Navigate replace to="/login" />} />
+              <Route path="/profile/" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
+              <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
+              <Route path="*" element={ <Navigate to="/login" replace /> } />
+            </Routes>
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ fontSize: '1.5rem', padding: '1.5rem', maxWidth: '80vw' }}>
             <Alert onClose={closeSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
               {snackbarMessage}
