@@ -66,6 +66,7 @@ const MenuSidebar = () => {
                 <RenderMenuItem text={t('sidebar.createTicket')} path="/tickets/createTicket" />
                 <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" />
                 <RenderMenuItem text={t('sidebar.createTeam')} path="/teams/createTeam" />
+                <RenderMenuItem text={t('sidebar.userList')} path="/users/userList" />
             </List>
         </StyledBox>
         // <Sidebar>

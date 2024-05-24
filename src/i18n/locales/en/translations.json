@@ -8,7 +8,8 @@
         "userProfile": "User Profile",
         "createTicket": "Create Ticket",
         "createUser": "Create User",
-        "createTeam": "Create Team"
+        "createTeam": "Create Team",
+        "userList": "User List"
     },
     "dropdown": {
         "empty": "There are no options available."
@@ -84,7 +85,10 @@
         "skills": "Skills",
         "jobHistory": "Job history",
         "projectHistory": "Project history",
-        "editUser": "Edit User profile"
+        "editUser": "Edit User profile",
+        "details": "Details",
+        "allUsersInOrg": "User List",
+        "allUsersInOrgInfo": "List of users associated with organization"
     },
     "tickets": {
         "title": "Title",

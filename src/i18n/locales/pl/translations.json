@@ -8,7 +8,8 @@
         "userProfile": "Profil Użytkownika",
         "createTicket": "Utwórz Zgłoszenie",
         "createUser": "Utwórz Użytkownika",
-        "createTeam": "Utwórz zespół"
+        "createTeam": "Utwórz zespół",
+        "userList": "Lista Użytkowników"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -84,7 +85,10 @@
         "skills": "Umiejętności",
         "jobHistory": "Historia pracy",
         "projectHistory": "Historia projektów",
-        "editUser": "Edytuj profil Użytkownika"
+        "editUser": "Edytuj profil Użytkownika",
+        "details": "Szczegóły",
+        "allUsersInOrg": "Lista użytkowników",
+        "allUsersInOrgInfo": "Lista użytkowników powiązanych z organizacją"
     },
     "tickets": {
         "title": "Tytuł",

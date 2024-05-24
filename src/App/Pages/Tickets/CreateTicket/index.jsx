@@ -181,9 +181,9 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h8'>{t('dashboards.project')}</Typography> */}
+                    {/* <Typography variant='h8'>{t('dashboard.project')}</Typography> */}
                     <FormControl fullWidth error={!!projectError}>
-                        <InputLabel id="project-label">{t('dashboards.project')}</InputLabel>
+                        <InputLabel id="project-label">{t('dashboard.project')}</InputLabel>
                         <Select
                             labelId="project-label"
                             id="project"

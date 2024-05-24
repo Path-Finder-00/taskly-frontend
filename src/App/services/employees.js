@@ -1,6 +1,6 @@
-// import api from '@/shared/utils/api'
+import api from '@/shared/utils/api'
 
-// const baseUrl = '/api/employees'
+const baseUrl = '/api/employees'
 
 // const getEmployeeById = async (employeeId) => {
 //     try {
@@ -14,5 +14,12 @@
 //     }
 // }
 
-// export default { getEmployeeById }
+const getEmployeesInOrganization = async () => {
+    const url = `${baseUrl}/all`;
+    const response = await api.get(url)
+
+    return response
+}
+
+export default { getEmployeesInOrganization }
 

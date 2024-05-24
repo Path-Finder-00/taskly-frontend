@@ -18,7 +18,7 @@ const getUserById = async (userId) => {
         const response = await api.get(url)
         return response
     } catch (error) {
-        console.log('Error fetching user:'. error)
+        console.log('Error fetching user:'.error)
         throw error
     }
 }
@@ -34,5 +34,16 @@ const editUser = async (userId, userPayload) => {
     }
 }
 
-export default { createUser, getUserById, editUser }
+const getUserAccess = async () => {
+    try {
+        const url = `${baseUrl}/access`;
+        const response = await api.get(url)
+        return response
+    } catch (error) {
+        console.error('Error fetching user access:', error);
+        throw error
+    }
+}
+
+export default { createUser, getUserById, editUser, getUserAccess }
 
