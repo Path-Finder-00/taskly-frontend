@@ -5,6 +5,7 @@ import Filter from '@/shared/components/Filter'
 import roleService from '@/App/services/roles';
 import teamService from '@/App/services/teams';
 import projectService from '@/App/services/projects';
+import { useSnackbar } from '@/shared/components/Snackbar';
 import { sizes, color, font } from '@/shared/utils/styles';
 import {
     Grid,
@@ -23,9 +24,6 @@ import {
     FormControl,
     TextField,
     FormHelperText,
-    List,
-    ListItem,
-    ListItemText,
     Select,
     MenuItem
 } from '@mui/material'
@@ -34,6 +32,7 @@ import {
 const CreateProject = () => {
 
     const navigate = useNavigate();
+    const { openSnackbar } = useSnackbar();
 
     const [projectName, setProjectName] = useState('')
     const [projectDescription, setProjectDescription] = useState('')
@@ -81,7 +80,7 @@ const CreateProject = () => {
         const isNameValid = validateName();
         const isDescriptionValid = validateDescription();
 
-        if (!isNameValid || !isDescriptionValid){
+        if (!isNameValid || !isDescriptionValid) {
             return;
         }
         const projectPayload = {
@@ -97,9 +96,11 @@ const CreateProject = () => {
         try {
             const response = await projectService.createProject(projectPayload);
             console.log('Project created:', response)
-            navigate('/projects', { replace: true } )
+            openSnackbar(t('projects.creationSuccess'), 'success');
+            navigate('/projects', { replace: true })
         } catch (error) {
             console.error('Error creating project:', error)
+            openSnackbar(t('projects.creationError'), 'error');
         }
     };
 

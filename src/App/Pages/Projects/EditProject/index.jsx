@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter'
+import { useSnackbar } from '@/shared/components/Snackbar';
 import projectService from '@/App/services/projects';
 import roleService from '@/App/services/roles';
 import teamService from '@/App/services/teams';
@@ -23,9 +24,6 @@ import {
     OutlinedInput,
     FormControl,
     TextField,
-    List,
-    ListItem,
-    ListItemText,
     Select,
     MenuItem
 } from '@mui/material'
@@ -47,6 +45,7 @@ const EditProject = () => {
     const [nameError, setNameError] = useState('');
     const [descError, setDescError] = useState('');
     const { projectId } = useParams();
+    const { openSnackbar } = useSnackbar();
 
     const filterCount = teamList.filter(member =>
         member.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -106,14 +105,14 @@ const EditProject = () => {
             }))
         };
 
-        console.log(projectPayload)
-
         try {
             const response = await projectService.editProject(projectId, projectPayload);
             console.log('Project edited:', response)
+            openSnackbar(t('projects.editingSuccess'), 'success');
             navigate(`/projects/projectDetails/${projectId}`, { replace: true } )
         } catch (error) {
             console.error('Error creating project:', error)
+            openSnackbar(t('projects.editingError'), 'error');
         }
     }
 

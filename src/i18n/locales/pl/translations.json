@@ -58,7 +58,11 @@
         "edit": "Edytuj Projekt",
         "loading": "Ładowanie szczegółów projektu...",
         "fieldEmpty": "Pole nie może być puste.",
-        "descLengthError": "Opis projektu nie może przekroczyć 150 znaków."
+        "descLengthError": "Opis projektu nie może przekroczyć 150 znaków.",
+        "creationSuccess": "Pomyślnie stworzono Projekt",
+        "creationError": "Wystąpił błąd podczas tworzenia Projektu",
+        "editingSuccess": "Pomyślnie edytowano Projekt",
+        "editingError": "Wystąpił błąd podczas edytowania Projektu"
     },
     "users": {
         "name": "Imię",
@@ -88,7 +92,11 @@
         "editUser": "Edytuj profil Użytkownika",
         "details": "Szczegóły",
         "allUsersInOrg": "Lista użytkowników",
-        "allUsersInOrgInfo": "Lista użytkowników powiązanych z organizacją"
+        "allUsersInOrgInfo": "Lista użytkowników powiązanych z organizacją",
+        "creationSuccess": "Pomyślnie stworzono Użytkownika",
+        "creationError": "Wystąpił błąd podczas tworzenia Użytkownika",
+        "editingSuccess": "Pomyślnie edytowano Użytkownika",
+        "editingError": "Wystąpił błąd podczas edytowania Użytkownika"
     },
     "tickets": {
         "title": "Tytuł",
@@ -139,7 +147,11 @@
             "addDescription": "Dodaj Opis",
             "selectedFile": "Wybrany Plik",
             "download": "Pobierz"
-        }
+        },
+        "creationSuccess": "Pomyślnie stworzono Zgłoszenie",
+        "creationError": "Wystąpił błąd podczas tworzenia Zgłoszenia",
+        "editingSuccess": "Pomyślnie edytowano Zgłoszenie",
+        "editingError": "Wystąpił błąd podczas edytowania Zgłoszenia"
     },
     "organizations": {
         "organization": "Organizacja"
@@ -150,6 +162,8 @@
         "name": "Nazwa zespołu",
         "newTeam": "Utwórz zespół",
         "newTeamInfo": "Utwórz nowy zespół",
-        "nameTooLong": "Nazwa zespołu nie może przekroczyć 50 znaków"
+        "nameTooLong": "Nazwa zespołu nie może przekroczyć 50 znaków",
+        "creationSuccess": "Pomyślnie stworzono Zespół",
+        "creationError": "Wystąpił błąd podczas tworzenia Zespołu"
     }
 }

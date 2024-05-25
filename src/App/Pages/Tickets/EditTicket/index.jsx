@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
+import { useSnackbar } from '@/shared/components/Snackbar';
 import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
@@ -24,7 +25,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 const EditTicket = () => {
 
     const navigate = useNavigate();
-
+    const { openSnackbar } = useSnackbar();
     const { t } = useTranslation("translations")
     const [projects, setProjects] = useState([])
     const [priorities, setPriorities] = useState([])
@@ -61,10 +62,12 @@ const EditTicket = () => {
         console.log(ticket);
         try {
             const response = await ticketService.editTicket(ticketId, ticket)
+            openSnackbar(t('tickets.editingSuccess'), 'success');
             navigate(`/tickets/ticketDetails/${ticketId}`, { replace: true });
             console.log(response)
         } catch (error) {
             console.error('Error editing ticket:', error)
+            openSnackbar(t('tickets.editingError'), 'error');
         }
     };
 

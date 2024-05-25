@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router';
+import { useSnackbar } from '@/shared/components/Snackbar';
 import { sizes, color, font } from '@/shared/utils/styles';
 import {
     Grid,
@@ -35,6 +36,7 @@ const EditUser = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
+    const { openSnackbar } = useSnackbar();
     const userId = useParams().userId;
     const { t } = useTranslation("translations")
     const [user, setUser] = useState(null);
@@ -89,12 +91,12 @@ const EditUser = () => {
         if (formValid) {
             try {
                 const response = await usersService.editUser(userId, user)
-                console.log('user')
-                console.log(user)
-                navigate(`/profile/${userId}`, { replace: true });
+                openSnackbar(t('users.editingSuccess'), 'success');
+                navigate(`/profile`, { replace: true });
                 console.log(response)
             } catch (error) {
-                console.error('Error editing user:', error)
+                console.error('Error creating ticket:', error)
+                openSnackbar(t('users.editingError'), 'error');
             }
         }
     };

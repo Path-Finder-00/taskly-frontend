@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router';
 import { sizes, color, font } from '@/shared/utils/styles';
+import { useSnackbar } from '@/shared/components/Snackbar';
 import {
     Grid,
     Box,
@@ -34,6 +35,7 @@ const CreateUser = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
+    const { openSnackbar } = useSnackbar();
 
     const { t } = useTranslation("translations")
     const [user, setUser] = useState({
@@ -90,10 +92,12 @@ const CreateUser = () => {
         if (formValid) {
             try {
                 const response = await usersService.createUser(user)
+                openSnackbar(t('users.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
                 console.log(response)
             } catch (error) {
                 console.error('Error creating ticket:', error)
+                openSnackbar(t('users.creationError'), 'error');
             }
         }
     };
