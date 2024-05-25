@@ -1,12 +1,13 @@
 import { useState, Fragment, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
-import { AppBar, Toolbar, IconButton, Typography, Box, CssBaseline } from '@mui/material'
+import { AppBar, Toolbar, IconButton, Typography, Box, CssBaseline, Snackbar, Alert } from '@mui/material'
 import { useTheme, ThemeProvider } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 
 import MenuSidebar from '@/shared/components/MenuSidebar'
 import MenuTopbar from '@/shared/components/MenuTopbar'
+import { SnackbarProvider, useSnackbar } from '@/shared/components/Snackbar';
 import { Container, Content, Canvas } from './MainStyle'
 import BaseStyles from './BaseStyles'
 
@@ -34,6 +35,7 @@ import './fontStyles.css'
 const App = () => {
 
   const [user, setUser] = useState(null)
+
   // preventing the user from changing the id in session storage
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -52,17 +54,29 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', height: '100vh' }}>
-        <CssBaseline />
-        {user && <MenuTopbar>
+      <SnackbarProvider>
+        <AppContent user={user} setUser={setUser} />
+      </SnackbarProvider>
+    </ThemeProvider>
+  )
+}
 
-        </MenuTopbar>}
-        {user && <MenuSidebar>
+const AppContent = ({ user, setUser }) => {
 
-        </MenuSidebar>}
-        <ThemeProvider theme={mainTheme}>
-          <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
-            <Routes>
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
+
+  return (
+    <Box sx={{ display: 'flex', height: '100vh' }}>
+      <CssBaseline />
+      {user && <MenuTopbar>
+
+      </MenuTopbar>}
+      {user && <MenuSidebar>
+
+      </MenuSidebar>}
+      <ThemeProvider theme={mainTheme}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
+          <Routes>
               <Route path="/login" element={<LoginForm setUser={setUser} />} />
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
               <Route path="/projects" element={user ? <MyProjects /> : <Navigate replace to="/login" />} />
@@ -83,10 +97,14 @@ const App = () => {
               <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
-          </Box>
-        </ThemeProvider>
-      </Box>
-    </ThemeProvider>
+          <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ fontSize: '1.5rem', padding: '1.5rem', maxWidth: '80vw' }}>
+            <Alert onClose={closeSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
+      </ThemeProvider>
+    </Box>
   )
 }
 

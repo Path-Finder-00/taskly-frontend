@@ -57,7 +57,11 @@
         "edit": "Edit Project",
         "loading": "Loading project details...",
         "fieldEmpty": "Field cannot be empty.",
-        "descLengthError": "Project description cannot exceed 150 characters."
+        "descLengthError": "Project description cannot exceed 150 characters.",
+        "creationSuccess": "Project created successfully",
+        "creationError": "An error occurred while creating a Project",
+        "editingSuccess": "Project edited successfully",
+        "editingError": "An error occurred while editing a Project"
     },
     "users": {
         "name": "Name",
@@ -84,7 +88,11 @@
         "skills": "Skills",
         "jobHistory": "Job history",
         "projectHistory": "Project history",
-        "editUser": "Edit User profile"
+        "editUser": "Edit User profile",
+        "creationSuccess": "User created successfully",
+        "creationError": "An error occurred while creating a User",
+        "editingSuccess": "User edited successfully",
+        "editingError": "An error occurred while editing a User"
     },
     "tickets": {
         "title": "Title",
@@ -135,7 +143,11 @@
             "addDescription": "Add a Description",
             "selectedFile": "Selected File",
             "download": "Download"
-        }
+        },
+        "creationSuccess": "Ticket created successfully",
+        "creationError": "An error occurred while creating a Ticket",
+        "editingSuccess": "Ticket edited successfully",
+        "editingError": "An error occurred while editing a Ticket"
     },
     "organizations": {
         "organization": "Organization"
@@ -146,6 +158,8 @@
         "name": "Team name",
         "newTeam": "New Team",
         "newTeamInfo": "Create new Team",
-        "nameTooLong": "Team Name cannot exceed 50 characters"
+        "nameTooLong": "Team Name cannot exceed 50 characters",
+        "creationSuccess": "Team created successfully",
+        "creationError": "An error occurred while creating a Team"
     }
 }
