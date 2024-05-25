@@ -2,7 +2,7 @@ import api from '@/shared/utils/api'
 
 const baseUrl = '/api/organizations'
 
-const getOrganizations = async () => {
+const getOrganizationsId = async () => {
     const response = await api.get(baseUrl)
 
     return response
@@ -20,5 +20,5 @@ const getOrganizationByTeamId = async (teamId) => {
     } 
 };
 
-export default { getOrganizations, getOrganizationByTeamId }
+export default { getOrganizationsId, getOrganizationByTeamId }
 

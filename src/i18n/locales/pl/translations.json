@@ -8,7 +8,8 @@
         "userProfile": "Profil Użytkownika",
         "createTicket": "Utwórz Zgłoszenie",
         "createUser": "Utwórz Użytkownika",
-        "createTeam": "Utwórz zespół"
+        "createTeam": "Utwórz zespół",
+        "userList": "Lista Użytkowników"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
@@ -89,6 +90,9 @@
         "jobHistory": "Historia pracy",
         "projectHistory": "Historia projektów",
         "editUser": "Edytuj profil Użytkownika",
+        "details": "Szczegóły",
+        "allUsersInOrg": "Lista użytkowników",
+        "allUsersInOrgInfo": "Lista użytkowników powiązanych z organizacją",
         "creationSuccess": "Pomyślnie stworzono Użytkownika",
         "creationError": "Wystąpił błąd podczas tworzenia Użytkownika",
         "editingSuccess": "Pomyślnie edytowano Użytkownika",

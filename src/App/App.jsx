@@ -29,6 +29,7 @@ import CreateUser from '@/App/Pages/Users/CreateUser'
 import CreateTeam from '@/App/Pages/Teams/CreateTeam'
 import UserProfile from '@/App/Pages/Users/UserProfile'
 import EditUser from '@/App/Pages/Users/EditUser'
+import UserList from '@/App/Pages/Users/UserList'
 
 import './fontStyles.css'
 
@@ -92,9 +93,10 @@ const AppContent = ({ user, setUser }) => {
               <Route path="/users/createUser" element={user ? <CreateUser /> : <Navigate replace to="/login" />} />
               <Route path="/teams/createTeam" element={user ? <CreateTeam /> : <Navigate replace to="/login" />} />
               <Route path="/profile/" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
+              <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
               <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
               <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
+              <Route path="/users/userList" element={user ? <UserList /> : <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ fontSize: '1.5rem', padding: '1.5rem', maxWidth: '80vw' }}>

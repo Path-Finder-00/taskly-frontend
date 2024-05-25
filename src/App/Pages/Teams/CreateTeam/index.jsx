@@ -25,18 +25,14 @@ const CreateTeam = () => {
 
     const { t } = useTranslation("translations")
     const [team, setTeam] = useState({
-        name: "",
-        organization: "",
+        name: ""
     });
     const [nameError, setNameError] = useState('');
-    const [organizations, setOrganizations] = useState([]);
-    const [organizationError, setOrganizationError] = useState('');
     const { openSnackbar } = useSnackbar();
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
-        const isOrganizationValid = validateOrganization();
-        let formValid = (isNameValid && isOrganizationValid);
+        let formValid = (isNameValid);
 
         if (formValid) {
             try {
@@ -63,15 +59,6 @@ const CreateTeam = () => {
         return true;
     }
 
-    const validateOrganization = () => {
-        if (!team.organization) {
-            setOrganizationError(t('projects.fieldEmpty'));
-            return false;
-        }
-        setOrganizationError('');
-        return true;
-    }
-
     const handleChange = (prop) => (event) => {
         const { value } = event.target;
         setTeam({ ...team, [prop]: value });
@@ -79,9 +66,9 @@ const CreateTeam = () => {
 
     useEffect(() => {
         organizationsService
-            .getOrganizations()
-            .then(organizations => {
-                setOrganizations(organizations)
+            .getOrganizationsId()
+            .then(organizationId => {
+                setTeam({...team, organization: organizationId})
             })
     }, []);
 
@@ -96,7 +83,7 @@ const CreateTeam = () => {
                 </Typography>
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
-                <Grid item md={6}>
+                <Grid item md={12}>
                     <FormControl fullWidth error={!!nameError}>
                         <InputLabel htmlFor="name">{t('teams.name')}</InputLabel>
                         <OutlinedInput
@@ -107,28 +94,6 @@ const CreateTeam = () => {
                             label="name"
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
-                    </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth error={!!organizationError}>
-                        <InputLabel id="organization-label">{t('organizations.organization')}</InputLabel>
-                        <Select
-                            labelId="organization-label"
-                            id="organization"
-                            value={team.organization}
-                            onChange={handleChange('organization')}
-                            label="Organization"
-                        >
-                            {organizations.map((organization) => (
-                                <MenuItem
-                                    key={organization['id']}
-                                    value={organization['id']}
-                                >
-                                    {organization['name']}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {organizationError && <FormHelperText>{organizationError}</FormHelperText>}
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>

@@ -195,7 +195,7 @@ const TicketDetails = () => {
                             <TableRow>
                                 <TableCell>
                                     <Typography variant="h6">
-                                        {t('dashboards.project')}
+                                        {t('dashboard.project')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
                                         {projects?.name || 'Project name not found'}

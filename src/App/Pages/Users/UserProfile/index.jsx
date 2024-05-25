@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react'
 
 import {
@@ -26,7 +26,9 @@ import clientsService from '@/App/services/clients';
 
 const UserProfile = () => {
 
-    const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+    const { userId: userIdParam } = useParams();
+    const userId = userIdParam ?? sessionStorage.getItem('loggedTasklyAppUserId')
+
     const { t } = useTranslation("translations");
     const navigate = useNavigate();
     const [user, setUser] = useState(null);

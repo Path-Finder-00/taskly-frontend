@@ -46,7 +46,6 @@ const CreateUser = () => {
         phone: "",
         admin: false,
         technologies: [],
-        organization: "",
         team: "",
         project: "",
         team_lead: false,
@@ -56,7 +55,6 @@ const CreateUser = () => {
     const [nameError, setNameError] = useState('');
     const [surnameError, setSurnameError] = useState('');
     const [technologies, setTechnologies] = useState([]);
-    const [organizations, setOrganizations] = useState([]);
     const [roles, setRoles] = useState([]);
     const [projects, setProjects] = useState([]);
     const [teams, setTeams] = useState([]);
@@ -64,7 +62,6 @@ const CreateUser = () => {
     const [emailError, setEmailError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [organizationError, setOrganizationError] = useState('');
     const [teamError, setTeamError] = useState('');
     const [projectError, setProjectError] = useState('');
 
@@ -76,26 +73,15 @@ const CreateUser = () => {
         const isPasswordValid = validatePassword();
         let formValid = isNameValid && isSurnameValid && isEmailValid && isPhoneValid && isPasswordValid;
         
-        setOrganizationError('');
         setTeamError('');
         setProjectError('');
 
         if (!user.is_client) {
-            // Employee validation -> organization and team selected
-            if (!user.organization) {
-                setOrganizationError(t('projects.fieldEmpty'));
-                formValid = false;
-            }
             if (!user.team) {
                 setTeamError(t('projects.fieldEmpty'));
                 formValid = false;
             }
         } else {
-            // Client validation -> organization and project selected
-            if (!user.organization) {
-                setOrganizationError(t('projects.fieldEmpty'));
-                formValid = false;
-            }
             if (!user.project) {
                 setProjectError(t('projects.fieldEmpty'));
                 formValid = false;
@@ -219,31 +205,27 @@ const CreateUser = () => {
     };
 
     useEffect(() => {
-        technologiesService
-            .getTechnologies()
-            .then(technologies => {
-                setTechnologies(technologies)
-            })
-        organizationsService
-            .getOrganizations()
-            .then(organizations => {
-                setOrganizations(organizations)
-            })
-        rolesService
-            .getRoles()
-            .then(roles => {
-                setRoles(roles)
-            })
-    }, []);
+        const fetchData = async () => {
+            try {
+                const technologiesData = await technologiesService.getTechnologies()
+                setTechnologies(technologiesData)
 
-    useEffect(() => {
-        if (user.organization) {
-            organizationTeamsService.getTeamsByOrganizationId(user.organization)
-                .then(teams => {
-                    setTeams(teams);
-                })
-        }
-    }, [user.organization]);
+                const organizationId = await organizationsService.getOrganizationsId()
+                setUser({...user, organization: organizationId})
+
+                const teamsData = await organizationTeamsService.getTeamsByOrganizationId(organizationId)
+                setTeams(teamsData);
+                
+                const rolesData = await rolesService.getRoles()
+                setRoles(rolesData)
+
+            } catch (err) {
+                console.error("Error fetching data: ", err);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (user.team) {
@@ -353,28 +335,6 @@ const CreateUser = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    <FormControl fullWidth error={!!organizationError}>
-                        <InputLabel id="organization-label">{t('organizations.organization')}</InputLabel>
-                        <Select
-                            labelId="organization-label"
-                            id="organization"
-                            value={user.organization}
-                            onChange={handleChange('organization')}
-                            label="Organization"
-                        >
-                            {organizations.map((organization) => (
-                                <MenuItem
-                                    key={organization['id']}
-                                    value={organization['id']}
-                                >
-                                    {organization['name']}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {organizationError && <FormHelperText>{organizationError}</FormHelperText>}
-                    </FormControl>
-                </Grid>
-                <Grid item md={6}>
                     <FormControl fullWidth disabled={user.is_client} error={!!teamError}>
                         <InputLabel id="team-label">{t('teams.team')}</InputLabel>
                         <Select
@@ -398,7 +358,7 @@ const CreateUser = () => {
                 </Grid>
                 <Grid item md={6}>
                     <FormControl fullWidth error={!!projectError}>
-                        <InputLabel id="project-label">{t('dashboards.project')}</InputLabel>
+                        <InputLabel id="project-label">{t('dashboard.project')}</InputLabel>
                         <Select
                             labelId="project-label"
                             id="project"
@@ -456,7 +416,7 @@ const CreateUser = () => {
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item md={6}>
+                <Grid item md={3}>
                     <FormControlLabel disabled={user.is_client}
                         control={
                             <Checkbox
@@ -469,7 +429,7 @@ const CreateUser = () => {
                         label={t('users.admin')}
                     />
                 </Grid>
-                <Grid item md={3}>
+                <Grid item md={6}>
                     <FormControlLabel disabled={user.is_client}
                         control={
                             <Checkbox
@@ -494,8 +454,6 @@ const CreateUser = () => {
                         }
                         label={t('users.client')}
                     />
-                </Grid>
-                <Grid item md={6}>
                 </Grid>
                 <Grid item md={6}>
                     <Button

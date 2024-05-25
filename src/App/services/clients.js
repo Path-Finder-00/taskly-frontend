@@ -14,5 +14,12 @@ const getClientByUserId = async (userId) => {
     } 
 };
 
-export default { getClientByUserId }
+const getClientsInOrganization = async () => {
+    const url = `${baseUrl}/all`;
+    const response = await api.get(url)
+
+    return response
+}
+
+export default { getClientByUserId, getClientsInOrganization }
 
