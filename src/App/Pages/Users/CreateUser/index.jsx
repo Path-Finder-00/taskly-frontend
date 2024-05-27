@@ -25,7 +25,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import technologiesService from '@/App/services/technologies';
 import organizationsService from '@/App/services/organizations';
-import organizationTeamsService from '@/App/services/organization_teams';
 import projectsService from '@/App/services/projects';
 import rolesService from '@/App/services/roles';
 import usersService from '@/App/services/users';
@@ -88,13 +87,11 @@ const CreateUser = () => {
             }
         }
 
-        console.log(user)
         if (formValid) {
             try {
                 const response = await usersService.createUser(user)
                 openSnackbar(t('users.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
-                console.log(response)
             } catch (error) {
                 console.error('Error creating ticket:', error)
                 openSnackbar(t('users.creationError'), 'error');
@@ -113,7 +110,7 @@ const CreateUser = () => {
                     team_lead: checked ? false : user.team_lead,
                     team: checked ? '' : user.team,
                     technologies: checked ? [] : user.technologies,
-                    role: checked ? '' : user.role
+                    role: checked ? 'Klient' : user.role
                 }))
             } else {
                 setUser({ ...user, [prop]: type === 'checkbox' ? checked : value });
@@ -210,10 +207,10 @@ const CreateUser = () => {
                 const technologiesData = await technologiesService.getTechnologies()
                 setTechnologies(technologiesData)
 
-                const organizationId = await organizationsService.getOrganizationsId()
-                setUser({...user, organization: organizationId})
+                const organization = await organizationsService.getOrganization()
+                setUser({...user, organization: organization.id})
 
-                const teamsData = await organizationTeamsService.getTeamsByOrganizationId(organizationId)
+                const teamsData = await organizationsService.getTeamsByOrganizationId(organization.id)
                 setTeams(teamsData);
                 
                 const rolesData = await rolesService.getRoles()
@@ -264,7 +261,7 @@ const CreateUser = () => {
                             id="name"
                             value={user.name}
                             onChange={handleChange('name')}
-                            label="name"
+                            label={t('users.name')}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -277,7 +274,7 @@ const CreateUser = () => {
                             id="surname"
                             value={user.surname}
                             onChange={handleChange('surname')}
-                            label="surname"
+                            label={t('users.surname')}
                         />
                         {surnameError && <FormHelperText>{surnameError}</FormHelperText>}
                     </FormControl>
@@ -290,7 +287,7 @@ const CreateUser = () => {
                             id="email"
                             value={user.email}
                             onChange={handleChange('email')}
-                            label="email"
+                            label={t('users.email')}
                         />
                         {emailError && <FormHelperText>{emailError}</FormHelperText>}
                     </FormControl>
@@ -304,7 +301,7 @@ const CreateUser = () => {
                             type={showPassword ? 'text' : 'password'}
                             value={user.password}
                             onChange={handleChange('password')}
-                            label="Password"
+                            label={t('users.password')}
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -329,12 +326,12 @@ const CreateUser = () => {
                             id="phone"
                             value={user.phone}
                             onChange={handleChange('phone')}
-                            label="phone"
+                            label={t('users.phone')}
                         />
                         {phoneError && <FormHelperText>{phoneError}</FormHelperText>}
                     </FormControl>
                 </Grid>
-                <Grid item md={6}>
+                {!user.is_client && <Grid item md={6}>
                     <FormControl fullWidth disabled={user.is_client} error={!!teamError}>
                         <InputLabel id="team-label">{t('teams.team')}</InputLabel>
                         <Select
@@ -342,21 +339,21 @@ const CreateUser = () => {
                             id="team"
                             value={user.team}
                             onChange={handleChange('team')}
-                            label="Team"
+                            label={t('teams.team')}
                         >
-                            {teams?.map((teams) => (
+                            {teams?.map((team) => (
                                 <MenuItem
-                                    key={teams.team.id}
-                                    value={teams.team.id}
+                                    key={team.id}
+                                    value={team.id}
                                 >
-                                    {teams.team.name}
+                                    {team.name}
                                 </MenuItem>
                             ))}
                         </Select>
                         {teamError && <FormHelperText>{teamError}</FormHelperText>}
                     </FormControl>
-                </Grid>
-                <Grid item md={6}>
+                </Grid>}
+                {user.is_client && <Grid item md={6}>
                     <FormControl fullWidth error={!!projectError}>
                         <InputLabel id="project-label">{t('dashboard.project')}</InputLabel>
                         <Select
@@ -364,7 +361,7 @@ const CreateUser = () => {
                             id="project"
                             value={user.project}
                             onChange={handleChange('project')}
-                            label="Project"
+                            label={t('dashboard.project')}
                         >
                             {projects?.map((projects) => (
                                 <MenuItem
@@ -377,9 +374,9 @@ const CreateUser = () => {
                         </Select>
                         {projectError && <FormHelperText>{projectError}</FormHelperText>}
                     </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth disabled={user.is_client}>
+                </Grid>}
+                {!user.is_client && <Grid item md={6}>
+                    <FormControl fullWidth>
                         <InputLabel id="technologies-label">{t('users.technologies')}</InputLabel>
                         <Select
                             labelId="technologies-label"
@@ -388,7 +385,7 @@ const CreateUser = () => {
                             value={user.technologies}
                             onChange={handleChange('technologies')}
                             renderValue={renderTechnologyNames}
-                            label="Technologies"
+                            label={t('users.technologies')}
                         >
                             {technologies.map((technology) => (
                                 <MenuItem key={technology.id} value={technology.id}>
@@ -397,9 +394,9 @@ const CreateUser = () => {
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
-                <Grid item md={6}>
-                    <FormControl fullWidth disabled={user.is_client}>
+                </Grid>}
+                {!user.is_client && <Grid item md={6}>
+                    <FormControl fullWidth>
                         <InputLabel id="role-label">{t('projects.role')}</InputLabel>
                         <Select
                             labelId="role-label"
@@ -415,9 +412,9 @@ const CreateUser = () => {
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
-                <Grid item md={3}>
-                    <FormControlLabel disabled={user.is_client}
+                </Grid>}
+                {!user.is_client && <Grid item md={3}>
+                    <FormControlLabel
                         control={
                             <Checkbox
                                 checked={user.admin}
@@ -428,9 +425,9 @@ const CreateUser = () => {
                         }
                         label={t('users.admin')}
                     />
-                </Grid>
-                <Grid item md={6}>
-                    <FormControlLabel disabled={user.is_client}
+                </Grid>}
+                {!user.is_client && <Grid item md={6}>
+                    <FormControlLabel
                         control={
                             <Checkbox
                                 checked={user.team_lead}
@@ -441,7 +438,7 @@ const CreateUser = () => {
                         }
                         label={t('teams.teamLead')}
                     />
-                </Grid>
+                </Grid>}
                 <Grid item md={6}>
                     <FormControlLabel
                         control={
@@ -455,24 +452,23 @@ const CreateUser = () => {
                         label={t('users.client')}
                     />
                 </Grid>
-                <Grid item md={6}>
-                    <Button
-                        onClick={() => navigate(-1)}
-                        sx={{
-                            display: 'flex'
-                        }}
-                    >
-                        <KeyboardReturnIcon />
-                    </Button>
-                </Grid>
-                <Grid item md={6}>
-                    <Button variant="contained" onClick={handleSubmit} sx={{ width: '100%' }}>
-                        {t('tickets.submit')}
-                    </Button>
+                <Grid item md={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                        <Button
+                            onClick={() => navigate(-1)}
+                            sx={{
+                                display: 'flex'
+                            }}
+                        >
+                            <KeyboardReturnIcon />
+                        </Button>
+                        <Button variant="contained" onClick={handleSubmit} sx={{ width: '100%' }}>
+                            {t('tickets.submit')}
+                        </Button>
+                    </Box>
                 </Grid>
             </Grid>
         </Box>
-
     )
 }
 

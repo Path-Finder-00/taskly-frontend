@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router';
 import { useSnackbar } from '@/shared/components/Snackbar';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import {
     Grid,
     Box,
@@ -10,8 +10,6 @@ import {
     Button,
     OutlinedInput,
     FormControl,
-    Select,
-    MenuItem,
     FormHelperText,
     InputLabel,
 } from '@mui/material'
@@ -25,7 +23,8 @@ const CreateTeam = () => {
 
     const { t } = useTranslation("translations")
     const [team, setTeam] = useState({
-        name: ""
+        name: "",
+        organization: 0
     });
     const [nameError, setNameError] = useState('');
     const { openSnackbar } = useSnackbar();
@@ -51,7 +50,7 @@ const CreateTeam = () => {
         if (team.name.trim() === '') {
             setNameError(t('projects.fieldEmpty'));
             return false;
-        } else if (team.name.length > 40) {
+        } else if (team.name.length > 50) {
             setNameError(t('teams.nameTooLong'));
             return false;
         }
@@ -66,9 +65,9 @@ const CreateTeam = () => {
 
     useEffect(() => {
         organizationsService
-            .getOrganizationsId()
-            .then(organizationId => {
-                setTeam({...team, organization: organizationId})
+            .getOrganization()
+            .then(organization => {
+                setTeam({...team, organization: organization.id})
             })
     }, []);
 
@@ -91,7 +90,7 @@ const CreateTeam = () => {
                             id="name"
                             value={team.name}
                             onChange={handleChange('name')}
-                            label="name"
+                            label={t('teams.name')}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>

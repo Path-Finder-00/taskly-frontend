@@ -21,8 +21,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
-import employeesService from '@/App/services/employees';
-import clientsService from '@/App/services/clients';
+import organizationsService from '@/App/services/organizations'
 
 const UserList = () => {
 
@@ -39,16 +38,12 @@ const UserList = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const employeesData = await employeesService.getEmployeesInOrganization();
-
-                const clientsData = await clientsService.getClientsInOrganization();
-
-                const allUsers = [...employeesData, ...clientsData]
-
-                setUsers(allUsers)
+                await organizationsService.getUsersInOrganization()
+                    .then(users => {
+                        setUsers(users)
+                    })
                 
                 usersNumberRef.current = users.length
-
             } catch (err) {
                 console.error("Error fetching data: ", err);
             }

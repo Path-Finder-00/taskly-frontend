@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router';
 import { useSnackbar } from '@/shared/components/Snackbar';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import {
     Grid,
     Box,
@@ -25,7 +25,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import technologiesService from '@/App/services/technologies';
 import organizationsService from '@/App/services/organizations';
-import organizationTeamsService from '@/App/services/organization_teams';
 import projectsService from '@/App/services/projects';
 import usersService from '@/App/services/users';
 import employmentHistoriesService from '@/App/services/employment_histories';
@@ -40,20 +39,6 @@ const EditUser = () => {
     const userId = useParams().userId;
     const { t } = useTranslation("translations")
     const [user, setUser] = useState(null);
-    // const [user, setUser] = useState({
-    //     name: "",
-    //     surname: "",
-    //     email: "",
-    //     password: "",
-    //     phone: "",
-    //     admin: false,
-    //     technologies: [],
-    //     team: "",
-    //     project: "",
-    //     team_lead: false,
-    //     role: "",
-    //     is_client: false
-    // });
     const [nameError, setNameError] = useState('');
     const [surnameError, setSurnameError] = useState('');
     const [technologies, setTechnologies] = useState([]);
@@ -90,10 +75,9 @@ const EditUser = () => {
         }
         if (formValid) {
             try {
-                const response = await usersService.editUser(userId, user)
+                await usersService.editUser(userId, user)
                 openSnackbar(t('users.editingSuccess'), 'success');
                 navigate(`/profile`, { replace: true });
-                console.log(response)
             } catch (error) {
                 console.error('Error creating ticket:', error)
                 openSnackbar(t('users.editingError'), 'error');
@@ -207,9 +191,9 @@ const EditUser = () => {
         const fetchData = async () => {
             try {
                 const userData = await usersService.getUserById(userId)
-                const organizationId = await organizationsService.getOrganizationsId()
+                const organization = await organizationsService.getOrganization()
                 if (!userData.employee) {
-                    const projectsData = await projectsService.getProjectsByOrgId(organizationId)
+                    const projectsData = await projectsService.getProjectsByOrgId(organization.id)
                     setProjects(projectsData);
                     const clientData = await clientsService.getClientByUserId(userId)
                     setUser(
@@ -221,19 +205,16 @@ const EditUser = () => {
                             phone: userData.phone,
                             project: clientData.client_projects[clientData.client_projects.length - 1].projectId,
                             is_client: true,
-                            organization: organizationId,
-                            admin: false
+                            organization: organization.id
                         }
                     )
-
-
                 } else {
                     const employmentHistoriesData = await employmentHistoriesService.getEmploymentHistoriesByUserId(userId)
 
                     const technologiesData = await technologiesService.getTechnologies()
                     setTechnologies(technologiesData)
 
-                    const teamsData = await organizationTeamsService.getTeamsByOrganizationId(organizationId)
+                    const teamsData = await organizationsService.getTeamsByOrganizationId(organization.id)
                     setTeams(teamsData)
 
                     setUser(
@@ -244,29 +225,24 @@ const EditUser = () => {
                             email: userData.email,
                             phone: userData.phone,
                             technologies: userData.employee.technologies.map(tech => tech.id),
-                            team: employmentHistoriesData[employmentHistoriesData.length - 1].team.id,
+                            team: employmentHistoriesData.length !== 0 ? employmentHistoriesData[employmentHistoriesData.length - 1].team.id : '',
                             is_client: false,
-                            organization: organizationId,
-                            admin: userData.admin,
-                            team_lead: employmentHistoriesData[employmentHistoriesData.length - 1].team_lead
+                            organization: organization.id,
+                            team_lead: userData.accessId === 2,
+                            admin: userData.accessId === 1
                         }
                     )
-
                 }
             } catch (err) {
                 console.error("Error fetching data: ", err);
             }
         };
-
         fetchData();
-
     }, [userId]);
 
     if (!user) {
         return <div>{t('users.loading')}</div>;
     }
-
-    console.log(user)
 
     return (
         <Box sx={{ width: '100%', boxShadow: 3 }} >
@@ -274,9 +250,6 @@ const EditUser = () => {
                 <Typography variant="h6" component="div">
                     {t('users.editUser')}
                 </Typography>
-                {/* <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                    {t('users.editUserInfo')}
-                </Typography> */}
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
                 <Grid item md={6}>
@@ -287,7 +260,7 @@ const EditUser = () => {
                             id="name"
                             value={user.name}
                             onChange={handleChange('name')}
-                            label="name"
+                            label={t('users.name')}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -300,7 +273,7 @@ const EditUser = () => {
                             id="surname"
                             value={user.surname}
                             onChange={handleChange('surname')}
-                            label="surname"
+                            label={t('users.surname')}
                         />
                         {surnameError && <FormHelperText>{surnameError}</FormHelperText>}
                     </FormControl>
@@ -313,7 +286,7 @@ const EditUser = () => {
                             id="email"
                             value={user.email}
                             onChange={handleChange('email')}
-                            label="email"
+                            label={t('users.email')}
                         />
                         {emailError && <FormHelperText>{emailError}</FormHelperText>}
                     </FormControl>
@@ -327,7 +300,7 @@ const EditUser = () => {
                             type={showPassword ? 'text' : 'password'}
                             value={user.password}
                             onChange={handleChange('password')}
-                            label="Password"
+                            label={t('users.password')}
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -352,7 +325,7 @@ const EditUser = () => {
                             id="phone"
                             value={user.phone}
                             onChange={handleChange('phone')}
-                            label="phone"
+                            label={t('users.phone')}
                         />
                         {phoneError && <FormHelperText>{phoneError}</FormHelperText>}
                     </FormControl>
@@ -366,7 +339,7 @@ const EditUser = () => {
                                 id="project"
                                 value={user.project}
                                 onChange={handleChange('project')}
-                                label="Project"
+                                label={t('dashboard.project')}
                             >
                                 {projects?.map((projects) => (
                                     <MenuItem
@@ -384,21 +357,20 @@ const EditUser = () => {
                 {!user.is_client && (
                     <Grid item md={6}>
                         <FormControl fullWidth error={!!teamError}>
-                            {/* <FormControl fullWidth disabled={user.is_client} error={!!teamError}> */}
                             <InputLabel id="team-label">{t('teams.team')}</InputLabel>
                             <Select
                                 labelId="team-label"
                                 id="team"
                                 value={user.team}
                                 onChange={handleChange('team')}
-                                label="Team"
+                                label={t('teams.team')}
                             >
-                                {teams?.map((teams) => (
+                                {teams?.map((team) => (
                                     <MenuItem
-                                        key={teams.team.id}
-                                        value={teams.team.id}
+                                        key={team.id}
+                                        value={team.id}
                                     >
-                                        {teams.team.name}
+                                        {team.name}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -417,7 +389,7 @@ const EditUser = () => {
                                 value={user.technologies}
                                 onChange={handleChange('technologies')}
                                 renderValue={renderTechnologyNames}
-                                label="Technologies"
+                                label={t('users.technologies')}
                             >
                                 {technologies.map((technology) => (
                                     <MenuItem key={technology.id} value={technology.id}>
@@ -435,7 +407,6 @@ const EditUser = () => {
                 {!user.is_client && (
                     <Grid item md={6}>
                         <FormControlLabel
-                            // <FormControlLabel disabled={user.is_client}
                             control={
                                 <Checkbox
                                     checked={user.admin}
@@ -480,7 +451,6 @@ const EditUser = () => {
                 </Grid>
             </Grid>
         </Box>
-
     )
 }
 

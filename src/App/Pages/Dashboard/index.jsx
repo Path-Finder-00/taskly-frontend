@@ -92,7 +92,7 @@ const Dashboard = () => {
     }
 
     const getPrioritiesBarChartData = () => {
-        const mapping = { "Low": t('dashboard.low'), "Normal": t('dashboard.normal'), "High": t('dashboard.high'), "Critical": t('dashboard.critical') }
+        const mapping = { "Niski": t('dashboard.low'), "Średni": t('dashboard.medium'), "Wysoki": t('dashboard.high'), "Krytyczny": t('dashboard.critical') }
         const priorities = tickets.map(ticket =>
             ticket.priority
         )
@@ -132,7 +132,7 @@ const Dashboard = () => {
     }
 
     const getStatusesBarChartData = () => {
-        const mapping = { "Open": t('dashboard.open'), "Assigned": t('dashboard.assigned'), "Closed": t('dashboard.closed') }
+        const mapping = { "Nowy": t('dashboard.open'), "Przypisany": t('dashboard.assigned'), "W trakcie": t('dashboard.inProgress'), "Oceniany": t('dashboard.underReview'), "Zamknięty": t('dashboard.closed') }
 
         const statuses = tickets
             .map(ticket => ticket.status)
@@ -202,7 +202,7 @@ const Dashboard = () => {
                                 <BarChart
                                     xAxis={[{ 
                                         scaleType: 'band', 
-                                        data: [t('dashboard.low'), t('dashboard.normal'), t('dashboard.high'), t('dashboard.critical')],
+                                        data: [t('dashboard.low'), t('dashboard.medium'), t('dashboard.high'), t('dashboard.critical')],
                                         colorMap: {
                                             type: 'ordinal',
                                             colors: colors
@@ -261,7 +261,7 @@ const Dashboard = () => {
                                     colors={colors}
                                     xAxis={[{ 
                                         scaleType: 'band', 
-                                        data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.closed')],
+                                        data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.inProgress'), t('dashboard.underReview'), t('dashboard.closed')],
                                         colorMap: {
                                             type: 'ordinal',
                                             colors: colors

@@ -6,7 +6,6 @@ const getEmployeeProjectsByUserId = async (userId) => {
     try {
         const url = `${baseUrl}/${userId}`;
         const response = await api.get(url);
-        console.log(response);
         return response;
     } catch (error) {
         console.error('Error fetching employee projects:', error);

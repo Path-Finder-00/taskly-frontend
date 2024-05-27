@@ -78,16 +78,12 @@ const TicketDetails = () => {
         ticketsNumberRef.current = ticketHistory.length - 1;
 
         const maxPage = Math.ceil(ticketsNumberRef.current / 2) - 1;
-        console.log("Max page " + maxPage)
-        console.log("Page " + page)
         if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
         } else {
             setIsPrevDisabled(page <= 0);
             setIsNextDisabled(page >= maxPage);
         }
-        console.log("Filtered Ticket Histories Count:", ticketsNumberRef.current);
-
     }, [ticketHistory, page]);
 
     const getEmployeeNameById = (id) => {
@@ -236,7 +232,7 @@ const TicketDetails = () => {
                                         {t('tickets.created')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {ticket.createdAt}
+                                        {new Date(ticket.createdAt).toLocaleString('pl-PL')}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -244,7 +240,7 @@ const TicketDetails = () => {
                                         {t('tickets.updated')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {ticket.ticket_histories[0].createdAt}
+                                        {new Date(ticket.ticket_histories[0].createdAt).toLocaleString('pl-PL')}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -278,7 +274,6 @@ const TicketDetails = () => {
                                 // compare and look for the changes between current and next record, if there's no next record return null
                                 const nextHistory = array[idx + 1]; 
                                 if (!nextHistory) return null;
-
                                 const changes = [];
                                 if (history.employeeId !== nextHistory.employeeId) {
                                     changes.push(
@@ -286,7 +281,7 @@ const TicketDetails = () => {
                                             <TableCell>{t('tickets.developer')}</TableCell>
                                             <TableCell>{getEmployeeNameById(history.employeeId)}</TableCell>
                                             <TableCell>{getEmployeeNameById(nextHistory.employeeId)}</TableCell>
-                                            <TableCell>{nextHistory.createdAt}</TableCell>
+                                            <TableCell>{new Date(nextHistory.createdAt).toLocaleString('pl-PL')}</TableCell>
                                         </TableRow>
                                     );
                                 }
@@ -296,7 +291,7 @@ const TicketDetails = () => {
                                             <TableCell>{t('tickets.status')}</TableCell>
                                             <TableCell>{getStatusNameById(history.statusId)}</TableCell>
                                             <TableCell>{getStatusNameById(nextHistory.statusId)}</TableCell>
-                                            <TableCell>{nextHistory.createdAt}</TableCell>
+                                            <TableCell>{new Date(nextHistory.createdAt).toLocaleString('pl-PL')}</TableCell>
                                         </TableRow>
                                     );
                                 }
@@ -306,7 +301,7 @@ const TicketDetails = () => {
                                             <TableCell>{t('tickets.priority')}</TableCell>
                                             <TableCell>{getPriorityNameById(history.priorityId)}</TableCell>
                                             <TableCell>{getPriorityNameById(nextHistory.priorityId)}</TableCell>
-                                            <TableCell>{nextHistory.createdAt}</TableCell>
+                                            <TableCell>{new Date(nextHistory.createdAt).toLocaleString('pl-PL')}</TableCell>
                                         </TableRow>
                                     );
                                 }

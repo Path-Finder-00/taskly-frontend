@@ -76,7 +76,7 @@ const AppContent = ({ user, setUser }) => {
 
       </MenuSidebar>}
       <ThemeProvider theme={mainTheme}>
-        <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: `${sizes.topbarHeight}px`, marginLeft: { sm: `${sizes.sidebarWidth}px` }, boxShadow: 'inset 2px 2px 5px #d3d3d3' }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: user ? `${sizes.topbarHeight}px` : 0, marginLeft: user ? { sm: `${sizes.sidebarWidth}px` }: 0, boxShadow: user ? 'inset 2px 2px 5px #d3d3d3' : 0 }}>
           <Routes>
               <Route path="/login" element={<LoginForm setUser={setUser} />} />
               <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate replace to="/login" />} />
@@ -86,7 +86,7 @@ const AppContent = ({ user, setUser }) => {
               <Route path="/projects/editProject/:projectId" element={user ? <EditProject /> : <Navigate replace to="/login" />} />
               <Route path="/projects/projectDetails/:projectId" element={user ? <ProjectDetails /> : <Navigate replace to="/login" />} />
               <Route path="/projects/projectTickets/:projectId" element={user ? <AllTickets /> : <Navigate replace to="/login" />} />
-              <Route path="/tickets/createTicket" element={user ? <CreateTicket /> : <Navigate replace to="/login" />} />
+              <Route path="/createTicket" element={user ? <CreateTicket /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/ticketDetails/:ticketId" element={user ? <TicketDetails /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/editTicket/:ticketId" element={user ? <EditTicket /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/commentsAttachments" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />

@@ -83,7 +83,10 @@ const CreateTicket = () => {
     }
 
     const validateName = () => {
-        const errorMessage = isEmpty(ticket.title);
+        let errorMessage = isEmpty(ticket.title);
+        if (!errorMessage && ticket.title.length > 80) {
+            errorMessage = t('tickets.nameLengthError');
+        }
         setNameError(errorMessage)
         return !errorMessage
     }
@@ -164,7 +167,7 @@ const CreateTicket = () => {
                             id="title"
                             value={ticket.title}
                             onChange={handleChange('title')}
-                            label="Title"
+                            label={t('tickets.title')}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -178,7 +181,7 @@ const CreateTicket = () => {
                             id="description"
                             value={ticket.description}
                             onChange={handleChange('description')}
-                            label="Description"
+                            label={t('tickets.description')}
                         />
                         {descError && <FormHelperText>{descError}</FormHelperText>}
                     </FormControl>
@@ -192,7 +195,7 @@ const CreateTicket = () => {
                             id="project"
                             value={ticket.project}
                             onChange={handleChange('project')}
-                            label="Project"
+                            label={t('dashboard.project')}
                         >
                             {projects.map((project) => (
                                 <MenuItem
@@ -215,7 +218,7 @@ const CreateTicket = () => {
                             id="assigned"
                             value={ticket.assigned}
                             onChange={handleChange('assigned')}
-                            label="Assigned"
+                            label={t('tickets.assigned')}
                         >
                             {projectMembers?.map((members) => (
                                 <MenuItem
@@ -237,7 +240,7 @@ const CreateTicket = () => {
                             id="priority"
                             value={ticket.priority}
                             onChange={handleChange('priority')}
-                            label="Ticket Priority"
+                            label={t('tickets.priority')}
                         >
                             {priorities.map((priority) => (
                                 <MenuItem
@@ -260,7 +263,7 @@ const CreateTicket = () => {
                             id="type"
                             value={ticket.type}
                             onChange={handleChange('type')}
-                            label="Ticket Type"
+                            label={t('tickets.type')}
                         >
                             {types.map((type) => (
                                 <MenuItem

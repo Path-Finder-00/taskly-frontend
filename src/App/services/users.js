@@ -18,7 +18,7 @@ const getUserById = async (userId) => {
         const response = await api.get(url)
         return response
     } catch (error) {
-        console.log('Error fetching user:'.error)
+        console.error('Error fetching user:'.error)
         throw error
     }
 }

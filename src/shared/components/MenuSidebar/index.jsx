@@ -1,16 +1,14 @@
-import { useTranslation } from 'react-i18next'
-// import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ListItem, ListItemText, List, Toolbar, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-// import { Sidebar, MenuItem } from './Styles'
 import { sizes, color, font } from '@/shared/utils/styles';
 
 const MenuSidebar = () => {
 
     const { t } = useTranslation("translations")
 
-    const StyledBox = styled(Box)(({ theme }) => ({
+    const StyledBox = styled(Box)(() => ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -21,7 +19,7 @@ const MenuSidebar = () => {
         background: color.sidebar
     }))
 
-    const StyledListItem = styled(ListItem)(({ theme, active }) => ({
+    const StyledListItem = styled(ListItem)(({ active }) => ({
         position: 'relative',
         padding: '8px 12px',
         borderRadius: '3px',
@@ -43,12 +41,11 @@ const MenuSidebar = () => {
     function RenderMenuItem({ text, path }) {
         const navigate = useNavigate();
         const location = useLocation();
-        // const isActive = location.pathname.includes(path);
-        const isActive = location.pathname === path;
+        const isActive = location.pathname.includes(path);
     
         return (
             <StyledListItem button active={isActive ? 1 : 0} onClick={() => navigate(path)}>
-            <ListItemText primary={text} />
+                <ListItemText primary={text} />
             </StyledListItem>
         );
     }
@@ -58,37 +55,16 @@ const MenuSidebar = () => {
             <Toolbar />
             <List>
                 <RenderMenuItem text={t('sidebar.dashboard')} path="/dashboard" />
-                <RenderMenuItem text={t('sidebar.roleAssignments')} path="/roles" />
-                <RenderMenuItem text={t('sidebar.projectUsers')} path="/users" />
                 <RenderMenuItem text={t('sidebar.myProjects')} path="/projects" />
                 <RenderMenuItem text={t('sidebar.myTickets')} path="/tickets" />
                 <RenderMenuItem text={t('sidebar.userProfile')} path="/profile/" />
-                <RenderMenuItem text={t('sidebar.createTicket')} path="/tickets/createTicket" />
+                <RenderMenuItem text={t('sidebar.createTicket')} path="/createTicket" />
                 <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" />
                 <RenderMenuItem text={t('sidebar.createTeam')} path="/teams/createTeam" />
                 <RenderMenuItem text={t('sidebar.userList')} path="/users/userList" />
             </List>
         </StyledBox>
-        // <Sidebar>
-            // {renderMenuItem(t('sidebar.dashboard'), '/dashboard')}
-            // {renderMenuItem(t('sidebar.roleAssignments'), '/roles')}
-            // {renderMenuItem(t('sidebar.projectUsers'), '/users')}
-            // {renderMenuItem(t('sidebar.myProjects'), '/projects')}
-            // {renderMenuItem(t('sidebar.myTickets'), '/tickets')}
-            // {renderMenuItem(t('sidebar.userProfile'), '/profile')}
-        // </Sidebar>
     )
 }
-
-// const renderMenuItem = (text, path) => {
-
-//     const menuItemProps = { as: NavLink, end: true, to: `${path}`}
-
-//     return (
-//         <MenuItem {...menuItemProps}>
-//             {text}
-//         </MenuItem>
-//     )
-// }
 
 export default MenuSidebar

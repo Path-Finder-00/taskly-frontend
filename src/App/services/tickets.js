@@ -22,7 +22,6 @@ const getTicketById = async (ticketId) => {
     try{
         const url = `${baseUrl}/${ticketId}`;
         const response = await api.get(url)
-        console.log(response)
         return response; 
     } catch (error) {
         console.error('Error fetching ticket details:', error);

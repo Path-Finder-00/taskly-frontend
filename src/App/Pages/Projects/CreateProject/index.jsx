@@ -95,7 +95,6 @@ const CreateProject = () => {
 
         try {
             const response = await projectService.createProject(projectPayload);
-            console.log('Project created:', response)
             openSnackbar(t('projects.creationSuccess'), 'success');
             navigate('/projects', { replace: true })
         } catch (error) {
@@ -112,7 +111,10 @@ const CreateProject = () => {
     }
 
     const validateName = () => {
-        const errorMessage = isEmpty(projectName);
+        let errorMessage = isEmpty(projectName);
+        if (!errorMessage && projectName.length > 80) {
+            errorMessage = t('projects.nameLengthError');
+        }
         setNameError(errorMessage)
         return !errorMessage
     }

@@ -59,12 +59,10 @@ const EditTicket = () => {
         if (ticket.assigned === '') {
             ticket.assigned = null
         }
-        console.log(ticket);
         try {
             const response = await ticketService.editTicket(ticketId, ticket)
             openSnackbar(t('tickets.editingSuccess'), 'success');
             navigate(`/tickets/ticketDetails/${ticketId}`, { replace: true });
-            console.log(response)
         } catch (error) {
             console.error('Error editing ticket:', error)
             openSnackbar(t('tickets.editingError'), 'error');
@@ -178,7 +176,7 @@ const EditTicket = () => {
                             id="title"
                             value={ticket.title}
                             onChange={handleChange('title')}
-                            label="Title"
+                            label={t('tickets.title')}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -192,7 +190,7 @@ const EditTicket = () => {
                             id="description"
                             value={ticket.description}
                             onChange={handleChange('description')}
-                            label="Description"
+                            label={t('tickets.description')}
                         />
                         {descError && <FormHelperText>{descError}</FormHelperText>}
                     </FormControl>
@@ -206,14 +204,14 @@ const EditTicket = () => {
                             id="project"
                             value={ticket.project}
                             onChange={handleChange('project')}
-                            label="Project"
+                            label={t('dashboard.project')}
                         >
                             {projects.map((project) => (
                                 <MenuItem
-                                    key={project['id']}
-                                    value={project['id']}
+                                    key={project.id}
+                                    value={project.id}
                                 >
-                                    {project['name']}
+                                    {project.name}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -229,14 +227,14 @@ const EditTicket = () => {
                             id="assigned"
                             value={ticket.assigned}
                             onChange={handleChange('assigned')}
-                            label="Assigned"
+                            label={t('tickets.assigned')}
                         >
-                            {projectMembers?.map((members) => (
+                            {projectMembers?.map((member) => (
                                 <MenuItem
-                                    key={members.id}
-                                    value={members.id}
+                                    key={member.id}
+                                    value={member.id}
                                 >
-                                    {`${members.user.name} ${members.user.surname}`}
+                                    {`${member.user.name} ${member.user.surname}`}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -251,14 +249,14 @@ const EditTicket = () => {
                             id="priority"
                             value={ticket.priority}
                             onChange={handleChange('priority')}
-                            label="Ticket Priority"
+                            label={t('tickets.priority')}
                         >
                             {priorities.map((priority) => (
                                 <MenuItem
-                                    key={priority['id']}
-                                    value={priority['id']}
+                                    key={priority.id}
+                                    value={priority.id}
                                 >
-                                    {priority['priority']}
+                                    {priority.priority}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -274,14 +272,14 @@ const EditTicket = () => {
                             id="type"
                             value={ticket.type}
                             onChange={handleChange('type')}
-                            label="Ticket Type"
+                            label={t('tickets.type')}
                         >
                             {types.map((type) => (
                                 <MenuItem
-                                    key={type['id']}
-                                    value={type['id']}
+                                    key={type.id}
+                                    value={type.id}
                                 >
-                                    {type['type']}
+                                    {type.type}
                                 </MenuItem>
                             ))}
                         </Select>

@@ -56,7 +56,7 @@ const UserProfile = () => {
                     setEmploymentHistories(employmentHistoriesData)
                     const employeeProjectsData = await employeeProjectsService.getEmployeeProjectsByUserId(userId)
                     setEmployeeProjects(employeeProjectsData)
-                    const organizationData = await organizationsService.getOrganizationByTeamId(employmentHistoriesData[employmentHistoriesData.length - 1].teamId)
+                    const organizationData = await organizationsService.getOrganization()
                     setOrganization(organizationData)
 
                 }
@@ -71,9 +71,6 @@ const UserProfile = () => {
     if (!user) {
         return <div>{t('users.loading')}</div>
     }
-
-    console.log(user)
-    console.log(employmentHistories)
 
     return (
         <Box sx={{ margin: 2 }}>

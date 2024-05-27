@@ -42,7 +42,6 @@ const ProjectDetails = () => {
                 setProject(data);
                 setProjectMembers(data.employees);
                 setTickets(data.tickets)
-                console.log(data.tickets)
             })
             .catch(err => {
                 console.error('Error fetching project:', err);
@@ -140,7 +139,7 @@ const ProjectDetails = () => {
                                                 <TableCell>{submitter ? `${submitter.user.name} ${submitter.user.surname}` : "Submitter not found"}</TableCell>
                                                 <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
                                                 <TableCell>{latestHistory.status.status}</TableCell>
-                                                <TableCell>{ticket.createdAt}</TableCell>
+                                                <TableCell>{new Date(ticket.createdAt).toLocaleString('pl-PL')}</TableCell>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
                                                         <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>

@@ -12,7 +12,6 @@ const getProjectById = async (projectId) => {
     try {
         const url = `${baseUrl}/${projectId}`
         const response = await api.get(url)
-        console.log(response)
         return response
     } catch (error) {
         console.error('Error fetching project details:', error)
@@ -24,7 +23,6 @@ const getProjectsByTeamId = async (teamId) => {
     try {
         const url = `${baseUrl}/availableProjectsByTeamId/${teamId}`;
         const response = await api.get(url);
-        console.log(response);
         return response;
     } catch (error) {
         console.error('Error fetching project details:', error);
@@ -36,7 +34,6 @@ const getProjectsByOrgId = async (orgId) => {
     try {
         const url = `${baseUrl}/availableProjectsByOrganizationId/${orgId}`;
         const response = await api.get(url);
-        console.log(response);
         return response;
     } catch (error) {
         console.error('Error fetching project details:', error);

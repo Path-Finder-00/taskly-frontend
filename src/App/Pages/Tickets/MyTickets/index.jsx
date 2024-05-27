@@ -147,7 +147,7 @@ const MyTickets = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {ticketsNumberRef !== 0 ? tickets.filter(ticket =>
+                            {ticketsNumberRef.current !== 0 ? tickets.filter(ticket =>
                                 ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
                                 ticket.projectName.toLowerCase().includes(filter.toLowerCase())
                             ).map((ticket) => {
@@ -174,7 +174,7 @@ const MyTickets = () => {
                                 );
                             }).slice(0 + page * 10, 10 + page * 10) :
                                 <TableRow key={0}>
-                                    <TableCell>
+                                    <TableCell colSpan={8} align="center">
                                         {t('tickets.noTickets')}
                                     </TableCell>
                                 </TableRow>
