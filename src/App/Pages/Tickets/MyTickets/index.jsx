@@ -44,7 +44,7 @@ const MyTickets = () => {
             .catch(err => {
                 console.error('Error fetching tickets:', err);
             });
-    }, []);
+    }, [tickets]);
 
     useEffect(() => {
         const count = tickets.filter(ticket =>
@@ -159,7 +159,7 @@ const MyTickets = () => {
                                         <TableCell>{ticket.priority}</TableCell>
                                         <TableCell>{ticket.status}</TableCell>
                                         <TableCell>{ticket.type}</TableCell>
-                                        <TableCell>{ticket.createdAt}</TableCell>
+                                        <TableCell>{new Date(ticket.createdAt).toLocaleString('pl-PL')}</TableCell>
                                         <TableCell>
                                             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
                                                 <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
@@ -186,7 +186,7 @@ const MyTickets = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
                         <NavigateBeforeIcon />
                     </Button>
-                    <Button variant="contained" onClick={() => navigate('/tickets/createTicket/')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                    <Button variant="contained" onClick={() => navigate('/createTicket/')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
