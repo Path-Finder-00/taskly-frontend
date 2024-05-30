@@ -21,11 +21,15 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
-import organizationsService from '@/App/services/organizations'
+import { usePermissions } from '@/shared/components/Permissions';
+import organizationsService from '@/App/services/organizations';
+import teamsService from '@/App/services/teams';
 
 const UserList = () => {
 
     const [users, setUsers] = useState([]);
+    const [usersInTeam, setUsersInTeam] = useState([]);
+    const [teamNames, setTeamNames] = useState([]);
     const [page, setPage] = useState(0);
     const usersNumberRef = useRef(0);
     const [filter, setFilter] = useState('');
@@ -33,24 +37,44 @@ const UserList = () => {
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
 
     const { t } = useTranslation("translations");
+    const permissions = usePermissions();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                await organizationsService.getUsersInOrganization()
-                    .then(users => {
-                        setUsers(users)
-                    })
-                
-                usersNumberRef.current = users.length
+                const users = await organizationsService.getUsersInOrganization()
+                setUsers(users)
+
+                const teamNames = await teamsService.getTeamNames()
+                setTeamNames(teamNames)
+                console.log(teamNames)
             } catch (err) {
                 console.error("Error fetching data: ", err);
             }
-        };
+        }
 
-        fetchData();
+        fetchData()
     }, []);
+
+    useEffect(() => {
+        usersNumberRef.current = users.length
+    }, [users]);
+
+    useEffect(() => {
+        if (permissions.includes('editUserInTeam')) {
+            teamsService.getTeamMembers()
+                .then(members => {
+                    const membersIds = members.map(member => member.id)
+                    setUsersInTeam(membersIds)
+                })
+        } else if (permissions.includes('editAnyUser')) {
+            const usersIds = users.map(user => user.id)
+            setUsersInTeam(usersIds)
+        } else {
+            setUsersInTeam([])
+        }
+    }, [users, permissions])
 
     useEffect(() => {
         const count = users.filter(user =>
@@ -71,6 +95,10 @@ const UserList = () => {
         }
 
     }, [filter, users, page]);
+
+    const teamName = (id) => {
+        return teamNames.filter(teamName => teamName.id === id)[0].teamName
+    }
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value)
@@ -132,6 +160,11 @@ const UserList = () => {
                                         {t('users.phone')}
                                     </Typography>
                                 </TableCell>
+                                <TableCell width="20%">
+                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                        {t('teams.team')}
+                                    </Typography>
+                                </TableCell>
                                 <TableCell width="5%">
                                     <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
                                         {t('tickets.actions')}
@@ -152,12 +185,13 @@ const UserList = () => {
                                         <TableCell>{user.surname}</TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.phone}</TableCell>
+                                        <TableCell>{teamName(user.id)}</TableCell>
                                         <TableCell>
                                             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
                                                 <Button onClick={() => handleNavigateToUserDetails(user.id)}>
                                                     <InfoIcon />
                                                 </Button>
-                                                <Button onClick={() => handleNavigateToUserEdit(user.id)}>
+                                                <Button disabled={!usersInTeam.includes(user.id)} onClick={() => handleNavigateToUserEdit(user.id)}>
                                                     <EditIcon />
                                                 </Button>
                                             </Box>

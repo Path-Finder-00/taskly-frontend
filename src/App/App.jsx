@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect } from 'react'
+import { useState, Fragment, useEffect, createContext } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 import { AppBar, Toolbar, IconButton, Typography, Box, CssBaseline, Snackbar, Alert } from '@mui/material'
@@ -8,6 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import MenuSidebar from '@/shared/components/MenuSidebar'
 import MenuTopbar from '@/shared/components/MenuTopbar'
 import { SnackbarProvider, useSnackbar } from '@/shared/components/Snackbar';
+import { PermissionProvider, usePermissions } from '@/shared/components/Permissions'
 import { Container, Content, Canvas } from './MainStyle'
 import BaseStyles from './BaseStyles'
 
@@ -55,9 +56,11 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider>
-        <AppContent user={user} setUser={setUser} />
-      </SnackbarProvider>
+      <PermissionProvider user={user} >
+        <SnackbarProvider>
+          <AppContent user={user} setUser={setUser} />
+        </SnackbarProvider>
+      </PermissionProvider>
     </ThemeProvider>
   )
 }
@@ -65,6 +68,7 @@ const App = () => {
 const AppContent = ({ user, setUser }) => {
 
   const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
+  const permissions = usePermissions();
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
@@ -96,7 +100,7 @@ const AppContent = ({ user, setUser }) => {
               <Route path="/profile/:userId" element={user ? <UserProfile /> : <Navigate replace to="/login" />} />
               <Route path="/editUser/:userId" element={user ? <EditUser /> : <Navigate replace to="/login" />} />
               <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
-              <Route path="/users/userList" element={user ? <UserList /> : <Navigate replace to="/login" />} />
+              <Route path="/users/userList" element={(user && permissions.includes('seeAllUsers')) ? <UserList /> : <Navigate replace to="/login" />} />
               <Route path="*" element={ <Navigate to="/login" replace /> } />
             </Routes>
           <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ fontSize: '1.5rem', padding: '1.5rem', maxWidth: '80vw' }}>

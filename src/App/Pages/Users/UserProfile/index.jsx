@@ -48,7 +48,7 @@ const UserProfile = () => {
                 setUser(userData)
                 if (!userData.employee) {
                     const clientData = await clientsService.getClientByUserId(userId)
-                    setEmployeeProjects(clientData.client_projects)
+                    setEmployeeProjects(clientData.client.client_projects)
                     setOrganization(clientData.organization)
                 } else {
                     setTechnologies(userData.employee.technologies)

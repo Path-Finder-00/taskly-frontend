@@ -39,12 +39,15 @@ const MyTickets = () => {
         ticketsService.getMyTickets()
             .then(data => {
                 setTickets(data)
-                ticketsNumberRef.current = tickets.length
             })
             .catch(err => {
                 console.error('Error fetching tickets:', err);
             });
-    }, [tickets]);
+    }, []);
+
+    useEffect(() => {
+        ticketsNumberRef.current = tickets.length
+    }, [tickets])
 
     useEffect(() => {
         const count = tickets.filter(ticket =>

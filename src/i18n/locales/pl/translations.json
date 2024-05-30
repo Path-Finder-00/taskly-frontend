@@ -99,7 +99,8 @@
         "creationSuccess": "Pomyślnie stworzono Użytkownika",
         "creationError": "Wystąpił błąd podczas tworzenia Użytkownika",
         "editingSuccess": "Pomyślnie edytowano Użytkownika",
-        "editingError": "Wystąpił błąd podczas edytowania Użytkownika"
+        "editingError": "Wystąpił błąd podczas edytowania Użytkownika",
+        "loading": "Ładowanie danych użytkownika..."
     },
     "tickets": {
         "title": "Tytuł",
@@ -155,7 +156,9 @@
         "creationSuccess": "Pomyślnie stworzono Zgłoszenie",
         "creationError": "Wystąpił błąd podczas tworzenia Zgłoszenia",
         "editingSuccess": "Pomyślnie edytowano Zgłoszenie",
-        "editingError": "Wystąpił błąd podczas edytowania Zgłoszenia"
+        "editingError": "Wystąpił błąd podczas edytowania Zgłoszenia",
+        "noSubmitter": "Nie znaleziono zgłaszającego",
+        "noDeveloper": "Brak przypisanego developera"
     },
     "organizations": {
         "organization": "Organizacja"

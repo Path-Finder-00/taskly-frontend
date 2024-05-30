@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom';
 import { sizes, color, font } from '@/shared/utils/styles';
 import { useSnackbar } from '@/shared/components/Snackbar';
+import { usePermissions } from '@/shared/components/Permissions';
 import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
@@ -26,6 +27,7 @@ const EditTicket = () => {
 
     const navigate = useNavigate();
     const { openSnackbar } = useSnackbar();
+    const permissions = usePermissions();
     const { t } = useTranslation("translations")
     const [projects, setProjects] = useState([])
     const [priorities, setPriorities] = useState([])
@@ -228,6 +230,7 @@ const EditTicket = () => {
                             value={ticket.assigned}
                             onChange={handleChange('assigned')}
                             label={t('tickets.assigned')}
+                            disabled={permissions.includes('assignUser')}
                         >
                             {projectMembers?.map((member) => (
                                 <MenuItem

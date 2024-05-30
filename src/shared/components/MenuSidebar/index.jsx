@@ -1,12 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
+
 import { ListItem, ListItemText, List, Toolbar, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 import { sizes, color, font } from '@/shared/utils/styles';
+
+import { usePermissions } from '@/shared/components/Permissions';
 
 const MenuSidebar = () => {
 
     const { t } = useTranslation("translations")
+    const permissions = usePermissions()
 
     const StyledBox = styled(Box)(() => ({
         display: 'flex',
@@ -59,9 +64,9 @@ const MenuSidebar = () => {
                 <RenderMenuItem text={t('sidebar.myTickets')} path="/tickets" />
                 <RenderMenuItem text={t('sidebar.userProfile')} path="/profile/" />
                 <RenderMenuItem text={t('sidebar.createTicket')} path="/createTicket" />
-                <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" />
-                <RenderMenuItem text={t('sidebar.createTeam')} path="/teams/createTeam" />
-                <RenderMenuItem text={t('sidebar.userList')} path="/users/userList" />
+                { permissions.includes('createUser') && <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" /> }
+                { permissions.includes('createTeam') && <RenderMenuItem text={t('sidebar.createTeam')} path="/teams/createTeam" /> }
+                { permissions.includes('seeAllUsers') && <RenderMenuItem text={t('sidebar.userList')} path="/users/userList" /> }
             </List>
         </StyledBox>
     )

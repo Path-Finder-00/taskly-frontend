@@ -136,8 +136,8 @@ const ProjectDetails = () => {
                                         return (
                                             <TableRow key={ticket.id}>
                                                 <TableCell>{ticket.title}</TableCell>
-                                                <TableCell>{submitter ? `${submitter.user.name} ${submitter.user.surname}` : "Submitter not found"}</TableCell>
-                                                <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : "No developer assigned"}</TableCell>
+                                                <TableCell>{submitter ? `${submitter.user.name} ${submitter.user.surname}` : t('tickets.noSubmitter')}</TableCell>
+                                                <TableCell>{developer ? `${developer.user.name} ${developer.user.surname}` : t('tickets.noDeveloper')}</TableCell>
                                                 <TableCell>{latestHistory.status.status}</TableCell>
                                                 <TableCell>{new Date(ticket.createdAt).toLocaleString('pl-PL')}</TableCell>
                                                 <TableCell>

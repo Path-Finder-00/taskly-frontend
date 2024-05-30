@@ -99,7 +99,8 @@
         "creationSuccess": "User created successfully",
         "creationError": "An error occurred while creating a User",
         "editingSuccess": "User edited successfully",
-        "editingError": "An error occurred while editing a User"
+        "editingError": "An error occurred while editing a User",
+        "loading": "Loading user data..."
     },
     "tickets": {
         "title": "Title",
@@ -155,7 +156,9 @@
         "creationSuccess": "Ticket created successfully",
         "creationError": "An error occurred while creating a Ticket",
         "editingSuccess": "Ticket edited successfully",
-        "editingError": "An error occurred while editing a Ticket"
+        "editingError": "An error occurred while editing a Ticket",
+        "noSubmitter": "Submitter not found",
+        "noDeveloper": "No developer assigned"
     },
     "organizations": {
         "organization": "Organization"

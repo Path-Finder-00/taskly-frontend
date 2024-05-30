@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import { useSnackbar } from '@/shared/components/Snackbar';
+import { usePermissions } from '@/shared/components/Permissions';
 import {
     Grid,
     Box,
@@ -35,6 +36,7 @@ const CreateUser = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
     const { openSnackbar } = useSnackbar();
+    const permissions = usePermissions();
 
     const { t } = useTranslation("translations")
     const [user, setUser] = useState({
@@ -421,6 +423,7 @@ const CreateUser = () => {
                                 onChange={handleChange('admin')}
                                 name="admin"
                                 color="primary"
+                                disabled={!permissions.includes('createHighAccessUser')}
                             />
                         }
                         label={t('users.admin')}
@@ -434,6 +437,7 @@ const CreateUser = () => {
                                 onChange={handleChange('team_lead')}
                                 name="team_lead"
                                 color="primary"
+                                disabled={!permissions.includes('createHighAccessUser')}
                             />
                         }
                         label={t('teams.teamLead')}
