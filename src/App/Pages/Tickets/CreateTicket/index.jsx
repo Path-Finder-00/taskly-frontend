@@ -8,7 +8,6 @@ import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
 import ticketService from '@/App/services/tickets';
-import clientsService from '@/App/services/clients';
 import {
     Grid,
     Box,
