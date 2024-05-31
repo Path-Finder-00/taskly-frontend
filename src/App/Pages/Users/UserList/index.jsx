@@ -12,7 +12,8 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    CircularProgress
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
@@ -35,6 +36,7 @@ const UserList = () => {
     const [filter, setFilter] = useState('');
     const [isNextDisabled, setIsNextDisabled] = useState(false);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const [loading, setLoading] = useState(true)
 
     const { t } = useTranslation("translations");
     const permissions = usePermissions();
@@ -43,7 +45,6 @@ const UserList = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-
                 const users = await organizationsService.getUsersInOrganization()
                 setUsers(users)
 
@@ -52,9 +53,10 @@ const UserList = () => {
                 
             } catch (err) {
                 console.error("Error fetching data: ", err);
+            } finally {
+                setLoading(false)
             }
         }
-
         fetchData()
     }, []);
 
@@ -118,9 +120,9 @@ const UserList = () => {
     };
 
     const handleNavigateToUserEdit = (userId) => {
-        navigate(`/editUser/${userId}`);
+        navigate(`/profile/editUser/${userId}`);
     };
-
+    
     return (
         <Box sx={{ width: '100%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
             <Paper>
@@ -138,78 +140,83 @@ const UserList = () => {
                     </Box>
                 </Box>
                 <TableContainer sx={{ width: "100%" }}>
-                    <Table aria-label="simple table" sx={{ width: "100%" }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell width="25%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('users.name')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('users.surname')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('users.email')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('users.phone')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="20%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('teams.team')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="5%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.actions')}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {usersNumberRef !== 0 ? users.filter(user =>
-                                user.name.toLowerCase().includes(filter.toLowerCase()) ||
-                                user.surname.toLowerCase().includes(filter.toLowerCase()) ||
-                                user.email.toLowerCase().includes(filter.toLowerCase()) ||
-                                user.phone.toLowerCase().includes(filter.toLowerCase())
-                            ).map((user) => {
-                                return (
-                                    <TableRow key={user.id}>
-                                        <TableCell>{user.name}</TableCell>
-                                        <TableCell>{user.surname}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.phone}</TableCell>
-                                        <TableCell>
-                                            {(user.accessId !== 5 && teamNames) && teamName(user.id)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
-                                                <Button onClick={() => handleNavigateToUserDetails(user.id)}>
-                                                    <InfoIcon />
-                                                </Button>
-                                                <Button disabled={!usersInTeam.includes(user.id)} onClick={() => handleNavigateToUserEdit(user.id)}>
-                                                    <EditIcon />
-                                                </Button>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            }).slice(0 + page * 10, 10 + page * 10) :
-                                <TableRow key={0}>
-                                    <TableCell>
-                                        {t('users.noUsers')}
+                    {loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : ( <Table aria-label="simple table" sx={{ width: "100%" }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell width="25%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('users.name')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('users.surname')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('users.email')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('users.phone')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="20%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('teams.team')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="5%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.actions')}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {usersNumberRef !== 0 ? users.filter(user =>
+                                    user.name.toLowerCase().includes(filter.toLowerCase()) ||
+                                    user.surname.toLowerCase().includes(filter.toLowerCase()) ||
+                                    user.email.toLowerCase().includes(filter.toLowerCase()) ||
+                                    user.phone.toLowerCase().includes(filter.toLowerCase())
+                                ).map((user) => {
+                                    return (
+                                        <TableRow key={user.id}>
+                                            <TableCell>{user.name}</TableCell>
+                                            <TableCell>{user.surname}</TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.phone}</TableCell>
+                                            <TableCell>
+                                                {(user.accessId !== 5 && teamNames) && teamName(user.id)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
+                                                    <Button onClick={() => handleNavigateToUserDetails(user.id)}>
+                                                        <InfoIcon />
+                                                    </Button>
+                                                    <Button disabled={!usersInTeam.includes(user.id)} onClick={() => handleNavigateToUserEdit(user.id)}>
+                                                        <EditIcon />
+                                                    </Button>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }).slice(0 + page * 10, 10 + page * 10) :
+                                    <TableRow key={0}>
+                                        <TableCell>
+                                            {t('users.noUsers')}
+                                        </TableCell>
+                                    </TableRow>
+                                }
+                            </TableBody>
+                        </Table>
+                    )}
                 </TableContainer>
                 <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5 }}>
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >

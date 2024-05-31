@@ -17,15 +17,17 @@ import {
 } from '@mui/material';
 
 import Filter from '@/shared/components/Filter';
+import { usePermissions } from '@/shared/components/Permissions';
 import projectService from '@/App/services/projects';
 
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 
 const MyProjects = () => {
     const [filter, setFilter] = useState('');
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
-    const filterCount = projects.length;
+    const [filterCount, setFilterCount] = useState(0)
+    const permissions = usePermissions();
 
     const { t } = useTranslation('translations');
     const navigate = useNavigate();
@@ -34,7 +36,7 @@ const MyProjects = () => {
         const fetchProjects = async () => {
             setLoading(true);
             try {
-                const fetchedProjects = await projectService.getUserProjects();
+                const fetchedProjects = await projectService.getUserProjectsWithRoles();
                 setProjects(fetchedProjects);
             } catch (err) {
                 console.error("Error fetching projects: ", err);
@@ -45,6 +47,13 @@ const MyProjects = () => {
 
         fetchProjects();
     }, []);
+
+    useEffect(() => {
+        const filteredCount = projects.filter(project =>
+            project.project.name.toLowerCase().includes(filter.toLowerCase())
+        ).length;
+        setFilterCount(filteredCount)
+    }, [projects, filter]);
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
@@ -69,12 +78,9 @@ const MyProjects = () => {
                     paddingBottom: '20px'
                 }}
             >
-                <Typography variant="h4" sx={{ color: `${color.textDark}` }}>
-                    {t('projects.title')}
-                </Typography>
-                <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                { permissions.includes('createProject') && <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                     {t('projects.create')}
-                </Button>
+                </Button> }
             </Box>
             <Box sx={{ width: '100%', boxShadow: 3 }}>
                 <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
@@ -89,7 +95,7 @@ const MyProjects = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                         <Filter handleFilterChange={handleFilterChange} />
                     </Box>
-                    {loading ? (
+                    { loading ? (
                         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
                             <CircularProgress />
                         </Box>
@@ -115,17 +121,17 @@ const MyProjects = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {filterCount !== 0 ? projects.filter(project => project.name.toLowerCase().includes(filter.toLowerCase())).map((project) => (
-                                    <TableRow key={project.id}>
+                                {filterCount !== 0 ? projects.filter(project => project.project.name.toLowerCase().includes(filter.toLowerCase())).map((project) => (
+                                    <TableRow key={project.project.id}>
                                         <TableCell component="th" scope="row">
-                                            {project.name}
+                                            {project.project.name}
                                         </TableCell>
                                         <TableCell>
-                                            {project.description}
+                                            {project.project.description}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Button variant="contained" color="primary" onClick={() => handleNavigateToEditProject(project.id)}>{t('projects.manage')}</Button>
-                                            <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
+                                            { (permissions.includes('editProject') || project.role === 1) && <Button variant="contained" color="primary" onClick={() => handleNavigateToEditProject(project.project.id)}>{t('projects.manage')}</Button> }
+                                            <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
                                         </TableCell>
                                     </TableRow>
                                 )) : (

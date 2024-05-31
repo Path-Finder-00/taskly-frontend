@@ -37,7 +37,7 @@ const UserProfile = () => {
     const [loading, setLoading] = useState(true);
 
     const handleNavigateToProfileEdit = (userId) => {
-        navigate(`/editUser/${userId}`);
+        navigate(`/profile/editUser/${userId}`);
     };
 
     useEffect(() => {

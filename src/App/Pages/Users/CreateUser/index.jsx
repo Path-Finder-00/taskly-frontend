@@ -91,7 +91,7 @@ const CreateUser = () => {
 
         if (formValid) {
             try {
-                const response = await usersService.createUser(user)
+                await usersService.createUser(user)
                 openSnackbar(t('users.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
             } catch (error) {
@@ -239,7 +239,6 @@ const CreateUser = () => {
         if (user.is_client && user.organization) {
             projectsService.getProjectsByOrgId(user.organization)
                 .then(projects => {
-                    console.log(projects)
                     setProjects(projects);
                 })
         }

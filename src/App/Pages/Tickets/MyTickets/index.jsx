@@ -23,9 +23,11 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
 import ticketsService from '@/App/services/tickets';
+import userService from '@/App/services/users';
 
 const MyTickets = () => {
     const [tickets, setTickets] = useState([]);
+    const [userAccess, setUserAccess] = useState(null);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
     const [filter, setFilter] = useState('');
@@ -36,9 +38,11 @@ const MyTickets = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchTickets = async () => {
-            setLoading(true);
+        const fetchData = async () => {
             try {
+                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+                const user = await userService.getUserById(userId);
+                setUserAccess(user.accessId)
                 const fetchedTickets = await ticketsService.getMyTickets();
                 setTickets(fetchedTickets);
             } catch (err) {
@@ -47,7 +51,7 @@ const MyTickets = () => {
                 setLoading(false);
             }
         };
-        fetchTickets();
+        fetchData();
     }, []);
 
     useEffect(() => {
@@ -94,7 +98,7 @@ const MyTickets = () => {
                             {t('tickets.allMyTickets')}
                         </Typography>
                         <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                            {t('tickets.allMyTicketsInfo')}
+                            { userAccess !== 5 ? t('tickets.allMyAssignedTicketsInfo') : t('tickets.allMyTicketsInfo') }
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
@@ -122,7 +126,7 @@ const MyTickets = () => {
                                     </TableCell>
                                     <TableCell width="15%">
                                         <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                            {t('tickets.developer')}
+                                            { userAccess !== 5 ? t('tickets.developer') : t('tickets.creator') }
                                         </Typography>
                                     </TableCell>
                                     <TableCell width="10%">

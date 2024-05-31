@@ -12,13 +12,13 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    CircularProgress
 } from '@mui/material';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 import { color } from '@/shared/utils/styles';
-import Filter from '@/shared/components/Filter';
 import ticketsService from '@/App/services/tickets';
 import statusesService from '@/App/services/statuses';
 import prioritiesService from '@/App/services/priorities';
@@ -42,6 +42,7 @@ const TicketDetails = () => {
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
     const [page, setPage] = useState(0);
     const ticketsNumberRef = useRef(0);
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -68,6 +69,8 @@ const TicketDetails = () => {
                 setTicketHistory(historyData)
             } catch (err) {
                 console.error("Error fetching data: ", err);
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -121,9 +124,13 @@ const TicketDetails = () => {
     const handleNavigateToCommentsAttachments = (ticketId) => {
         navigate(`/tickets/commentsAttachments/${ticketId}`);
     };
-    
-    if (!ticket) {
-        return <div>{t('tickets.loading')}</div>
+
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
@@ -202,7 +209,6 @@ const TicketDetails = () => {
                                         {t('tickets.priority')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {/* {priorities.find(priority => priority.id === ticket.ticket_histories[0].priorityId)?.priority || 'Priority not found'} */}
                                         {getPriorityNameById(ticket.ticket_histories[ticket.ticket_histories.length - 1].priorityId)}
                                     </Typography>
                                 </TableCell>
@@ -213,7 +219,6 @@ const TicketDetails = () => {
                                         {t('tickets.status')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {/* {statuses.find(status => status.id === ticket.ticket_histories[0].statusId)?.status || 'Status not found'} */}
                                         {getStatusNameById(ticket.ticket_histories[ticket.ticket_histories.length - 1].statusId)}
                                     </Typography>
                                 </TableCell>
@@ -240,7 +245,7 @@ const TicketDetails = () => {
                                         {t('tickets.updated')}
                                     </Typography>
                                     <Typography variant="subtitle1" sx={{ ml: 2, color: `${color.textDark}` }} >
-                                        {new Date(ticket.ticket_histories[0].createdAt).toLocaleString('pl-PL')}
+                                        {new Date(ticket.ticket_histories[0].updatedAt).toLocaleString('pl-PL')}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -259,7 +264,7 @@ const TicketDetails = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} elevation={0} >
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>
@@ -314,7 +319,6 @@ const TicketDetails = () => {
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward}>
                         <NavigateBeforeIcon />
                     </Button>
-                    <Typography>Page: {page + 1}</Typography>
                     <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained">
                         <NavigateNextIcon />
                     </Button>

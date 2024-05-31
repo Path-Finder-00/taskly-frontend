@@ -13,7 +13,8 @@ import { MenuItem,
         InputLabel,
         Paper,
         Grid,
-        Typography
+        Typography,
+        CircularProgress 
     } from '@mui/material'
 import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
@@ -31,6 +32,7 @@ const Dashboard = () => {
     const [priorities, setPriorities] = useState([])
     const [statuses, setStatuses] = useState([])
     const [assignees, setAssignees] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const colors = [
         Color(color.third).string(),
@@ -40,30 +42,45 @@ const Dashboard = () => {
     ]
 
     useEffect(() => {
-        projectService
-            .getUserProjects()
-            .then(projects => {
-                setProjects(projects)
-            })
+        const fetchData = async () => {
+            try {
+                const userProjects = await projectService.getUserProjects()
+                setProjects(userProjects)
+            } catch (error) {
+                console.error("Error while fetching users's projects: ", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
     }, [])
 
     useEffect(() => {
         if (projects.length > 0) {
-            projectService.getProjectTickets(projects[0].id)
-                .then(tickets => {
-                    setTickets(tickets)
-                })
-            setSelectedProject(projects[0])
+            const fetchData = async () => {
+                try {
+                    const projectsTickets = await projectService.getProjectTickets(projects[0].id)
+                    setTickets(projectsTickets)
+                    setSelectedProject(projects[0])
+                } catch (error) {
+                    console.error("Error while fetching project's tickets data: ", error)
+                }
+            }
+            fetchData()
         }
     }, [projects])
 
     useEffect(() => {
         if (selectedProject) {
-            projectService
-                .getProjectTickets(selectedProject.id)
-                .then(tickets => {
-                    setTickets(tickets)
-                })
+            const fetchData = async () => {
+                try {
+                    const projectsTickets = await projectService.getProjectTickets(selectedProject.id)
+                    setTickets(projectsTickets)
+                } catch (error) {
+                    console.error("Error while fetching selected project's tickets data: ", error)
+                }
+            }
+            fetchData()
         }
     }, [selectedProject])
 
@@ -195,128 +212,133 @@ const Dashboard = () => {
                 </FormControl>
             </Box>
             <Box sx={{ flexGrow: 1, padding: 2 }}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                                <BarChart
-                                    xAxis={[{ 
-                                        scaleType: 'band', 
-                                        data: [t('dashboard.low'), t('dashboard.medium'), t('dashboard.high'), t('dashboard.critical')],
-                                        colorMap: {
-                                            type: 'ordinal',
-                                            colors: colors
-                                        }
-                                    }]}
-                                    series={[
-                                        { data: priorities.map(priority => priority.value) }
-                                    ]}
-                                    slotProps={{
-                                        noDataOverlay: { message: t('dashboard.noData')}
-                                    }}
-                                    onItemClick={(event, d) => handleChartClick('priorities', priorities[d.dataIndex].id)}
-                                />
-                            </Box>
-                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                                <Typography variant="body1" align="center" color="white">
-                                    {t('dashboard.priorities')}
-                                </Typography>
-                            </Box>
-                        </Paper>
+                { loading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : ( <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                            <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                    <BarChart
+                                        xAxis={[{ 
+                                            scaleType: 'band', 
+                                            data: [t('dashboard.low'), t('dashboard.medium'), t('dashboard.high'), t('dashboard.critical')],
+                                            colorMap: {
+                                                type: 'ordinal',
+                                                colors: colors
+                                            }
+                                        }]}
+                                        series={[
+                                            { data: priorities.map(priority => priority.value) }
+                                        ]}
+                                        slotProps={{
+                                            noDataOverlay: { message: t('dashboard.noData')}
+                                        }}
+                                        onItemClick={(event, d) => handleChartClick('priorities', priorities[d.dataIndex].id)}
+                                    />
+                                </Box>
+                                <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                    <Typography variant="body1" align="center" color="white">
+                                        {t('dashboard.priorities')}
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                    <PieChart
+                                        key={typesChartKey}
+                                        colors={colors}
+                                        series={[
+                                            {
+                                                data: types,
+                                                innerRadius: 50,
+                                                outerRadius: 120,
+                                                paddingAngle: 5,
+                                                cornerRadius: 5,
+                                                cx: 150,
+                                                cy: 150
+                                            }
+                                        ]}
+                                        slotProps={{
+                                            noDataOverlay: { message: t('dashboard.noData')}
+                                        }}
+                                        onItemClick={(event, d) => handleChartClick('types', types[d.dataIndex].label)}
+                                    />
+                                </Box>
+                                <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                    <Typography variant="body1" align="center" color="white">
+                                        {t('dashboard.types')}
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                    <BarChart
+                                        colors={colors}
+                                        xAxis={[{ 
+                                            scaleType: 'band', 
+                                            data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.inProgress'), t('dashboard.underReview'), t('dashboard.closed')],
+                                            colorMap: {
+                                                type: 'ordinal',
+                                                colors: colors
+                                            } 
+                                        }]}
+                                        series={[
+                                            { data: statuses.map(status => status.value) }
+                                        ]}
+                                        slotProps={{
+                                            noDataOverlay: { message: t('dashboard.noData')}
+                                        }}
+                                        onItemClick={(event, d) => handleChartClick('statuses', statuses[d.dataIndex].id)}
+                                    />
+                                </Box>
+                                <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                    <Typography variant="body1" align="center" color="white">
+                                        {t('dashboard.statuses')}
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                                    <PieChart
+                                        colors={colors}
+                                        series={[
+                                            {
+                                                id: 'assignees',
+                                                data: assignees,
+                                                innerRadius: 50,
+                                                outerRadius: 120,
+                                                paddingAngle: 5,
+                                                cornerRadius: 5,
+                                                cx: 150,
+                                                cy: 150
+                                            }
+                                        ]}
+                                        slotProps={{
+                                            noDataOverlay: { message: t('dashboard.noData')}
+                                        }}
+                                        onItemClick={(event, d) => handleChartClick('assignees', assignees[d.dataIndex].label)}
+                                    />
+                                </Box>
+                                <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
+                                    <Typography variant="body1" align="center" color="white">
+                                        {t('dashboard.persons')}
+                                    </Typography>
+                                </Box>
+                            </Paper>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                                <PieChart
-                                    key={typesChartKey}
-                                    colors={colors}
-                                    series={[
-                                        {
-                                            data: types,
-                                            innerRadius: 50,
-                                            outerRadius: 120,
-                                            paddingAngle: 5,
-                                            cornerRadius: 5,
-                                            cx: 150,
-                                            cy: 150
-                                        }
-                                    ]}
-                                    slotProps={{
-                                        noDataOverlay: { message: t('dashboard.noData')}
-                                    }}
-                                    onItemClick={(event, d) => handleChartClick('types', types[d.dataIndex].label)}
-                                />
-                            </Box>
-                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                                <Typography variant="body1" align="center" color="white">
-                                    {t('dashboard.types')}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                                <BarChart
-                                    colors={colors}
-                                    xAxis={[{ 
-                                        scaleType: 'band', 
-                                        data: [t('dashboard.open'), t('dashboard.assigned'), t('dashboard.inProgress'), t('dashboard.underReview'), t('dashboard.closed')],
-                                        colorMap: {
-                                            type: 'ordinal',
-                                            colors: colors
-                                        } 
-                                    }]}
-                                    series={[
-                                        { data: statuses.map(status => status.value) }
-                                    ]}
-                                    slotProps={{
-                                        noDataOverlay: { message: t('dashboard.noData')}
-                                    }}
-                                    onItemClick={(event, d) => handleChartClick('statuses', statuses[d.dataIndex].id)}
-                                />
-                            </Box>
-                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                                <Typography variant="body1" align="center" color="white">
-                                    {t('dashboard.statuses')}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
-                                <PieChart
-                                    colors={colors}
-                                    series={[
-                                        {
-                                            id: 'assignees',
-                                            data: assignees,
-                                            innerRadius: 50,
-                                            outerRadius: 120,
-                                            paddingAngle: 5,
-                                            cornerRadius: 5,
-                                            cx: 150,
-                                            cy: 150
-                                        }
-                                    ]}
-                                    slotProps={{
-                                        noDataOverlay: { message: t('dashboard.noData')}
-                                    }}
-                                    onItemClick={(event, d) => handleChartClick('assignees', assignees[d.dataIndex].label)}
-                                />
-                            </Box>
-                            <Box sx={{ bgcolor: `${color.third}`, padding: 1, width: '100%' }}>
-                                <Typography variant="body1" align="center" color="white">
-                                    {t('dashboard.persons')}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                </Grid>
+                )}
             </Box>
         </Box>
     )
 }
 
-export default Dashboard
+export default Dashboard;

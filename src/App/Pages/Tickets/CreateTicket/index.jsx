@@ -8,7 +8,6 @@ import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
 import ticketService from '@/App/services/tickets';
-import clientsService from '@/App/services/clients';
 import {
     Grid,
     Box,
@@ -61,12 +60,10 @@ const CreateTicket = () => {
         if (ticket.assigned === ''){
             ticket.assigned = null
         }
-        console.log(ticket);
         try {
-            const response = await ticketService.createTicket(ticket)
+            await ticketService.createTicket(ticket)
             openSnackbar(t('tickets.creationSuccess'), 'success');
             navigate(`/projects/projectDetails/${ticket.project}`, { replace: true });
-            console.log(response)
         } catch (error) {
             console.error('Error creating ticket:', error)
             openSnackbar(t('tickets.creationError'), 'error');
@@ -162,7 +159,6 @@ const CreateTicket = () => {
             </Box>
             <Grid container spacing={4} sx={{ p: 2 }}>
                 <Grid item md={6}>
-                    {/* <Typography variant='h5'>{t('tickets.title')}</Typography> */}
                     <FormControl fullWidth error={!!nameError}>
                         <InputLabel htmlFor="title">{t('tickets.title')}</InputLabel>
                         <OutlinedInput
@@ -176,7 +172,6 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h5'>{t('tickets.description')}</Typography> */}
                     <FormControl fullWidth error={!!descError}>
                         <InputLabel htmlFor="description">{t('tickets.description')}</InputLabel>
                         <OutlinedInput
@@ -190,7 +185,6 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h8'>{t('dashboard.project')}</Typography> */}
                     <FormControl fullWidth error={!!projectError}>
                         <InputLabel id="project-label">{t('dashboard.project')}</InputLabel>
                         <Select
@@ -213,7 +207,6 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h8'>{t('tickets.assigned')}</Typography> */}
                     <FormControl fullWidth>
                         <InputLabel id="assigned-label">{t('tickets.assigned')}</InputLabel>
                         <Select
@@ -236,7 +229,6 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h8'>{t('tickets.priority')}</Typography> */}
                     <FormControl fullWidth error={!!priorityError}>
                         <InputLabel id="priority-label">{t('tickets.priority')}</InputLabel>
                         <Select
@@ -259,7 +251,6 @@ const CreateTicket = () => {
                     </FormControl>
                 </Grid>
                 <Grid item md={6}>
-                    {/* <Typography variant='h8'>{t('tickets.type')}</Typography> */}
                     <FormControl fullWidth error={!!typeError}>
                         <InputLabel id="type-label">{t('tickets.type')}</InputLabel>
                         <Select
@@ -298,8 +289,7 @@ const CreateTicket = () => {
                 </Grid>
             </Grid>
         </Box>
-
     )
 }
 
-export default CreateTicket
+export default CreateTicket;

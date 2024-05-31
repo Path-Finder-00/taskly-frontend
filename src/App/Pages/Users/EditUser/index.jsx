@@ -1,7 +1,8 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router';
 import { useSnackbar } from '@/shared/components/Snackbar';
+import { usePermissions } from '@/shared/components/Permissions';
 import { color } from '@/shared/utils/styles';
 import {
     Grid,
@@ -36,6 +37,7 @@ const EditUser = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
     const { openSnackbar } = useSnackbar();
+    const permissions = usePermissions();
     const userId = useParams().userId;
     const { t } = useTranslation("translations")
     const [user, setUser] = useState(null);
@@ -269,6 +271,7 @@ const EditUser = () => {
                             value={user.name}
                             onChange={handleChange('name')}
                             label={t('users.name')}
+                            disabled={!permissions.includes("editUserInTeam")}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -282,6 +285,7 @@ const EditUser = () => {
                             value={user.surname}
                             onChange={handleChange('surname')}
                             label={t('users.surname')}
+                            disabled={!permissions.includes("editUserInTeam")}
                         />
                         {surnameError && <FormHelperText>{surnameError}</FormHelperText>}
                     </FormControl>
@@ -295,6 +299,7 @@ const EditUser = () => {
                             value={user.email}
                             onChange={handleChange('email')}
                             label={t('users.email')}
+                            disabled={!permissions.includes("editUserInTeam")}
                         />
                         {emailError && <FormHelperText>{emailError}</FormHelperText>}
                     </FormControl>
@@ -334,6 +339,7 @@ const EditUser = () => {
                             value={user.phone}
                             onChange={handleChange('phone')}
                             label={t('users.phone')}
+                            disabled={!permissions.includes("editUserInTeam")}
                         />
                         {phoneError && <FormHelperText>{phoneError}</FormHelperText>}
                     </FormControl>
@@ -348,6 +354,7 @@ const EditUser = () => {
                                 value={user.project}
                                 onChange={handleChange('project')}
                                 label={t('dashboard.project')}
+                                disabled={!permissions.includes("editUserInTeam")}
                             >
                                 {projects?.map((projects) => (
                                     <MenuItem
@@ -372,6 +379,7 @@ const EditUser = () => {
                                 value={user.team}
                                 onChange={handleChange('team')}
                                 label={t('teams.team')}
+                                disabled={!permissions.includes("editUserInTeam")}
                             >
                                 {teams?.map((team) => (
                                     <MenuItem
@@ -421,6 +429,7 @@ const EditUser = () => {
                                     onChange={handleChange('admin')}
                                     name="admin"
                                     color="primary"
+                                    disabled={!permissions.includes("editAnyUser")}
                                 />
                             }
                             label={t('users.admin')}
@@ -429,13 +438,14 @@ const EditUser = () => {
                 )}
                 {!user.is_client && (
                     <Grid item md={6}>
-                        <FormControlLabel disabled={user.is_client}
+                        <FormControlLabel
                             control={
                                 <Checkbox
                                     checked={user.team_lead}
                                     onChange={handleChange('team_lead')}
                                     name="team_lead"
                                     color="primary"
+                                    disabled={!permissions.includes("editUserInTeam")}
                                 />
                             }
                             label={t('teams.teamLead')}

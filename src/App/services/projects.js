@@ -8,6 +8,12 @@ const getUserProjects = async () => {
     return response
 }
 
+const getUserProjectsWithRoles = async () => {
+    const response = api.get(`${baseUrl}/projectsWithRoles`)
+
+    return response
+}
+
 const getProjectById = async (projectId) => {
     try {
         const url = `${baseUrl}/${projectId}`
@@ -73,4 +79,4 @@ const editProject = async (projectId, projectPayload) => {
     }
 }
 
-export default { getUserProjects, getProjectById, createProject, getProjectsByTeamId, getProjectsByOrgId, editProject, getProjectTickets }
+export default { getUserProjects, getUserProjectsWithRoles, getProjectById, createProject, getProjectsByTeamId, getProjectsByOrgId, editProject, getProjectTickets }
