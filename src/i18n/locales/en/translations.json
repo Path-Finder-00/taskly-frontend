@@ -11,6 +11,9 @@
         "createTeam": "Create Team",
         "userList": "User List"
     },
+    "topbar": {
+        "changeLanguage": "pl"
+    },
     "dropdown": {
         "empty": "There are no options available."
     },
