@@ -43,12 +43,13 @@ const UserList = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+
                 const users = await organizationsService.getUsersInOrganization()
                 setUsers(users)
 
                 const teamNames = await teamsService.getTeamNames()
                 setTeamNames(teamNames)
-                console.log(teamNames)
+                
             } catch (err) {
                 console.error("Error fetching data: ", err);
             }
@@ -97,7 +98,7 @@ const UserList = () => {
     }, [filter, users, page]);
 
     const teamName = (id) => {
-        return teamNames.filter(teamName => teamName.id === id)[0].teamName
+        return teamNames.filter(teamName => teamName.id === id)[0]?.teamName
     }
 
     const handleFilterChange = (event) => {
@@ -185,7 +186,9 @@ const UserList = () => {
                                         <TableCell>{user.surname}</TableCell>
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>{user.phone}</TableCell>
-                                        <TableCell>{teamName(user.id)}</TableCell>
+                                        <TableCell>
+                                            {(user.accessId !== 5 && teamNames) && teamName(user.id)}
+                                        </TableCell>
                                         <TableCell>
                                             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
                                                 <Button onClick={() => handleNavigateToUserDetails(user.id)}>
