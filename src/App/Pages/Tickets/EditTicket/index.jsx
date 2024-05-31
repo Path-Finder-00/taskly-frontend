@@ -149,7 +149,8 @@ const EditTicket = () => {
         if (ticket.project) {
             projectService.getProjectById(ticket.project)
                 .then(data => {
-                    setProjectMembers(data.employees);
+                    console.log(data)
+                    setProjectMembers(data.employees.filter(employee => employee.employee_project.roleId !== 6)); // Get only users who aren't clients
                 })
                 .catch(error => {
                     console.error('Error fetching project members:', error);
@@ -227,7 +228,7 @@ const EditTicket = () => {
                         <Select
                             labelId="assigned-label"
                             id="assigned"
-                            value={ticket.assigned}
+                            value={ticket.assigned ? ticket.assigned : ''}
                             onChange={handleChange('assigned')}
                             label={t('tickets.assigned')}
                             disabled={permissions.includes('assignUser')}
@@ -235,7 +236,7 @@ const EditTicket = () => {
                             {projectMembers?.map((member) => (
                                 <MenuItem
                                     key={member.id}
-                                    value={member.id}
+                                    value={member ? member.id : ''}
                                 >
                                     {`${member.user.name} ${member.user.surname}`}
                                 </MenuItem>

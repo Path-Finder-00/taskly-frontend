@@ -105,14 +105,14 @@ const CreateUser = () => {
         const { type, value, checked, options } = event.target;
         if (type === 'checkbox') {
             if (prop === 'is_client') {
-                setUser(user => ({
+                setUser(updatedUser => ({
                     ...user,
                     [prop]: checked,
-                    admin: checked ? false : user.admin,
-                    team_lead: checked ? false : user.team_lead,
-                    team: checked ? '' : user.team,
-                    technologies: checked ? [] : user.technologies,
-                    role: checked ? 'Klient' : user.role
+                    admin: checked ? false : updatedUser.admin,
+                    team_lead: checked ? false : updatedUser.team_lead,
+                    team: checked ? '' : updatedUser.team,
+                    technologies: checked ? [] : updatedUser.technologies,
+                    role: checked ? 6 : updatedUser.role // 6 is the id of role "Klient"
                 }))
             } else {
                 setUser({ ...user, [prop]: type === 'checkbox' ? checked : value });
@@ -239,6 +239,7 @@ const CreateUser = () => {
         if (user.is_client && user.organization) {
             projectsService.getProjectsByOrgId(user.organization)
                 .then(projects => {
+                    console.log(projects)
                     setProjects(projects);
                 })
         }
@@ -405,7 +406,7 @@ const CreateUser = () => {
                             id="role"
                             value={user.role}
                             onChange={handleChange('role')}
-                            label="Role"
+                            label={t('projects.role')}
                         >
                             {roles.map((role) => (
                                 <MenuItem key={role.id} value={role.id}>

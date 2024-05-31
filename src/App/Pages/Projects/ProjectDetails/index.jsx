@@ -42,6 +42,7 @@ const ProjectDetails = () => {
                 setProject(data);
                 setProjectMembers(data.employees);
                 setTickets(data.tickets)
+                console.log(data.tickets)
             })
             .catch(err => {
                 console.error('Error fetching project:', err);

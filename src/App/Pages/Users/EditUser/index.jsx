@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router';
 import { useSnackbar } from '@/shared/components/Snackbar';
@@ -18,6 +18,7 @@ import {
     FormControlLabel,
     IconButton,
     InputAdornment,
+    CircularProgress
 } from '@mui/material'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -28,7 +29,6 @@ import organizationsService from '@/App/services/organizations';
 import projectsService from '@/App/services/projects';
 import usersService from '@/App/services/users';
 import employmentHistoriesService from '@/App/services/employment_histories';
-import clientsService from '@/App/services/clients';
 
 
 const EditUser = () => {
@@ -50,6 +50,7 @@ const EditUser = () => {
     const [passwordError, setPasswordError] = useState('');
     const [teamError, setTeamError] = useState('');
     const [projectError, setProjectError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
@@ -192,10 +193,11 @@ const EditUser = () => {
             try {
                 const userData = await usersService.getUserById(userId)
                 const organization = await organizationsService.getOrganization()
-                if (!userData.employee) {
+                if (userData.accessId === 5) { // Check if user is a client
                     const projectsData = await projectsService.getProjectsByOrgId(organization.id)
                     setProjects(projectsData);
-                    const clientData = await clientsService.getClientByUserId(userId)
+                    const clientProjects = await projectsService.getUserProjects()
+                    const clientProject = clientProjects.filter(project => project.employee_project.to === null)[0].id
                     setUser(
                         {
                             password: '',
@@ -203,7 +205,7 @@ const EditUser = () => {
                             surname: userData.surname,
                             email: userData.email,
                             phone: userData.phone,
-                            project: clientData.client_projects[clientData.client_projects.length - 1].projectId,
+                            project: clientProject,
                             is_client: true,
                             organization: organization.id
                         }
@@ -235,13 +237,19 @@ const EditUser = () => {
                 }
             } catch (err) {
                 console.error("Error fetching data: ", err);
+            } finally {
+                setLoading(false)
             }
         };
         fetchData();
     }, [userId]);
 
-    if (!user) {
-        return <div>{t('users.loading')}</div>;
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (

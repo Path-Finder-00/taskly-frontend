@@ -8,7 +8,6 @@ import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 import typeService from '@/App/services/types';
 import ticketService from '@/App/services/tickets';
-import userService from '@/App/services/users';
 import clientsService from '@/App/services/clients';
 import {
     Grid,
@@ -34,7 +33,6 @@ const CreateTicket = () => {
     const [projects, setProjects] = useState([])
     const [priorities, setPriorities] = useState([])
     const [types, setTypes] = useState([])
-    const [user, setUser] = useState(null)
     const [projectMembers, setProjectMembers] = useState(null);
     const [ticket, setTicket] = useState({
         title: '',
@@ -49,7 +47,6 @@ const CreateTicket = () => {
     const [projectError, setProjectError] = useState('');
     const [priorityError, setPriorityError] = useState('');
     const [typeError, setTypeError] = useState('');
-    const userId = sessionStorage.getItem('loggedTasklyAppUserId')
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
@@ -126,25 +123,17 @@ const CreateTicket = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const userData = await userService.getUserById(userId)
-            setUser(userData)
-            if (!userData.employee) {
-                const clientData = await clientsService.getClientByUserId(userId)
-                console.log(clientData)
-                setProjects(clientData.client.client_projects.filter(project => project.to === null).map(project => project.project))
-            } else {
                 const projects = await projectService.getUserProjects()
                 setProjects(projects)
             }
-            priorityService.getPriorities()
-                .then(priorities => {
-                    setPriorities(priorities)
+        priorityService.getPriorities()
+            .then(priorities => {
+                setPriorities(priorities)
+            })
+        typeService.getTypes()
+            .then(types => {
+                setTypes(types)
                 })
-            typeService.getTypes()
-                .then(types => {
-                    setTypes(types)
-                })
-        }
         fetchData()
     }, []);
 
