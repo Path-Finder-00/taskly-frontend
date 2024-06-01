@@ -22,5 +22,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: build
-        run: npm run build
+      - name: Build
+        run: |
+          npm run build
+
+      - name: List files
+        run: ls -R
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ./
