@@ -73,7 +73,7 @@ const AppContent = ({ user, setUser }) => {
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       <CssBaseline />
-      {user && <MenuTopbar>
+      {user && <MenuTopbar setUser={setUser}>
 
       </MenuTopbar>}
       {user && <MenuSidebar>
