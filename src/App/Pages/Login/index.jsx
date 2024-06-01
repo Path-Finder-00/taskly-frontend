@@ -21,6 +21,7 @@ const LoginForm = ({ setUser }) => {
     const [passwordError, setPasswordError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
+    const [credentialsError, setCredentialsError] = useState('')
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value)
@@ -60,6 +61,7 @@ const LoginForm = ({ setUser }) => {
                 setPassword('')
                 navigate('/dashboard')
             } catch (exception) {
+                setCredentialsError("Invalid e-mail or password")
                 console.log(exception)
             }
         }
@@ -144,6 +146,11 @@ const LoginForm = ({ setUser }) => {
                         />
                         {passwordError && <FormHelperText>{passwordError}</FormHelperText>}
                     </FormControl>
+                    {credentialsError && (
+                        <Typography color="error">
+                            {credentialsError}
+                        </Typography>
+                    )}
                 <Button
                     id="login-button"
                     type="submit"
