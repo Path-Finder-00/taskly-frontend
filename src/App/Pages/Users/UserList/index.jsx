@@ -65,15 +65,15 @@ const UserList = () => {
     }, [users]);
 
     useEffect(() => {
-        if (permissions.includes('editUserInTeam')) {
+        if (permissions.includes('editAnyUser')) {
+            const usersIds = users.map(user => user.id)
+            setUsersInTeam(usersIds)
+        } else if (permissions.includes('editUserInTeam')) {
             teamsService.getTeamMembers()
                 .then(members => {
                     const membersIds = members.map(member => member.id)
                     setUsersInTeam(membersIds)
                 })
-        } else if (permissions.includes('editAnyUser')) {
-            const usersIds = users.map(user => user.id)
-            setUsersInTeam(usersIds)
         } else {
             setUsersInTeam([])
         }
