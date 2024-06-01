@@ -11,6 +11,9 @@
         "createTeam": "Utwórz zespół",
         "userList": "Lista Użytkowników"
     },
+    "topbar": {
+        "changeLanguage": "en"
+    },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
     },
