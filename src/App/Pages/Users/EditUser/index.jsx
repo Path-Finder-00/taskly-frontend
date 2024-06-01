@@ -80,7 +80,7 @@ const EditUser = () => {
             try {
                 await usersService.editUser(userId, user)
                 openSnackbar(t('users.editingSuccess'), 'success');
-                navigate(`/profile`, { replace: true });
+                navigate(`/profile/${userId}`, { replace: true });
             } catch (error) {
                 console.error('Error creating ticket:', error)
                 openSnackbar(t('users.editingError'), 'error');
@@ -196,8 +196,10 @@ const EditUser = () => {
                 const userData = await usersService.getUserById(userId)
                 const organization = await organizationsService.getOrganization()
                 if (userData.accessId === 5) { // Check if user is a client
+                    const projectsData = await projectsService.getProjectsByOrgId(organization.id)
+                    setProjects(projectsData)
                     const clientProjects = await projectsService.getProjectByUserId(userId)
-                    const clientProject = clientProjects.filter(project => project.employee_project.to === null)[0].id
+                    const clientProject = clientProjects.filter(project => project.employee_project.to === null)[0]
                     setUser(
                         {
                             password: '',
@@ -205,7 +207,7 @@ const EditUser = () => {
                             surname: userData.surname,
                             email: userData.email,
                             phone: userData.phone,
-                            project: clientProject,
+                            project: clientProject.id,
                             is_client: true,
                             organization: organization.id
                         }
@@ -427,7 +429,7 @@ const EditUser = () => {
                                     onChange={handleChange('admin')}
                                     name="admin"
                                     color="primary"
-                                    disabled={!permissions.includes("editAnyUser") && !permissions.includes("editAnyUser")}
+                                    disabled={(!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")) || !permissions.includes("createHighAccessUser")}
                                 />
                             }
                             label={t('users.admin')}
@@ -443,7 +445,7 @@ const EditUser = () => {
                                     onChange={handleChange('team_lead')}
                                     name="team_lead"
                                     color="primary"
-                                    disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
+                                    disabled={(!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")) || !permissions.includes("createHighAccessUser")}
                                 />
                             }
                             label={t('teams.teamLead')}
