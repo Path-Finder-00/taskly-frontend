@@ -22,6 +22,8 @@ import usersService from '@/App/services/users';
 import employmentHistoriesService from '@/App/services/employment_histories';
 import employeeProjectsService from '@/App/services/employee_projects';
 import organizationsService from '@/App/services/organizations';
+import teamsService from '@/App/services/teams';
+import { usePermissions } from '@/shared/components/Permissions';
 
 const UserProfile = () => {
     const { userId: userIdParam } = useParams();
@@ -29,7 +31,9 @@ const UserProfile = () => {
 
     const { t } = useTranslation('translations');
     const navigate = useNavigate();
+    const permissions = usePermissions();
     const [user, setUser] = useState(null);
+    const [userInTeam, setUserInTeam] = useState(false);
     const [technologies, setTechnologies] = useState([]);
     const [employmentHistories, setEmploymentHistories] = useState([]);
     const [employeeProjects, setEmployeeProjects] = useState([]);
@@ -63,6 +67,26 @@ const UserProfile = () => {
         fetchData();
     }, [userId]);
 
+    useEffect(() => {
+        const fetchTeamMembers = async () => {
+            if (permissions.includes('editUserInTeam') && userIdParam) {
+                const members = await teamsService.getTeamMembers();
+                const isTeamMember = members.some(member => {
+                    return member.id == userId;
+                });
+                setUserInTeam(isTeamMember);
+            } else if (permissions.includes('editAnyUser') && userIdParam) {
+                setUserInTeam(true)
+            } else if (!userIdParam) {
+                setUserInTeam(true)
+            } else {
+                setUserInTeam(false)
+            }
+        }
+
+        fetchTeamMembers()
+    }, [userId, permissions])
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
@@ -78,7 +102,7 @@ const UserProfile = () => {
                     <Paper sx={{ p: 2, marginBottom: 2 }}>
                         <Box display="flex" justifyContent="space-between">
                             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>{t('users.personal')}</Typography>
-                            <Button onClick={() => handleNavigateToProfileEdit(userId)}>
+                            <Button disabled={!userInTeam} onClick={() => handleNavigateToProfileEdit(userId)}>
                                 <EditIcon />
                             </Button>
                         </Box>

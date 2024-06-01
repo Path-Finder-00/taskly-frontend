@@ -27,7 +27,6 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import technologiesService from '@/App/services/technologies';
 import organizationsService from '@/App/services/organizations';
 import projectsService from '@/App/services/projects';
-import rolesService from '@/App/services/roles';
 import usersService from '@/App/services/users';
 
 
@@ -56,7 +55,6 @@ const CreateUser = () => {
     const [nameError, setNameError] = useState('');
     const [surnameError, setSurnameError] = useState('');
     const [technologies, setTechnologies] = useState([]);
-    const [roles, setRoles] = useState([]);
     const [projects, setProjects] = useState([]);
     const [teams, setTeams] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
@@ -112,7 +110,7 @@ const CreateUser = () => {
                     team_lead: checked ? false : updatedUser.team_lead,
                     team: checked ? '' : updatedUser.team,
                     technologies: checked ? [] : updatedUser.technologies,
-                    role: checked ? 6 : updatedUser.role // 6 is the id of role "Klient"
+                    role: checked ? 6 : '' // 6 is the id of role "Klient"
                 }))
             } else {
                 setUser({ ...user, [prop]: type === 'checkbox' ? checked : value });
@@ -214,9 +212,6 @@ const CreateUser = () => {
 
                 const teamsData = await organizationsService.getTeamsByOrganizationId(organization.id)
                 setTeams(teamsData);
-                
-                const rolesData = await rolesService.getRoles()
-                setRoles(rolesData)
 
             } catch (err) {
                 console.error("Error fetching data: ", err);
@@ -392,24 +387,6 @@ const CreateUser = () => {
                             {technologies.map((technology) => (
                                 <MenuItem key={technology.id} value={technology.id}>
                                     {technology.technology}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>}
-                {!user.is_client && <Grid item md={6}>
-                    <FormControl fullWidth>
-                        <InputLabel id="role-label">{t('projects.role')}</InputLabel>
-                        <Select
-                            labelId="role-label"
-                            id="role"
-                            value={user.role}
-                            onChange={handleChange('role')}
-                            label={t('projects.role')}
-                        >
-                            {roles.map((role) => (
-                                <MenuItem key={role.id} value={role.id}>
-                                    {role.role}
                                 </MenuItem>
                             ))}
                         </Select>

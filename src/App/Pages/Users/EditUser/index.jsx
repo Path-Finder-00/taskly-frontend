@@ -196,9 +196,7 @@ const EditUser = () => {
                 const userData = await usersService.getUserById(userId)
                 const organization = await organizationsService.getOrganization()
                 if (userData.accessId === 5) { // Check if user is a client
-                    const projectsData = await projectsService.getProjectsByOrgId(organization.id)
-                    setProjects(projectsData);
-                    const clientProjects = await projectsService.getUserProjects()
+                    const clientProjects = await projectsService.getProjectByUserId(userId)
                     const clientProject = clientProjects.filter(project => project.employee_project.to === null)[0].id
                     setUser(
                         {
@@ -271,7 +269,7 @@ const EditUser = () => {
                             value={user.name}
                             onChange={handleChange('name')}
                             label={t('users.name')}
-                            disabled={!permissions.includes("editUserInTeam")}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -285,7 +283,7 @@ const EditUser = () => {
                             value={user.surname}
                             onChange={handleChange('surname')}
                             label={t('users.surname')}
-                            disabled={!permissions.includes("editUserInTeam")}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {surnameError && <FormHelperText>{surnameError}</FormHelperText>}
                     </FormControl>
@@ -299,7 +297,7 @@ const EditUser = () => {
                             value={user.email}
                             onChange={handleChange('email')}
                             label={t('users.email')}
-                            disabled={!permissions.includes("editUserInTeam")}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {emailError && <FormHelperText>{emailError}</FormHelperText>}
                     </FormControl>
@@ -339,7 +337,7 @@ const EditUser = () => {
                             value={user.phone}
                             onChange={handleChange('phone')}
                             label={t('users.phone')}
-                            disabled={!permissions.includes("editUserInTeam")}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {phoneError && <FormHelperText>{phoneError}</FormHelperText>}
                     </FormControl>
@@ -354,7 +352,7 @@ const EditUser = () => {
                                 value={user.project}
                                 onChange={handleChange('project')}
                                 label={t('dashboard.project')}
-                                disabled={!permissions.includes("editUserInTeam")}
+                                disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                             >
                                 {projects?.map((projects) => (
                                     <MenuItem
@@ -379,7 +377,7 @@ const EditUser = () => {
                                 value={user.team}
                                 onChange={handleChange('team')}
                                 label={t('teams.team')}
-                                disabled={!permissions.includes("editUserInTeam")}
+                                disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                             >
                                 {teams?.map((team) => (
                                     <MenuItem
@@ -429,7 +427,7 @@ const EditUser = () => {
                                     onChange={handleChange('admin')}
                                     name="admin"
                                     color="primary"
-                                    disabled={!permissions.includes("editAnyUser")}
+                                    disabled={!permissions.includes("editAnyUser") && !permissions.includes("editAnyUser")}
                                 />
                             }
                             label={t('users.admin')}
@@ -445,7 +443,7 @@ const EditUser = () => {
                                     onChange={handleChange('team_lead')}
                                     name="team_lead"
                                     color="primary"
-                                    disabled={!permissions.includes("editUserInTeam")}
+                                    disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                                 />
                             }
                             label={t('teams.teamLead')}
