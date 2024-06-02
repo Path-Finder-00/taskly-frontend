@@ -64,16 +64,20 @@ const UserList = () => {
         usersNumberRef.current = users.length
     }, [users]);
 
-    useEffect(() => {
-        if (permissions.includes('editUserInTeam')) {
-            teamsService.getTeamMembers()
-                .then(members => {
-                    const membersIds = members.map(member => member.id)
-                    setUsersInTeam(membersIds)
-                })
-        } else if (permissions.includes('editAnyUser')) {
+   useEffect(() => {
+        if (permissions.includes('editAnyUser')) {
             const usersIds = users.map(user => user.id)
             setUsersInTeam(usersIds)
+        } else if (permissions.includes('editUserInTeam')) {
+            teamsService.getTeamMembers()
+                .then(members => {
+                    const membersIds = members.map(member => {
+                        if (member.accessId !== 1) {
+                            return member.id
+                        }
+                    })
+                    setUsersInTeam(membersIds)
+                })
         } else {
             setUsersInTeam([])
         }

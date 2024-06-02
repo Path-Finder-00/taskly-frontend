@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 
 import projectService from '@/App/services/projects'
+import userService from '@/App/services/users'
 import { color } from '@/shared/utils/styles';
 import Color from 'color';
 
@@ -44,6 +45,19 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+                const user = await userService.getUserById(userId);
+
+                // if (user.accessId === 1) {
+                //     const fetchedProjects = await projectService.getProjectsByOrgId();
+                //     setProjects(fetchedProjects);
+                // } else if (user.accesssId === 2) {
+                //     const fetchedProjects = await projectService.getProjectsByTeamId();
+                //     setProjects(fetchedProjects);
+                // } else {
+                //     const userProjects = await projectService.getUserProjects()
+                //     setProjects(userProjects)
+                // }
                 const userProjects = await projectService.getUserProjects()
                 setProjects(userProjects)
             } catch (error) {

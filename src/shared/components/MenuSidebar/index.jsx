@@ -1,8 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { ListItem, ListItemText, List, Toolbar, Box } from '@mui/material';
+import { ListItem, ListItemText, List, Toolbar, Box, ListItemIcon } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import FolderIcon from '@mui/icons-material/Folder';
+import BugReportIcon from '@mui/icons-material/BugReport';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import CreateIcon from '@mui/icons-material/Create';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import PeopleIcon from '@mui/icons-material/People';
 
 import { sizes, color, font } from '@/shared/utils/styles';
 
@@ -43,7 +51,7 @@ const MenuSidebar = () => {
         }),
     }));
 
-    function RenderMenuItem({ text, path }) {
+    function RenderMenuItem({ text, path, Icon }) {
         const navigate = useNavigate();
         const location = useLocation();
         const isActive = location.pathname.includes(path);
@@ -51,6 +59,7 @@ const MenuSidebar = () => {
         return (
             <StyledListItem button active={isActive ? 1 : 0} onClick={() => navigate(path)}>
                 <ListItemText primary={text} />
+                {Icon && <ListItemIcon><Icon /></ListItemIcon>}
             </StyledListItem>
         );
     }
@@ -59,14 +68,14 @@ const MenuSidebar = () => {
         <StyledBox variant="permanent">
             <Toolbar />
             <List>
-                <RenderMenuItem text={t('sidebar.dashboard')} path="/dashboard" />
-                <RenderMenuItem text={t('sidebar.myProjects')} path="/projects" />
-                <RenderMenuItem text={t('sidebar.myTickets')} path="/tickets" />
-                <RenderMenuItem text={t('sidebar.userProfile')} path="/profile/" />
-                <RenderMenuItem text={t('sidebar.createTicket')} path="/createTicket" />
-                { permissions.includes('createUser') && <RenderMenuItem text={t('sidebar.createUser')} path="/users/createUser" /> }
-                { permissions.includes('createTeam') && <RenderMenuItem text={t('sidebar.createTeam')} path="/teams/createTeam" /> }
-                { permissions.includes('seeAllUsers') && <RenderMenuItem text={t('sidebar.userList')} path="/users/userList" /> }
+                <RenderMenuItem text={t('sidebar.dashboard')} Icon={DashboardIcon} path="/dashboard" />
+                <RenderMenuItem text={t('sidebar.myProjects')} Icon={FolderIcon} path="/projects" />
+                <RenderMenuItem text={t('sidebar.myTickets')} Icon={BugReportIcon} path="/tickets" />
+                <RenderMenuItem text={t('sidebar.userProfile')} Icon={AccountBoxIcon} path="/profile/" />
+                <RenderMenuItem text={t('sidebar.createTicket')} Icon={CreateIcon} path="/createTicket" />
+                { permissions.includes('createUser') && <RenderMenuItem text={t('sidebar.createUser')} Icon={PersonAddIcon} path="/users/createUser" /> }
+                { permissions.includes('createTeam') && <RenderMenuItem text={t('sidebar.createTeam')} Icon={GroupAddIcon} path="/teams/createTeam" /> }
+                { permissions.includes('seeAllUsers') && <RenderMenuItem text={t('sidebar.userList')} Icon={PeopleIcon} path="/users/userList" /> }
             </List>
         </StyledBox>
     )
