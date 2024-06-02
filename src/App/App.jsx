@@ -69,11 +69,11 @@ const App = () => {
 
 const AppContent = ({ user, setUser }) => {
 
-  const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
-  const permissions = usePermissions();
+    const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
+    const permissions = usePermissions();
 
-  return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    return (
+    <Box sx={{ display: 'flex', minHeight: '100vh', height: '100%' }}>
         <CssBaseline />
         {user && <MenuTopbar setUser={setUser}>
 
