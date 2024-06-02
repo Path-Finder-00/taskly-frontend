@@ -64,7 +64,7 @@ const UserList = () => {
         usersNumberRef.current = users.length
     }, [users]);
 
-   useEffect(() => {
+    useEffect(() => {
         if (permissions.includes('editAnyUser')) {
             const usersIds = users.map(user => user.id)
             setUsersInTeam(usersIds)

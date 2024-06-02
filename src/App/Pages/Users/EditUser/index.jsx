@@ -178,10 +178,7 @@ const EditUser = () => {
     };
 
     const validatePassword = () => {
-        if (user.password.trim() === '') {
-            setPasswordError(t('projects.fieldEmpty'));
-            return false;
-        } else if (user.password.length < 8) {
+        if (user.password.length > 0 && user.password.length < 8) {
             setPasswordError(t('users.passwordTooShort'));
             return false;
         }
@@ -198,6 +195,7 @@ const EditUser = () => {
         const fetchData = async () => {
             try {
                 const userData = await usersService.getUserById(userId)
+                console.log(userData)
                 const organization = await organizationsService.getOrganization()
                 if (userData.accessId === 5) { // Check if user is a client
                     const projectsData = await projectsService.getProjectsByOrgId(organization.id)

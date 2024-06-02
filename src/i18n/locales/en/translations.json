@@ -166,7 +166,9 @@
         "editingSuccess": "Ticket edited successfully",
         "editingError": "An error occurred while editing a Ticket",
         "noSubmitter": "Submitter not found",
-        "noDeveloper": "No developer assigned"
+        "noDeveloper": "No developer assigned",
+        "allTicketsInOrganization": "All tickets in your organization",
+        "allTicketsInTeam": "All tickets in your team"
     },
     "organizations": {
         "organization": "Organization"

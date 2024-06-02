@@ -166,7 +166,9 @@
         "editingSuccess": "Pomyślnie edytowano Zgłoszenie",
         "editingError": "Wystąpił błąd podczas edytowania Zgłoszenia",
         "noSubmitter": "Nie znaleziono zgłaszającego",
-        "noDeveloper": "Brak przypisanego developera"
+        "noDeveloper": "Brak przypisanego developera",
+        "allTicketsInOrganization": "Wszystkie zgłoszenia w Twojej organizacji",
+        "allTicketsInTeam": "Wszystkie zgłoszenia w Twoim zespole"
     },
     "organizations": {
         "organization": "Organizacja"

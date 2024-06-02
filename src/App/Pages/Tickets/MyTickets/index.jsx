@@ -34,6 +34,7 @@ const MyTickets = () => {
     const [filter, setFilter] = useState('');
     const [isNextDisabled, setIsNextDisabled] = useState(false);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const [header, setHeader] = useState('');
     const permissions = usePermissions();
 
     const { t } = useTranslation("translations");
@@ -44,6 +45,7 @@ const MyTickets = () => {
             try {
                 const userId = sessionStorage.getItem('loggedTasklyAppUserId');
                 const user = await userService.getUserById(userId);
+                displayTitle(user.accessId)
                 setUserAccess(user.accessId)
                 
                 if (permissions.includes('seeAllTickets')){
@@ -101,6 +103,23 @@ const MyTickets = () => {
         navigate(`/tickets/editTicket/${ticketId}`);
     };
 
+    const displayTitle = (userAccess) => {
+        switch(userAccess) {
+            case 1:
+                setHeader(t('tickets.allTicketsInOrganization'))
+                break
+            case 2:
+                setHeader(t('tickets.allTicketsInTeam'))
+                break
+            case 5:
+                setHeader(t('tickets.allMyTicketsInfo'))
+                break
+            default:
+                setHeader(t('tickets.allMyAssignedTicketsInfo'))
+                break
+        }
+    }
+
     return (
         <Box sx={{ width: '100%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
             <Paper>
@@ -110,7 +129,7 @@ const MyTickets = () => {
                             {t('tickets.allMyTickets')}
                         </Typography>
                         <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                            {userAccess !== 5 ? t('tickets.allMyAssignedTicketsInfo') : t('tickets.allMyTicketsInfo')}
+                            {header}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
@@ -138,7 +157,7 @@ const MyTickets = () => {
                                     </TableCell>
                                     <TableCell width="15%">
                                         <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                            {userAccess !== 5 ? t('tickets.developer') : t('tickets.creator')}
+                                            {userAccess === 5 || userAccess == 1 ? t('tickets.creator') : t('tickets.developer')}
                                         </Typography>
                                     </TableCell>
                                     <TableCell width="10%">
