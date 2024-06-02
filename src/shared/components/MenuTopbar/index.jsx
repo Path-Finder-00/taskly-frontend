@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-
+import { useState } from 'react'
 import { Box, AppBar, Toolbar, IconButton, Grid, Button } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
@@ -7,8 +7,12 @@ import { sizes, color } from '@/shared/utils/styles'
 import logo from '@/App/assets/taskly_logo.png'
 import i18n from "i18next";
 import { useTranslation } from 'react-i18next'
+import logoutService from '@/App/services/logout';
+import { removeStoredAuthToken } from '@/shared/utils/authToken'
+import { removeStoredUserId } from '@/shared/utils/storeUserId'
+import { useSnackbar } from '@/shared/components/Snackbar';
 
-const MenuTopbar = () => {
+const MenuTopbar = ({ setUser }) => {
     const StyledAppBar = styled(AppBar)(({ theme }) => ({
         height: sizes.topbarHeight,
         width: '100%',
@@ -17,9 +21,25 @@ const MenuTopbar = () => {
 
     const navigate = useNavigate()
     const { t } = useTranslation("translations")
+    const { openSnackbar } = useSnackbar();
 
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng);
+    }
+
+    const logout = () => {
+        logoutService.logout()
+            .then(() => {
+                removeStoredUserId(),
+                removeStoredAuthToken(),
+                setUser(null),
+                openSnackbar(t('topbar.logoutSuccess'), 'success'),
+                navigate('/', { replace: true })
+            })
+            .catch(err => {
+                console.error('Error while logging out:', err),
+                openSnackbar(t('topbar.logoutError'), 'error');
+            })
     }
 
     return (
@@ -36,6 +56,7 @@ const MenuTopbar = () => {
                     </IconButton >
                     <Grid container justifyContent="flex-end" gap="8px">
                         <Button onClick={() => changeLanguage(t('topbar.changeLanguage'))} sx={{ color: `${color.third}`}}>{t('topbar.changeLanguage')}</Button>
+                        <Button onClick={() => logout()} sx={{ color: `${color.third}`}}>{t('topbar.logout')}</Button>
                     </Grid>
                 </Toolbar>
             </StyledAppBar>

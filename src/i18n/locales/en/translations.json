@@ -12,7 +12,11 @@
         "userList": "User List"
     },
     "topbar": {
-        "changeLanguage": "pl"
+        "changeLanguage": "pl",
+        "logout": "Logout",
+        "logoutSuccess": "Logged out successfully",
+        "logoutError": "An error occurred while logging out"
+
     },
     "dropdown": {
         "empty": "There are no options available."

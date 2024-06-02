@@ -12,7 +12,10 @@
         "userList": "Lista Użytkowników"
     },
     "topbar": {
-        "changeLanguage": "en"
+        "changeLanguage": "en",
+        "logout": "Wyloguj",
+        "logoutSuccess": "Wylogowano pomyślnie",
+        "logoutError": "Wystąpił błąd podczas wylogowywania"
     },
     "dropdown": {
         "empty": "Brak dostępnych opcji."
