@@ -69,13 +69,13 @@ const App = () => {
 
 const AppContent = ({ user, setUser }) => {
 
-    const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
-    const permissions = usePermissions();
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, closeSnackbar } = useSnackbar();
+  const permissions = usePermissions();
 
-    return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', height: '100%' }}>
+  return (
+    <Box sx={{ display: 'flex', height: '100vh' }}>
         <CssBaseline />
-        {user && <MenuTopbar>
+        {user && <MenuTopbar setUser={setUser}>
 
         </MenuTopbar>}
         {user && <MenuSidebar>
@@ -104,7 +104,7 @@ const AppContent = ({ user, setUser }) => {
                 <Route path="/tickets/commentsAttachments/:ticketId" element={user ? <CommentsAttachments /> : <Navigate replace to="/login" />} />
                 <Route path="/users/userList" element={(user && permissions.includes('seeAllUsers')) ? <UserList /> : <Navigate replace to="/login" />} />
                 <Route path="*" element={ <Navigate to="/login" replace /> } />
-                </Routes>
+            </Routes>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} sx={{ fontSize: '1.5rem', padding: '1.5rem', maxWidth: '80vw' }}>
                 <Alert onClose={closeSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
                 {snackbarMessage}
@@ -112,7 +112,7 @@ const AppContent = ({ user, setUser }) => {
             </Snackbar>
             </Box>
         </ThemeProvider>
-        </Box>
+    </Box>
     )
 }
 
