@@ -8,6 +8,18 @@ const getUserProjects = async () => {
     return response
 }
 
+const getProjectByUserId = async (userId) => {
+    const response = api.get(`${baseUrl}/user/${userId}`)
+
+    return response
+}
+
+const getUserProjectsWithRoles = async () => {
+    const response = api.get(`${baseUrl}/projectsWithRoles`)
+
+    return response
+}
+
 const getProjectById = async (projectId) => {
     try {
         const url = `${baseUrl}/${projectId}`
@@ -19,9 +31,9 @@ const getProjectById = async (projectId) => {
     } 
 }
 
-const getProjectsByTeamId = async (teamId) => {
+const getProjectsByTeamId = async () => {
     try {
-        const url = `${baseUrl}/availableProjectsByTeamId/${teamId}`;
+        const url = `${baseUrl}/availableProjectsByTeamId/`;
         const response = await api.get(url);
         return response;
     } catch (error) {
@@ -30,9 +42,9 @@ const getProjectsByTeamId = async (teamId) => {
     } 
 };
 
-const getProjectsByOrgId = async (orgId) => {
+const getProjectsByOrgId = async () => {
     try {
-        const url = `${baseUrl}/availableProjectsByOrganizationId/${orgId}`;
+        const url = `${baseUrl}/availableProjectsByOrganizationId`;
         const response = await api.get(url);
         return response;
     } catch (error) {
@@ -73,4 +85,4 @@ const editProject = async (projectId, projectPayload) => {
     }
 }
 
-export default { getUserProjects, getProjectById, createProject, getProjectsByTeamId, getProjectsByOrgId, editProject, getProjectTickets }
+export default { getUserProjects, getUserProjectsWithRoles, getProjectById, createProject, getProjectsByTeamId, getProjectsByOrgId, editProject, getProjectTickets, getProjectByUserId }

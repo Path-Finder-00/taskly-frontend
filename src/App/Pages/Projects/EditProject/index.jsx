@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter'
 import { useSnackbar } from '@/shared/components/Snackbar';
 import projectService from '@/App/services/projects';
@@ -25,7 +25,9 @@ import {
     FormControl,
     TextField,
     Select,
-    MenuItem
+    MenuItem,
+    FormHelperText,
+    CircularProgress 
 } from '@mui/material'
 
 
@@ -33,6 +35,7 @@ const EditProject = () => {
 
     const { t } = useTranslation("translations")
     const navigate = useNavigate();
+
     const [selectedMember, setSelectedMember] = useState('')
     const [filter, setFilter] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
@@ -40,10 +43,12 @@ const EditProject = () => {
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [teamMembers, setTeamMembers] = useState([]);
-    const [project, setProject] = useState(null);
     const [roles, setRoles] = useState([]);
     const [nameError, setNameError] = useState('');
     const [descError, setDescError] = useState('');
+    const [memberError, setMemberError] = useState('');
+    const [loading, setLoading] = useState(true);
+
     const { projectId } = useParams();
     const { openSnackbar } = useSnackbar();
 
@@ -62,18 +67,24 @@ const EditProject = () => {
             member.employee.id === selectedMember
         );
 
-        if (memberToAdd && !teamList.some(member => member.id === memberToAdd.employee.id)) {
-            setTeamList([
-                ...teamList,
-                {
-                    id: memberToAdd.employee.id,
-                    user_id: memberToAdd.employee.userId,
-                    name: `${memberToAdd.name} ${memberToAdd.surname}`,
-                    email: memberToAdd.email,
-                    role: selectedRole.role,
-                    role_id: selectedRole.id
-                }
-            ]);
+        if (memberToAdd) {
+            if (!teamList.some(member => member.id === memberToAdd.employee.id)) {
+                setTeamList([
+                    ...teamList,
+                    {
+                        id: memberToAdd.employee.id,
+                        user_id: memberToAdd.employee.userId,
+                        name: `${memberToAdd.name} ${memberToAdd.surname}`,
+                        email: memberToAdd.email,
+                        role: selectedRole.role,
+                        role_id: selectedRole.id
+                    }
+                ]);
+            } else {
+                setMemberError(t('projects.memberAlreadyInProject'))
+            }
+        } else {
+            setMemberError(t('projects.memberNotSelected'))
         }
     };
 
@@ -106,8 +117,7 @@ const EditProject = () => {
         };
 
         try {
-            const response = await projectService.editProject(projectId, projectPayload);
-            console.log('Project edited:', response)
+            await projectService.editProject(projectId, projectPayload);
             openSnackbar(t('projects.editingSuccess'), 'success');
             navigate(`/projects/projectDetails/${projectId}`, { replace: true } )
         } catch (error) {
@@ -143,15 +153,10 @@ const EditProject = () => {
             try {
                 const rolesData = await roleService.getRoles();
                 setRoles(rolesData);
-
                 if (projectId) {
                     const projectData = await projectService.getProjectById(projectId);
-                    setProject(projectData);
                     setProjectName(projectData.name);
                     setProjectDescription(projectData.description);
-
-                    console.log(projectData.employees)
-
                     if (projectData.employees) {
                         const mappedMembers = projectData.employees.map(emp => {
                             const role = rolesData.find(role => role.id === emp.employee_project.roleId);
@@ -169,9 +174,10 @@ const EditProject = () => {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false)
             }
         };
-
         teamService.getTeamMembers()
             .then(data => {
                 setTeamMembers(data)
@@ -179,13 +185,15 @@ const EditProject = () => {
             .catch(err => {
                 console.error('Error fetching members:', err)
             })
-
         fetchRolesAndProject();
-
     }, [projectId]);
 
-    if (!project) {
-        return <div>{t('projects.loading')}</div>;
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
@@ -219,7 +227,7 @@ const EditProject = () => {
                     <Typography variant="h6" sx={{ color: `${color.textDark}`, marginTop: 8, marginBottom: 3 }}>
                         {t('projects.selectMember')}
                     </Typography>
-                    <FormControl sx={{ width: '100%' }}>
+                    <FormControl error={!!memberError} sx={{ width: '100%' }} size="medium">
                         <InputLabel id="select-team-member-label">{t('projects.teamMember')}</InputLabel>
                         <Select
                             labelId="select-team-member-label"
@@ -227,6 +235,7 @@ const EditProject = () => {
                             value={selectedMember}
                             onChange={(event) => setSelectedMember(event.target.value)}
                             label={t('projects.teamMember')}
+                            error={!!memberError}
                         >
                             {teamMembers.map((member) => (
                                 <MenuItem key={member.employee.id} value={member.employee.id}>
@@ -234,6 +243,7 @@ const EditProject = () => {
                                 </MenuItem>
                             ))}
                         </Select>
+                        {memberError && <FormHelperText>{memberError}</FormHelperText>}
                     </FormControl>
                     <Typography variant="h6" sx={{ color: `${color.textDark}`, marginTop: 3, marginBottom: 3 }}>
                         {t('projects.selectRole')}
@@ -350,8 +360,7 @@ const EditProject = () => {
                 </Paper>
             </Grid>
         </Grid>
-
     )
 }
 
-export default EditProject
+export default EditProject;

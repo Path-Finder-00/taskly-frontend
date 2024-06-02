@@ -72,7 +72,9 @@
         "creationSuccess": "Project created successfully",
         "creationError": "An error occurred while creating a Project",
         "editingSuccess": "Project edited successfully",
-        "editingError": "An error occurred while editing a Project"
+        "editingError": "An error occurred while editing a Project",
+        "memberNotSelected": "You have to choose a member to add to project",
+        "memberAlreadyInProject": "Selected member is already participating in the project"
     },
     "users": {
         "name": "Name",
@@ -107,12 +109,14 @@
         "creationError": "An error occurred while creating a User",
         "editingSuccess": "User edited successfully",
         "editingError": "An error occurred while editing a User",
-        "loading": "Loading user data..."
+        "loading": "Loading user data...",
+        "emailExistsError": "This email address is already in use"
     },
     "tickets": {
         "title": "Title",
         "submitter": "Submitter",
         "developer": "Developer",
+        "creator": "Creator",
         "status": "Status",
         "created": "Created",
         "nameLengthError": "Ticket name cannot be longer than 80 characters.",
@@ -126,7 +130,8 @@
         "submit": "Submit",
         "projectName": "Project Name",
         "allMyTickets": "All of my tickets",
-        "allMyTicketsInfo": "Information about tickets",
+        "allMyTicketsInfo": "Tickets you've created",
+        "allMyAssignedTicketsInfo": "Tickets you're assigned to",
         "addTicket": "Add Ticket",
         "noTickets": "No tickets to display",
         "details": "Ticket Details",

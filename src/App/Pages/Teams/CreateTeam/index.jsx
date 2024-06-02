@@ -35,8 +35,7 @@ const CreateTeam = () => {
 
         if (formValid) {
             try {
-                const response = await teamsService.createTeam(team)
-                console.log('Team created:', response)
+                await teamsService.createTeam(team)
                 openSnackbar(t('teams.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
             } catch (error) {

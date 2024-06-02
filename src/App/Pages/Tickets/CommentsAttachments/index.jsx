@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 
 import {
@@ -17,11 +17,11 @@ import {
     FormHelperText,
     FormControl,
     InputLabel,
-    OutlinedInput
+    OutlinedInput,
+    CircularProgress
 } from '@mui/material';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import { styled } from '@mui/material/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -34,7 +34,6 @@ import attachmentsService from '@/App/services/attachments';
 const CommentsAttachments = () => {
 
     const { t } = useTranslation("translations");
-    const navigate = useNavigate();
 
     const [commentFilter, setCommentFilter] = useState('');
     const [attachmentFilter, setAttachmentFilter] = useState('');
@@ -50,26 +49,26 @@ const CommentsAttachments = () => {
     const [isPrevCommentDisabled, setIsPrevCommentDisabled] = useState(true);
     const [isNextAttachmentDisabled, setIsNextAttachmentDisabled] = useState(false);
     const [isPrevAttachmentDisabled, setIsPrevAttachmentDisabled] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     const { ticketId } = useParams();
     const commentsNumberRef = useRef(0);
     const attachmentsNumberRef = useRef(0);
 
     useEffect(() => {
-        commentsService.getTicketComments(ticketId)
-            .then(data => {
-                setComments(data)
-            })
-            .catch(err => {
-                console.error('Error fetching comments:', err);
-            })
-        attachmentsService.getTicketAttachments(ticketId)
-            .then(data => {
-                setAttachments(data)
-            })
-            .catch(err => {
-                console.error('Error fetching attachments:', err)
-            })
+        const fetchData = async () => {
+            try {
+                const comments = await commentsService.getTicketComments(ticketId);
+                setComments(comments);
+                const attachments = await attachmentsService.getTicketAttachments(ticketId);
+                setAttachments(attachments);
+            } catch (error) {
+                console.error("Error while fetching comments and attachments data: ", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
     }, [ticketId]);
 
     useEffect(() => {
@@ -209,55 +208,60 @@ const CommentsAttachments = () => {
                             </Box>
                         </Box>
                         <TableContainer component={Paper} elevation={0} sx={{ width: '100%', height: '100%' }}>
-                            <Table aria-label="simple table" sx={{ width: '100%' }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.commenter')}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.comment')}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.submitted')}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {commentFilterCount !== 0 ? comments
-                                        .filter(comment =>
-                                            comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
-                                            comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
-                                            comment.comment.toLowerCase().includes(commentFilter.toLowerCase()))
-                                        .map((comment) => (
-                                            <TableRow key={comment.id}>
-                                                <TableCell component="th" scope="row">
-                                                    {comment.user.name} {comment.user.surname}
-                                                </TableCell>
-                                                <TableCell
-                                                    style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
-                                                >
-                                                    {comment.comment}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {new Date(comment.createdAt).toLocaleString('pl-PL')}
-                                                </TableCell>
-                                            </TableRow>
-                                        )).slice(0 + commentPage * 8, 8 + commentPage * 8) :
+                            { loading ? (
+                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                                    <CircularProgress />
+                                </Box>
+                            ) : ( <Table aria-label="simple table" sx={{ width: '100%' }}>
+                                    <TableHead>
                                         <TableRow>
-                                            <TableCell colSpan={3} align="center">
-                                                {t('tickets.noComments')}
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.commenter')}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.comment')}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.submitted')}
+                                                </Typography>
                                             </TableCell>
                                         </TableRow>
-                                    }
-                                </TableBody>
-                            </Table>
+                                    </TableHead>
+                                    <TableBody>
+                                        {commentFilterCount !== 0 ? comments
+                                            .filter(comment =>
+                                                comment.user.name.toLowerCase().includes(commentFilter.toLowerCase()) ||
+                                                comment.user.surname.toLowerCase().includes(commentFilter.toLowerCase()) ||
+                                                comment.comment.toLowerCase().includes(commentFilter.toLowerCase()))
+                                            .map((comment) => (
+                                                <TableRow key={comment.id}>
+                                                    <TableCell component="th" scope="row">
+                                                        {comment.user.name} {comment.user.surname}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
+                                                    >
+                                                        {comment.comment}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {new Date(comment.createdAt).toLocaleString('pl-PL')}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )).slice(0 + commentPage * 8, 8 + commentPage * 8) :
+                                            <TableRow>
+                                                <TableCell colSpan={3} align="center">
+                                                    {t('tickets.noComments')}
+                                                </TableCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            )}
                         </TableContainer>
                         <Box display="flex" justifyContent="space-between" sx={{ p: 2, mb: -2 }}>
                             <Button disabled={isPrevCommentDisabled} variant="contained" onClick={handleCommentPageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
@@ -298,71 +302,76 @@ const CommentsAttachments = () => {
                             </Box>
                         </Box>
                         <TableContainer component={Paper} elevation={0} sx={{ width: '100%', height: '100%' }}>
-                            <Table aria-label="simple table" sx={{ width: '100%' }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.attachments.file')}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.attachments.uploader')}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.attachments.description')}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                                {t('tickets.attachments.download')}
-                                            </Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {attachmentFilterCount !== 0 ? attachments
-                                        .filter(attachment =>
-                                            attachment.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
-                                            attachment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
-                                            attachment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
-                                            attachment.description.toLowerCase().includes(attachmentFilter.toLowerCase()))
-                                        .map((attachment) => (
-                                            <TableRow key={attachment.id}>
-                                                <TableCell component="th" scope="row">
-                                                    {attachment.name}
-                                                </TableCell>
-                                                <TableCell component="th" scope="row">
-                                                    {attachment.user.name} {attachment.user.surname}
-                                                </TableCell>
-                                                <TableCell
-                                                    style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
-                                                >
-                                                    {attachment.description}
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    {/* {new Date(attachment.createdAt).toLocaleString('pl-PL')} */}
-                                                    <Button
-                                                        onClick={() => downloadAttachment(attachment.name)}
-                                                        variant='contained'
-                                                        sx={{ width: '100%', height: '100%' }}
-                                                    >
-                                                        <DownloadIcon sx={{ color: `${color.mainBackground}` }}/>
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        )).slice(0 + attachmentPage * 8, 8 + attachmentPage * 8) :
+                            { loading ? (
+                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                                    <CircularProgress />
+                                </Box>
+                            ) : ( <Table aria-label="simple table" sx={{ width: '100%' }}>
+                                    <TableHead>
                                         <TableRow>
-                                            <TableCell colSpan={4} align="center">
-                                                {t('tickets.attachments.noAttachments')}
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.attachments.file')}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.attachments.uploader')}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.attachments.description')}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                    {t('tickets.attachments.download')}
+                                                </Typography>
                                             </TableCell>
                                         </TableRow>
-                                    }
-                                </TableBody>
-                            </Table>
+                                    </TableHead>
+                                    <TableBody>
+                                        {attachmentFilterCount !== 0 ? attachments
+                                            .filter(attachment =>
+                                                attachment.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                                attachment.user.name.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                                attachment.user.surname.toLowerCase().includes(attachmentFilter.toLowerCase()) ||
+                                                attachment.description.toLowerCase().includes(attachmentFilter.toLowerCase()))
+                                            .map((attachment) => (
+                                                <TableRow key={attachment.id}>
+                                                    <TableCell component="th" scope="row">
+                                                        {attachment.name}
+                                                    </TableCell>
+                                                    <TableCell component="th" scope="row">
+                                                        {attachment.user.name} {attachment.user.surname}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
+                                                    >
+                                                        {attachment.description}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        {/* {new Date(attachment.createdAt).toLocaleString('pl-PL')} */}
+                                                        <Button
+                                                            onClick={() => downloadAttachment(attachment.name)}
+                                                            variant='contained'
+                                                            sx={{ width: '100%', height: '100%' }}
+                                                        >
+                                                            <DownloadIcon sx={{ color: `${color.mainBackground}` }}/>
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )).slice(0 + attachmentPage * 8, 8 + attachmentPage * 8) :
+                                            <TableRow>
+                                                <TableCell colSpan={4} align="center">
+                                                    {t('tickets.attachments.noAttachments')}
+                                                </TableCell>
+                                            </TableRow>
+                                        }
+                                    </TableBody>
+                                </Table>
+                            )}
                         </TableContainer>
                         <Box display="flex" justifyContent="space-between" sx={{ p: 2, mb: -2 }}>
                             <Button disabled={isPrevAttachmentDisabled} variant="contained" onClick={handleAttachmentPageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >

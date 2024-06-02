@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router';
 import { useSnackbar } from '@/shared/components/Snackbar';
+import { usePermissions } from '@/shared/components/Permissions';
 import { color } from '@/shared/utils/styles';
 import {
     Grid,
@@ -18,6 +19,7 @@ import {
     FormControlLabel,
     IconButton,
     InputAdornment,
+    CircularProgress
 } from '@mui/material'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
@@ -28,7 +30,6 @@ import organizationsService from '@/App/services/organizations';
 import projectsService from '@/App/services/projects';
 import usersService from '@/App/services/users';
 import employmentHistoriesService from '@/App/services/employment_histories';
-import clientsService from '@/App/services/clients';
 
 
 const EditUser = () => {
@@ -36,6 +37,7 @@ const EditUser = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const navigate = useNavigate();
     const { openSnackbar } = useSnackbar();
+    const permissions = usePermissions();
     const userId = useParams().userId;
     const { t } = useTranslation("translations")
     const [user, setUser] = useState(null);
@@ -50,6 +52,7 @@ const EditUser = () => {
     const [passwordError, setPasswordError] = useState('');
     const [teamError, setTeamError] = useState('');
     const [projectError, setProjectError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const handleSubmit = async () => {
         const isNameValid = validateName();
@@ -77,10 +80,14 @@ const EditUser = () => {
             try {
                 await usersService.editUser(userId, user)
                 openSnackbar(t('users.editingSuccess'), 'success');
-                navigate(`/profile`, { replace: true });
+                navigate(`/profile/${userId}`, { replace: true });
             } catch (error) {
-                console.error('Error creating ticket:', error)
-                openSnackbar(t('users.editingError'), 'error');
+                if (error && error === "Email exists") {
+                    openSnackbar(t('users.emailExistsError'), 'error');
+                } else {
+                    console.error('Error creating user:', error)
+                    openSnackbar(t('users.creationError'), 'error');
+                }
             }
         }
     };
@@ -192,10 +199,11 @@ const EditUser = () => {
             try {
                 const userData = await usersService.getUserById(userId)
                 const organization = await organizationsService.getOrganization()
-                if (!userData.employee) {
+                if (userData.accessId === 5) { // Check if user is a client
                     const projectsData = await projectsService.getProjectsByOrgId(organization.id)
-                    setProjects(projectsData);
-                    const clientData = await clientsService.getClientByUserId(userId)
+                    setProjects(projectsData)
+                    const clientProjects = await projectsService.getProjectByUserId(userId)
+                    const clientProject = clientProjects.filter(project => project.employee_project.to === null)[0]
                     setUser(
                         {
                             password: '',
@@ -203,7 +211,7 @@ const EditUser = () => {
                             surname: userData.surname,
                             email: userData.email,
                             phone: userData.phone,
-                            project: clientData.client_projects[clientData.client_projects.length - 1].projectId,
+                            project: clientProject.id,
                             is_client: true,
                             organization: organization.id
                         }
@@ -235,13 +243,19 @@ const EditUser = () => {
                 }
             } catch (err) {
                 console.error("Error fetching data: ", err);
+            } finally {
+                setLoading(false)
             }
         };
         fetchData();
     }, [userId]);
 
-    if (!user) {
-        return <div>{t('users.loading')}</div>;
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
@@ -261,6 +275,7 @@ const EditUser = () => {
                             value={user.name}
                             onChange={handleChange('name')}
                             label={t('users.name')}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {nameError && <FormHelperText>{nameError}</FormHelperText>}
                     </FormControl>
@@ -274,6 +289,7 @@ const EditUser = () => {
                             value={user.surname}
                             onChange={handleChange('surname')}
                             label={t('users.surname')}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {surnameError && <FormHelperText>{surnameError}</FormHelperText>}
                     </FormControl>
@@ -287,6 +303,7 @@ const EditUser = () => {
                             value={user.email}
                             onChange={handleChange('email')}
                             label={t('users.email')}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {emailError && <FormHelperText>{emailError}</FormHelperText>}
                     </FormControl>
@@ -326,6 +343,7 @@ const EditUser = () => {
                             value={user.phone}
                             onChange={handleChange('phone')}
                             label={t('users.phone')}
+                            disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                         />
                         {phoneError && <FormHelperText>{phoneError}</FormHelperText>}
                     </FormControl>
@@ -340,6 +358,7 @@ const EditUser = () => {
                                 value={user.project}
                                 onChange={handleChange('project')}
                                 label={t('dashboard.project')}
+                                disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                             >
                                 {projects?.map((projects) => (
                                     <MenuItem
@@ -364,6 +383,7 @@ const EditUser = () => {
                                 value={user.team}
                                 onChange={handleChange('team')}
                                 label={t('teams.team')}
+                                disabled={!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")}
                             >
                                 {teams?.map((team) => (
                                     <MenuItem
@@ -413,6 +433,7 @@ const EditUser = () => {
                                     onChange={handleChange('admin')}
                                     name="admin"
                                     color="primary"
+                                    disabled={(!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")) || !permissions.includes("createHighAccessUser")}
                                 />
                             }
                             label={t('users.admin')}
@@ -421,13 +442,14 @@ const EditUser = () => {
                 )}
                 {!user.is_client && (
                     <Grid item md={6}>
-                        <FormControlLabel disabled={user.is_client}
+                        <FormControlLabel
                             control={
                                 <Checkbox
                                     checked={user.team_lead}
                                     onChange={handleChange('team_lead')}
                                     name="team_lead"
                                     color="primary"
+                                    disabled={(!permissions.includes("editUserInTeam") && !permissions.includes("editAnyUser")) || !permissions.includes("createHighAccessUser")}
                                 />
                             }
                             label={t('teams.teamLead')}

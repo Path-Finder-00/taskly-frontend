@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react';
 
 import {
     Box,
@@ -12,72 +12,86 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    CircularProgress
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import { usePermissions } from '@/shared/components/Permissions';
 
 import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
 import ticketsService from '@/App/services/tickets';
+import userService from '@/App/services/users';
 
 const MyTickets = () => {
-
     const [tickets, setTickets] = useState([]);
+    const [userAccess, setUserAccess] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
-    const ticketsNumberRef = useRef(0);
     const [filter, setFilter] = useState('');
     const [isNextDisabled, setIsNextDisabled] = useState(false);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const permissions = usePermissions();
 
     const { t } = useTranslation("translations");
     const navigate = useNavigate();
 
     useEffect(() => {
-        ticketsService.getMyTickets()
-            .then(data => {
-                setTickets(data)
-            })
-            .catch(err => {
-                console.error('Error fetching tickets:', err);
-            });
+        const fetchData = async () => {
+            try {
+                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+                const user = await userService.getUserById(userId);
+                setUserAccess(user.accessId)
+                
+                if (permissions.includes('seeAllTickets')){
+                    const fetchedTickets = await ticketsService.getAllTickets();
+                    setTickets(fetchedTickets);
+                } else if (permissions.includes('seeAllTicketsInTeam')) {
+                    const fetchedTickets = await ticketsService.getAllTicketsInTeam();
+                    setTickets(fetchedTickets);
+                } else {
+                    const fetchedTickets = await ticketsService.getMyTickets();
+                    setTickets(fetchedTickets);
+                }
+
+            } catch (err) {
+                console.error("Error fetching tickets: ", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
     }, []);
 
     useEffect(() => {
-        ticketsNumberRef.current = tickets.length
-    }, [tickets])
-
-    useEffect(() => {
-        const count = tickets.filter(ticket =>
+        const filteredCount = tickets.filter(ticket =>
             ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
             ticket.projectName.toLowerCase().includes(filter.toLowerCase())
         ).length;
 
-        ticketsNumberRef.current = count;
+        const maxPage = Math.ceil(filteredCount / 10) - 1;
+        setIsPrevDisabled(page <= 0);
+        setIsNextDisabled(page >= maxPage);
 
-        const maxPage = Math.ceil(ticketsNumberRef.current / 10) - 1;
         if (page > maxPage && maxPage !== -1) {
             setPage(maxPage > 0 ? maxPage : 0);
-        } else {
-            setIsPrevDisabled(page <= 0);
-            setIsNextDisabled(page >= maxPage);
         }
-
-    }, [filter, tickets, page]);
+    }, [tickets, filter, page]);
 
     const handleFilterChange = (event) => {
-        setFilter(event.target.value)
-    }
+        setFilter(event.target.value);
+    };
 
     const handlePageChangeForward = () => {
-        setPage(current => current + 1)
-    }
+        setPage(current => current + 1);
+    };
 
     const handlePageChangeBackward = () => {
-        setPage(current => current - 1)
-    }
+        setPage(current => current - 1);
+    };
 
     const handleNavigateToTicketDetails = (ticketId) => {
         navigate(`/tickets/ticketDetails/${ticketId}`);
@@ -96,7 +110,7 @@ const MyTickets = () => {
                             {t('tickets.allMyTickets')}
                         </Typography>
                         <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                            {t('tickets.allMyTicketsInfo')}
+                            {userAccess !== 5 ? t('tickets.allMyAssignedTicketsInfo') : t('tickets.allMyTicketsInfo')}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
@@ -104,57 +118,61 @@ const MyTickets = () => {
                     </Box>
                 </Box>
                 <TableContainer sx={{ width: "100%" }}>
-                    <Table aria-label="simple table" sx={{ width: "100%" }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell width="25%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.title')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.projectName')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.developer')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.priority')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.status')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.type')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.created')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="5%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.actions')}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {ticketsNumberRef.current !== 0 ? tickets.filter(ticket =>
-                                ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
-                                ticket.projectName.toLowerCase().includes(filter.toLowerCase())
-                            ).map((ticket) => {
-                                return (
+                    {loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <Table aria-label="simple table" sx={{ width: "100%" }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell width="25%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.title')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.projectName')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {userAccess !== 5 ? t('tickets.developer') : t('tickets.creator')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.priority')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.status')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.type')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.created')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="5%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.actions')}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {tickets.length > 0 ? tickets.filter(ticket =>
+                                    ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
+                                    ticket.projectName.toLowerCase().includes(filter.toLowerCase())
+                                ).slice(page * 10, (page + 1) * 10).map((ticket) => (
                                     <TableRow key={ticket.id}>
                                         <TableCell>{ticket.title}</TableCell>
                                         <TableCell>{ticket.projectName}</TableCell>
@@ -164,7 +182,7 @@ const MyTickets = () => {
                                         <TableCell>{ticket.type}</TableCell>
                                         <TableCell>{new Date(ticket.createdAt).toLocaleString('pl-PL')}</TableCell>
                                         <TableCell>
-                                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
                                                 <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
                                                     <InfoIcon />
                                                 </Button>
@@ -174,31 +192,31 @@ const MyTickets = () => {
                                             </Box>
                                         </TableCell>
                                     </TableRow>
-                                );
-                            }).slice(0 + page * 10, 10 + page * 10) :
-                                <TableRow key={0}>
-                                    <TableCell colSpan={8} align="center">
-                                        {t('tickets.noTickets')}
-                                    </TableCell>
-                                </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
+                                )) : (
+                                    <TableRow key={0}>
+                                        <TableCell colSpan={8} align="center">
+                                            {t('tickets.noTickets')}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    )}
                 </TableContainer>
                 <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5 }}>
-                    <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                    <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }}>
                         <NavigateBeforeIcon />
                     </Button>
                     <Button variant="contained" onClick={() => navigate('/createTicket/')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                         {t('tickets.addTicket')}
                     </Button>
-                    <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
+                    <Button disabled={isNextDisabled} onClick={handlePageChangeForward} variant="contained" sx={{ maxWidth: '133px', width: '10%', height: '40px' }}>
                         <NavigateNextIcon />
                     </Button>
                 </Box>
             </Paper>
         </Box>
-    )
+    );
 }
 
-export default MyTickets
+export default MyTickets;

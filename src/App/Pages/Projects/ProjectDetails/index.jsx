@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import projectService from '@/App/services/projects';
 import roleService from '@/App/services/roles';
 import {
@@ -14,7 +14,8 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    CircularProgress
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -27,29 +28,36 @@ const ProjectDetails = () => {
     const [projectMembers, setProjectMembers] = useState(null);
     const [tickets, setTickets] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handleNavigateToTicketDetails = (ticketId) => {
         navigate(`/tickets/ticketDetails/${ticketId}`);
     };
 
     useEffect(() => {
-        roleService.getRoles()
-            .then(data => {
-                setRoles(data)
-            })
-        projectService.getProjectById(projectId)
-            .then(data => {
-                setProject(data);
-                setProjectMembers(data.employees);
-                setTickets(data.tickets)
-            })
-            .catch(err => {
-                console.error('Error fetching project:', err);
-            });
+        const fetchData = async () => {
+            try {
+                const roles = await roleService.getRoles()
+                setRoles(roles)
+                const project = await projectService.getProjectById(projectId)
+                setProject(project);
+                setProjectMembers(project.employees);
+                setTickets(project.tickets)
+            } catch (error) {
+                console.error("Error while fetching project details: ", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
     }, [projectId]);
 
-    if (!project) {
-        return <div>{t('projects.loading')}</div>;
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
@@ -73,9 +81,9 @@ const ProjectDetails = () => {
                     </Box>
                 </Paper>
             </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                <Box sx={{ width: '50%', marginRight: '0.5%', boxShadow: 3, mb: 2 }}>
-                    <Paper>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                <Box sx={{ width: '49.5%', boxShadow: 3, mb: 2, height: 'auto' }}>
+                    <Paper elevation={0} >
                         <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                             <Typography variant="h6" gutterBottom component="div">
                                 {t('projects.projectPersonnel')}
@@ -88,9 +96,21 @@ const ProjectDetails = () => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>{t('users.name')}</TableCell>
-                                        <TableCell>{t('users.email')}</TableCell>
-                                        <TableCell>{t('users.role')}</TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('users.name')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('users.email')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('users.role')}
+                                            </Typography>
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -106,7 +126,7 @@ const ProjectDetails = () => {
                         </TableContainer>
                     </Paper>
                 </Box>
-                <Box sx={{ width: '50%', marginLeft: '0.5%', boxShadow: 3, mb: 2 }}>
+                <Box sx={{ width: '49.5%', boxShadow: 3, mb: 2, height: 'auto' }}>
                     <Paper elevation={0} >
                         <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                             <Typography variant="h6" gutterBottom component="div">
@@ -120,12 +140,36 @@ const ProjectDetails = () => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>{t('tickets.title')}</TableCell>
-                                        <TableCell>{t('tickets.submitter')}</TableCell>
-                                        <TableCell>{t('tickets.developer')}</TableCell>
-                                        <TableCell>{t('tickets.status')}</TableCell>
-                                        <TableCell>{t('tickets.created')}</TableCell>
-                                        <TableCell>{t('tickets.actions')}</TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.title')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.submitter')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.developer')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.status')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.created')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                                {t('tickets.actions')}
+                                            </Typography>
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

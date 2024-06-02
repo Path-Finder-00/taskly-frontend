@@ -12,7 +12,8 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
+    TableBody,
+    CircularProgress
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info'
 import EditIcon from '@mui/icons-material/Edit'
@@ -32,6 +33,8 @@ const AllTickets = () => {
     const [isNextDisabled, setIsNextDisabled] = useState(false)
     const [isPrevDisabled, setIsPrevDisabled] = useState(true)
     const [header, setHeader] = useState('')
+    const [loading, setLoading] = useState(true)
+
     const { projectId } = useParams()
     const location = useLocation()
     const { filterAttribute, attributeId } = location.state || {}
@@ -40,8 +43,9 @@ const AllTickets = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        projectService.getProjectTickets(projectId)
-            .then(tickets => {
+        const fetchData = async () => {
+            try {
+                const tickets = await projectService.getProjectTickets(projectId)
                 switch(filterAttribute) {
                     case "assignees":
                         setTickets(tickets.filter(ticket =>
@@ -68,8 +72,14 @@ const AllTickets = () => {
                         setHeader(t('dashboard.statuses'))
                         break
                 }
-            })
-    }, []);
+            } catch (error) {
+                console.error("Error while fetching filtered tickets data: ", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [attributeId, filterAttribute, projectId, t]);
 
     useEffect(() => {
         const count = tickets.filter(ticket =>
@@ -123,86 +133,91 @@ const AllTickets = () => {
                     </Box>
                 </Box>
                 <TableContainer sx={{ width: "100%" }}>
-                    <Table aria-label="simple table" sx={{ width: "100%" }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell width="25%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.title')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.projectName')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.developer')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.priority')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.status')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="10%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.type')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="15%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.created')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell width="5%">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('tickets.actions')}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {ticketsNumberRef !== 0 ? tickets.filter(ticket =>
-                                ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
-                                ticket.projectName.toLowerCase().includes(filter.toLowerCase())
-                            ).map((ticket) => {
-                                return (
-                                    <TableRow key={ticket.id}>
-                                        <TableCell>{ticket.title}</TableCell>
-                                        <TableCell>{ticket.projectName}</TableCell>
-                                        <TableCell>{ticket.name} {ticket.surname}</TableCell>
-                                        <TableCell>{ticket.priority}</TableCell>
-                                        <TableCell>{ticket.status}</TableCell>
-                                        <TableCell>{ticket.type}</TableCell>
-                                        <TableCell>{ticket.createdAt}</TableCell>
-                                        <TableCell>
-                                            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
-                                                <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
-                                                    <InfoIcon />
-                                                </Button>
-                                                <Button onClick={() => handleNavigateToTicketEdit(ticket.id)}>
-                                                    <EditIcon />
-                                                </Button>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            }).slice(0 + page * 10, 10 + page * 10) :
-                                <TableRow key={0}>
-                                    <TableCell>
-                                        {t('tickets.noTickets')}
+                    { loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : ( <Table aria-label="simple table" sx={{ width: "100%" }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell width="25%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.title')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.projectName')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.developer')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.priority')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.status')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="10%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.type')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="15%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.created')}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell width="5%">
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('tickets.actions')}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {ticketsNumberRef !== 0 ? tickets.filter(ticket =>
+                                    ticket.title.toLowerCase().includes(filter.toLowerCase()) ||
+                                    ticket.projectName.toLowerCase().includes(filter.toLowerCase())
+                                ).map((ticket) => {
+                                    return (
+                                        <TableRow key={ticket.id}>
+                                            <TableCell>{ticket.title}</TableCell>
+                                            <TableCell>{ticket.projectName}</TableCell>
+                                            <TableCell>{ticket.name} {ticket.surname}</TableCell>
+                                            <TableCell>{ticket.priority}</TableCell>
+                                            <TableCell>{ticket.status}</TableCell>
+                                            <TableCell>{ticket.type}</TableCell>
+                                            <TableCell>{ticket.createdAt}</TableCell>
+                                            <TableCell>
+                                                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 4}}>
+                                                    <Button onClick={() => handleNavigateToTicketDetails(ticket.id)}>
+                                                        <InfoIcon />
+                                                    </Button>
+                                                    <Button onClick={() => handleNavigateToTicketEdit(ticket.id)}>
+                                                        <EditIcon />
+                                                    </Button>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }).slice(0 + page * 10, 10 + page * 10) :
+                                    <TableRow key={0}>
+                                        <TableCell>
+                                            {t('tickets.noTickets')}
+                                        </TableCell>
+                                    </TableRow>
+                                }
+                            </TableBody>
+                        </Table>
+                    )}
                 </TableContainer>
                 <Box display="flex" justifyContent="space-between" sx={{ p: 2, mt: 5 }}>
                     <Button disabled={isPrevDisabled} variant="contained" onClick={handlePageChangeBackward} sx={{ maxWidth: '133px', width: '10%', height: '40px' }} >
@@ -217,4 +232,4 @@ const AllTickets = () => {
     )
 }
 
-export default AllTickets
+export default AllTickets;

@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -12,38 +12,70 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    TableBody
-} from '@mui/material'
+    TableBody,
+    CircularProgress
+} from '@mui/material';
 
-import Filter from '@/shared/components/Filter'
-import projectService from '@/App/services/projects'
+import Filter from '@/shared/components/Filter';
+import { usePermissions } from '@/shared/components/Permissions';
+import projectService from '@/App/services/projects';
+import userService from '@/App/services/users';
 
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 
 const MyProjects = () => {
+    const [filter, setFilter] = useState('');
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [filterCount, setFilterCount] = useState(0)
+    const permissions = usePermissions();
 
-    const [filter, setFilter] = useState('')
-    const [projects, setProjects] = useState([])
-    const filterCount = projects.length
-
-    const { t } = useTranslation("translations")
-    const navigate = useNavigate()
+    const { t } = useTranslation('translations');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        projectService
-            .getUserProjects()
-            .then(projects => {
-                setProjects(projects)
-            })
-    }, [])
+        const fetchProjects = async () => {
+            setLoading(true);
+            try {
+                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+                const user = await userService.getUserById(userId);
+
+                if (permissions.includes('seeAllProjects')){
+                    const fetchedProjects = await projectService.getProjectsByOrgId();
+                    setProjects(fetchedProjects);
+                } else if (permissions.includes('seeAllProjectsInTeam')) {
+                    const fetchedProjects = await projectService.getProjectsByTeamId();
+                    setProjects(fetchedProjects)
+                } else {
+                    const fetchedProjects = await projectService.getUserProjectsWithRoles();
+                    setProjects(fetchedProjects);
+                }
+
+            } catch (err) {
+                console.error("Error fetching projects: ", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProjects();
+    }, []);
+
+    useEffect(() => {
+        const filteredCount = (Array.isArray(projects) ? projects : []).filter(project =>
+            project.project.name.toLowerCase().includes(filter.toLowerCase())
+        ).length;
+        setFilterCount(filteredCount)
+    }, [projects, filter]);
 
     const handleFilterChange = (event) => {
-        setFilter(event.target.value)
-    }
+        setFilter(event.target.value);
+    };
 
     const handleNavigateToProjectDetails = (projectId) => {
         navigate(`/projects/projectDetails/${projectId}`);
     };
+
     const handleNavigateToEditProject = (projectId) => {
         navigate(`/projects/editProject/${projectId}`);
     };
@@ -59,14 +91,11 @@ const MyProjects = () => {
                     paddingBottom: '20px'
                 }}
             >
-                <Typography variant="h4" sx={{ color: `${color.textDark}` }}>
-                    {t('projects.title')}
-                </Typography>
-                <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
+                { permissions.includes('createProject') && <Button variant="contained" onClick={() => navigate('/projects/createProject')} sx={{ maxWidth: '400px', width: '30%', height: '40px' }}>
                     {t('projects.create')}
-                </Button>
+                </Button> }
             </Box>
-            <Box sx={{ width: '100%', boxShadow: 3 }} >
+            <Box sx={{ width: '100%', boxShadow: 3 }}>
                 <Box sx={{ backgroundColor: `${color.third}`, color: `${color.mainBackground}`, p: 2 }}>
                     <Typography variant="h6" component="div">
                         {t('projects.yourProjects')}
@@ -79,53 +108,59 @@ const MyProjects = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                         <Filter handleFilterChange={handleFilterChange} />
                     </Box>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('projects.name')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('projects.description')}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                        {t('projects.action')}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filterCount !== 0 ? projects.filter(project => project.name.toLowerCase().includes(filter.toLowerCase())).map((project) => (
-                                <TableRow key={project.id}>
-                                    <TableCell component="th" scope="row">
-                                        {project.name}
+                    { loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '300px' }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <Table aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('projects.name')}
+                                        </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {project.description}
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('projects.description')}
+                                        </Typography>
                                     </TableCell>
                                     <TableCell align="right">
-                                        <Button variant="contained" color="primary" onClick={() => handleNavigateToEditProject(project.id)}>{t('projects.manage')}</Button>
-                                        <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
+                                        <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
+                                            {t('projects.action')}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
-                            )) :
-                                <TableRow key={0}>
-                                    <TableCell>
-                                        {t('projects.noProject')}
-                                    </TableCell>
-                                </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
+                            </TableHead>
+                            <TableBody>
+                                {filterCount !== 0 ? projects.filter(project => project.project.name.toLowerCase().includes(filter.toLowerCase())).map((project) => (
+                                    <TableRow key={project.project.id}>
+                                        <TableCell component="th" scope="row">
+                                            {project.project.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {project.project.description}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            { (permissions.includes('editProject') || project.role === 1) && <Button variant="contained" color="primary" onClick={() => handleNavigateToEditProject(project.project.id)}>{t('projects.manage')}</Button> }
+                                            <Button variant="outlined" color="primary" onClick={() => handleNavigateToProjectDetails(project.project.id)} sx={{ ml: 1 }}>{t('projects.details')}</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : (
+                                    <TableRow key={0}>
+                                        <TableCell colSpan={3} align="center">
+                                            {t('projects.noProject')}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    )}
                 </TableContainer>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
-export default MyProjects
+export default MyProjects;
