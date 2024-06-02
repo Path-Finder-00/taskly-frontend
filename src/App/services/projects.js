@@ -31,9 +31,9 @@ const getProjectById = async (projectId) => {
     } 
 }
 
-const getProjectsByTeamId = async (teamId) => {
+const getProjectsByTeamId = async () => {
     try {
-        const url = `${baseUrl}/availableProjectsByTeamId/${teamId}`;
+        const url = `${baseUrl}/availableProjectsByTeamId/`;
         const response = await api.get(url);
         return response;
     } catch (error) {
@@ -42,9 +42,9 @@ const getProjectsByTeamId = async (teamId) => {
     } 
 };
 
-const getProjectsByOrgId = async (orgId) => {
+const getProjectsByOrgId = async () => {
     try {
-        const url = `${baseUrl}/availableProjectsByOrganizationId/${orgId}`;
+        const url = `${baseUrl}/availableProjectsByOrganizationId`;
         const response = await api.get(url);
         return response;
     } catch (error) {

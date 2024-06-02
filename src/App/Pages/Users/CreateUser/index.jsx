@@ -93,8 +93,12 @@ const CreateUser = () => {
                 openSnackbar(t('users.creationSuccess'), 'success');
                 navigate(`/dashboard`, { replace: true });
             } catch (error) {
-                console.error('Error creating ticket:', error)
-                openSnackbar(t('users.creationError'), 'error');
+                if (error && error === "Email exists") {
+                    openSnackbar(t('users.emailExistsError'), 'error');
+                } else {
+                    console.error('Error creating user:', error)
+                    openSnackbar(t('users.creationError'), 'error');
+                }
             }
         }
     };

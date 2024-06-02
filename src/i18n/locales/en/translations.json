@@ -105,7 +105,8 @@
         "creationError": "An error occurred while creating a User",
         "editingSuccess": "User edited successfully",
         "editingError": "An error occurred while editing a User",
-        "loading": "Loading user data..."
+        "loading": "Loading user data...",
+        "emailExistsError": "This email address is already in use"
     },
     "tickets": {
         "title": "Title",

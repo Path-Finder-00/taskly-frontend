@@ -40,5 +40,27 @@ const editTicket = async (ticketId, ticketPayload) => {
     }
 }
 
-export default { getMyTickets, createTicket, getTicketById, editTicket }
+const getAllTickets = async () => {
+    try {
+        const url = `${baseUrl}/allTickets`;
+        const response = await api.get(url)
+        return response
+    } catch (error) {
+        console.error('Error editing ticket:', error);
+        throw error
+    }
+}
+
+const getAllTicketsInTeam = async () => {
+    try {
+        const url = `${baseUrl}/allTicketsInTeam`;
+        const response = await api.get(url)
+        return response
+    } catch (error) {
+        console.error('Error editing ticket:', error);
+        throw error
+    }
+}
+
+export default { getMyTickets, createTicket, getTicketById, editTicket, getAllTickets, getAllTicketsInTeam }
 

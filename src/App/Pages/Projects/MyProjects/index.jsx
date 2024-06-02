@@ -19,6 +19,7 @@ import {
 import Filter from '@/shared/components/Filter';
 import { usePermissions } from '@/shared/components/Permissions';
 import projectService from '@/App/services/projects';
+import userService from '@/App/services/users';
 
 import { color } from '@/shared/utils/styles';
 
@@ -36,8 +37,20 @@ const MyProjects = () => {
         const fetchProjects = async () => {
             setLoading(true);
             try {
-                const fetchedProjects = await projectService.getUserProjectsWithRoles();
-                setProjects(fetchedProjects);
+                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
+                const user = await userService.getUserById(userId);
+
+                if (permissions.includes('seeAllProjects')){
+                    const fetchedProjects = await projectService.getProjectsByOrgId();
+                    setProjects(fetchedProjects);
+                } else if (permissions.includes('seeAllProjectsInTeam')) {
+                    const fetchedProjects = await projectService.getProjectsByTeamId();
+                    setProjects(fetchedProjects)
+                } else {
+                    const fetchedProjects = await projectService.getUserProjectsWithRoles();
+                    setProjects(fetchedProjects);
+                }
+
             } catch (err) {
                 console.error("Error fetching projects: ", err);
             } finally {
@@ -49,7 +62,7 @@ const MyProjects = () => {
     }, []);
 
     useEffect(() => {
-        const filteredCount = projects.filter(project =>
+        const filteredCount = (Array.isArray(projects) ? projects : []).filter(project =>
             project.project.name.toLowerCase().includes(filter.toLowerCase())
         ).length;
         setFilterCount(filteredCount)

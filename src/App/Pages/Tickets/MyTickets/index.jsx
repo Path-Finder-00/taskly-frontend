@@ -19,6 +19,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import { usePermissions } from '@/shared/components/Permissions';
 
 import { color } from '@/shared/utils/styles';
 import Filter from '@/shared/components/Filter';
@@ -33,6 +34,7 @@ const MyTickets = () => {
     const [filter, setFilter] = useState('');
     const [isNextDisabled, setIsNextDisabled] = useState(false);
     const [isPrevDisabled, setIsPrevDisabled] = useState(true);
+    const permissions = usePermissions();
 
     const { t } = useTranslation("translations");
     const navigate = useNavigate();
@@ -43,8 +45,18 @@ const MyTickets = () => {
                 const userId = sessionStorage.getItem('loggedTasklyAppUserId');
                 const user = await userService.getUserById(userId);
                 setUserAccess(user.accessId)
-                const fetchedTickets = await ticketsService.getMyTickets();
-                setTickets(fetchedTickets);
+                
+                if (permissions.includes('seeAllTickets')){
+                    const fetchedTickets = await ticketsService.getAllTickets();
+                    setTickets(fetchedTickets);
+                } else if (permissions.includes('seeAllTicketsInTeam')) {
+                    const fetchedTickets = await ticketsService.getAllTicketsInTeam();
+                    setTickets(fetchedTickets);
+                } else {
+                    const fetchedTickets = await ticketsService.getMyTickets();
+                    setTickets(fetchedTickets);
+                }
+
             } catch (err) {
                 console.error("Error fetching tickets: ", err);
             } finally {
@@ -98,7 +110,7 @@ const MyTickets = () => {
                             {t('tickets.allMyTickets')}
                         </Typography>
                         <Typography variant="subtitle1" component="div" sx={{ ml: 2 }}>
-                            { userAccess !== 5 ? t('tickets.allMyAssignedTicketsInfo') : t('tickets.allMyTicketsInfo') }
+                            {userAccess !== 5 ? t('tickets.allMyAssignedTicketsInfo') : t('tickets.allMyTicketsInfo')}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center">
@@ -126,7 +138,7 @@ const MyTickets = () => {
                                     </TableCell>
                                     <TableCell width="15%">
                                         <Typography variant="h6" sx={{ color: `${color.textDark}` }}>
-                                            { userAccess !== 5 ? t('tickets.developer') : t('tickets.creator') }
+                                            {userAccess !== 5 ? t('tickets.developer') : t('tickets.creator')}
                                         </Typography>
                                     </TableCell>
                                     <TableCell width="10%">

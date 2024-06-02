@@ -82,8 +82,12 @@ const EditUser = () => {
                 openSnackbar(t('users.editingSuccess'), 'success');
                 navigate(`/profile/${userId}`, { replace: true });
             } catch (error) {
-                console.error('Error creating ticket:', error)
-                openSnackbar(t('users.editingError'), 'error');
+                if (error && error === "Email exists") {
+                    openSnackbar(t('users.emailExistsError'), 'error');
+                } else {
+                    console.error('Error creating user:', error)
+                    openSnackbar(t('users.creationError'), 'error');
+                }
             }
         }
     };

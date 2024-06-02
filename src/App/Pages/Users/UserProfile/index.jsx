@@ -69,14 +69,14 @@ const UserProfile = () => {
 
     useEffect(() => {
         const fetchTeamMembers = async () => {
-            if (permissions.includes('editUserInTeam') && userIdParam) {
+            if (permissions.includes('editAnyUser') && userIdParam)  {
+                setUserInTeam(true)
+            } else if (permissions.includes('editUserInTeam') && userIdParam) {
                 const members = await teamsService.getTeamMembers();
                 const isTeamMember = members.some(member => {
                     return member.id == userId;
                 });
                 setUserInTeam(isTeamMember);
-            } else if (permissions.includes('editAnyUser') && userIdParam) {
-                setUserInTeam(true)
             } else if (!userIdParam) {
                 setUserInTeam(true)
             } else {

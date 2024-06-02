@@ -105,7 +105,8 @@
         "creationError": "Wystąpił błąd podczas tworzenia Użytkownika",
         "editingSuccess": "Pomyślnie edytowano Użytkownika",
         "editingError": "Wystąpił błąd podczas edytowania Użytkownika",
-        "loading": "Ładowanie danych użytkownika..."
+        "loading": "Ładowanie danych użytkownika...",
+        "emailExistsError": "Użytkownik o podanym adresie e-mail już istnieje"
     },
     "tickets": {
         "title": "Tytuł",
