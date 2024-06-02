@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 import { Box, AppBar, Toolbar, IconButton, Grid, Button } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
@@ -13,7 +12,7 @@ import { removeStoredUserId } from '@/shared/utils/storeUserId'
 import { useSnackbar } from '@/shared/components/Snackbar';
 
 const MenuTopbar = ({ setUser }) => {
-    const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    const StyledAppBar = styled(AppBar)(() => ({
         height: sizes.topbarHeight,
         width: '100%',
         background: color.sidebar

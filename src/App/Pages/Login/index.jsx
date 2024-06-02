@@ -5,7 +5,7 @@ import { storeAuthToken } from '@/shared/utils/authToken'
 import { storeUserId } from '@/shared/utils/storeUserId'
 import { Box, Button, Typography, FormHelperText, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { color } from '@/shared/utils/styles';
-import logo from '../../assets/taskly_logo.png'
+import logo from '@/App/assets/taskly_logo.png'
 import loginService from '@/App/services/login.js'
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
