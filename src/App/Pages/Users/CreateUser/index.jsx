@@ -236,10 +236,17 @@ const CreateUser = () => {
 
     useEffect(() => {
         if (user.is_client && user.organization) {
-            projectsService.getProjectsByOrgId(user.organization)
-                .then(projects => {
-                    setProjects(projects);
-                })
+            if (permissions.includes('seeAllProjects')){
+                projectsService.getProjectsByOrgId()
+                    .then(projects => {
+                        setProjects(projects);
+                    })
+            } else if (permissions.includes('seeAllProjectsInTeam')) {
+                projectsService.getProjectsByTeamId()
+                    .then(projects => {
+                        setProjects(projects);
+                    })
+            }
         }
     }, [user.is_client && user.organization]);
 

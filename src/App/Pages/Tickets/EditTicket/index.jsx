@@ -8,6 +8,7 @@ import projectService from '@/App/services/projects';
 import priorityService from '@/App/services/priorities';
 // import typeService from '@/App/services/types';
 import ticketService from '@/App/services/tickets';
+import statusService from '@/App/services/statuses';
 import {
     Grid,
     Box,
@@ -46,6 +47,7 @@ const EditTicket = () => {
     const [descError, setDescError] = useState('');
     const [projectError, setProjectError] = useState('');
     const [priorityError, setPriorityError] = useState('');
+    const [statuses, setStatuses] = useState('');
     // const [typeError, setTypeError] = useState('');
     const { ticketId } = useParams();
     const [loading, setLoading] = useState(true);
@@ -129,13 +131,25 @@ const EditTicket = () => {
                     project: ticket.projectId,
                     assigned: ticket.ticket_histories[ticket.ticket_histories.length - 1].employeeId,
                     priority: ticket.ticket_histories[ticket.ticket_histories.length - 1].priorityId,
-                    type: ticket.typeId
+                    type: ticket.typeId,
+                    status: ticket.ticket_histories[ticket.ticket_histories.length - 1].statusId
                 }
             )
-            const userProjects = await projectService.getUserProjects()
-            setProjects(userProjects)
+            
+            if (permissions.includes('seeAllProjects')){
+                const fetchedProjects = await projectService.getProjectsByOrgId();
+                setProjects(fetchedProjects);
+            } else if (permissions.includes('seeAllProjectsInTeam')) {
+                const fetchedProjects = await projectService.getProjectsByTeamId();
+                setProjects(fetchedProjects);
+            } else {
+                const userProjects = await projectService.getUserProjects()
+                setProjects(userProjects)
+            }
             const priorities = await priorityService.getPriorities()
             setPriorities(priorities)
+            const statuses = await statusService.getStatuses()
+            setStatuses(statuses)
             // const types = await typeService.getTypes()
             // setTypes(types)
             } catch (error) {
@@ -268,7 +282,28 @@ const EditTicket = () => {
                         </FormControl>
                     </Grid>
                     <Grid item md={6}>
-                        {/* <FormControl fullWidth error={!!typeError}>
+                        <FormControl fullWidth>
+                            <InputLabel id="status-label">{t('tickets.status')}</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                id="status"
+                                value={ticket.status}
+                                onChange={handleChange('status')}
+                                label={t('tickets.status')}
+                            >
+                                {statuses.map((status) => (
+                                    <MenuItem
+                                        key={status.id}
+                                        value={status.id}
+                                    >
+                                        {status.status}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* <Grid item md={6}>
+                        <FormControl fullWidth error={!!typeError}>
                             <InputLabel id="type-label">{t('tickets.type')}</InputLabel>
                             <Select
                                 labelId="type-label"
@@ -287,8 +322,8 @@ const EditTicket = () => {
                                 ))}
                             </Select>
                             {typeError && <FormHelperText>{typeError}</FormHelperText>}
-                        </FormControl> */}
-                    </Grid>
+                        </FormControl>
+                    </Grid> */}
                     <Grid item md={6}>
                         <Button
                             onClick={() => navigate(-1)}

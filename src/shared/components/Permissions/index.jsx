@@ -15,7 +15,15 @@ export const PermissionProvider = ({ user, children }) => {
     const [permissions, setPermissions] = useState([]);
 
     useEffect(() => {
-        user ? permissionsService.getPermissions().then(permissions => setPermissions(permissions)) : [];
+        const fetchData = async () => {
+            try {
+                const permission = user ? await permissionsService.getPermissions() : [];
+                setPermissions(permission)
+            } catch (error) {
+                console.error("Error while fetching users's permissions: ", error)
+            } 
+        }
+        fetchData()
     }, [user])
 
     return (

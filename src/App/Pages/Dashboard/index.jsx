@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
 
 import projectService from '@/App/services/projects'
-import userService from '@/App/services/users'
 import { color } from '@/shared/utils/styles';
+import { usePermissions } from '@/shared/components/Permissions';
 import Color from 'color';
 
 import { MenuItem,
@@ -34,6 +34,8 @@ const Dashboard = () => {
     const [statuses, setStatuses] = useState([])
     const [assignees, setAssignees] = useState([])
     const [loading, setLoading] = useState(true)
+    // const [permissions, setPermissions] = useState([]);
+    const permissions = usePermissions();
 
     const colors = [
         Color(color.third).string(),
@@ -45,21 +47,16 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
-                const user = await userService.getUserById(userId);
-
-                // if (user.accessId === 1) {
-                //     const fetchedProjects = await projectService.getProjectsByOrgId();
-                //     setProjects(fetchedProjects);
-                // } else if (user.accesssId === 2) {
-                //     const fetchedProjects = await projectService.getProjectsByTeamId();
-                //     setProjects(fetchedProjects);
-                // } else {
-                //     const userProjects = await projectService.getUserProjects()
-                //     setProjects(userProjects)
-                // }
-                const userProjects = await projectService.getUserProjects()
-                setProjects(userProjects)
+                if (permissions.includes('seeAllProjects')){
+                    const projectsData = await projectService.getProjectsByOrgId();
+                    setProjects(projectsData);
+                } else if (permissions.includes('seeAllProjectsInTeam')) {
+                    const projectsData = await projectService.getProjectsByTeamId();
+                    setProjects(projectsData);
+                } else {
+                    const userProjects = await projectService.getUserProjects()
+                    setProjects(userProjects)
+                }
             } catch (error) {
                 console.error("Error while fetching users's projects: ", error)
             } finally {
@@ -67,7 +64,7 @@ const Dashboard = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [permissions])
 
     useEffect(() => {
         if (projects.length > 0) {
