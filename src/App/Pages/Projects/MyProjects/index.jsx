@@ -41,11 +41,25 @@ const MyProjects = () => {
                 const user = await userService.getUserById(userId);
 
                 if (permissions.includes('seeAllProjects')){
-                    const fetchedProjects = await projectService.getProjectsByOrgId();
-                    setProjects(fetchedProjects);
+                    const data = await projectService.getProjectsByOrgId();
+                    const projectsData = data.map(project => ({
+                        project: {
+                            id: project.id,
+                            name: project.name,
+                            description: project.description
+                        }
+                    }));
+                    setProjects(projectsData);
                 } else if (permissions.includes('seeAllProjectsInTeam')) {
-                    const fetchedProjects = await projectService.getProjectsByTeamId();
-                    setProjects(fetchedProjects)
+                    const data = await projectService.getProjectsByTeamId();
+                    const projectsData = data.map(project => ({
+                        project: {
+                            id: project.id,
+                            name: project.name,
+                            description: project.description
+                        }
+                    }));
+                    setProjects(projectsData);
                 } else {
                     const fetchedProjects = await projectService.getUserProjectsWithRoles();
                     setProjects(fetchedProjects);
