@@ -114,7 +114,7 @@ const CreateUser = () => {
                     team_lead: checked ? false : updatedUser.team_lead,
                     team: checked ? '' : updatedUser.team,
                     technologies: checked ? [] : updatedUser.technologies,
-                    role: checked ? 6 : '' // 6 is the id of role "Klient"
+                    role: checked ? 7 : '' // 7 is the id of role "Klient"
                 }))
             } else {
                 setUser({ ...user, [prop]: type === 'checkbox' ? checked : value });
