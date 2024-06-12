@@ -27,13 +27,6 @@ export const mainTheme = createTheme({
                     }
                 }
             }
-        },
-        // MuiTypography: {
-        //     styleOverrides: {
-        //         root: {
-        //             color: color.textDark
-        //         }
-        //     }
-        // }
+        }
     }
 })

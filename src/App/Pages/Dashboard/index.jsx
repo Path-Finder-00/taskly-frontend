@@ -8,7 +8,6 @@ import { usePermissions } from '@/shared/components/Permissions';
 import Color from 'color';
 
 import { MenuItem,
-        Select,
         Box,
         FormControl,
         InputLabel,
@@ -17,6 +16,7 @@ import { MenuItem,
         Typography,
         CircularProgress 
     } from '@mui/material'
+import { Select } from '@mui/material'
 import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
 
@@ -34,7 +34,6 @@ const Dashboard = () => {
     const [statuses, setStatuses] = useState([])
     const [assignees, setAssignees] = useState([])
     const [loading, setLoading] = useState(true)
-    // const [permissions, setPermissions] = useState([]);
     const permissions = usePermissions();
 
     const colors = [

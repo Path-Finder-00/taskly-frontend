@@ -6,7 +6,7 @@ import roleService from '@/App/services/roles';
 import teamService from '@/App/services/teams';
 import projectService from '@/App/services/projects';
 import { useSnackbar } from '@/shared/components/Snackbar';
-import { sizes, color, font } from '@/shared/utils/styles';
+import { color } from '@/shared/utils/styles';
 import {
     Grid,
     Box,
@@ -94,7 +94,7 @@ const CreateProject = () => {
         };
 
         try {
-            const response = await projectService.createProject(projectPayload);
+            await projectService.createProject(projectPayload);
             openSnackbar(t('projects.creationSuccess'), 'success');
             navigate('/projects', { replace: true })
         } catch (error) {
@@ -287,4 +287,4 @@ const CreateProject = () => {
     )
 }
 
-export default CreateProject
+export default CreateProject;
