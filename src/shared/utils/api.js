@@ -4,7 +4,8 @@ import { getStoredAuthToken, removeStoredAuthToken } from './authToken'
 import history from '@/browserHistory'
 
 const defaultParams = {
-    baseUrl:  'https://taskly-backend.fly.dev',
+
+    baseUrl: 'http://localhost:3001',
     headers: () => ({
         'Content-Type': 'application/json'
     })
