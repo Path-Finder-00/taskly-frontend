@@ -54,15 +54,12 @@ const LoginForm = ({ setUser }) => {
     
                 storeAuthToken(user.token)
                 storeUserId(user.id)
-            
-                console.log(user.token)
                 setUser(user)
                 setEmail('')
                 setPassword('')
                 navigate('/dashboard')
             } catch (exception) {
                 setCredentialsError("Invalid e-mail or password")
-                console.log(exception)
             }
         }
     }
@@ -165,7 +162,10 @@ const LoginForm = ({ setUser }) => {
                     Sign in
                 </Button>
                 <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                    <Typography>email: test_admin@gmail.com</Typography>
+                    <Typography>email: admin@gmail.com</Typography>
+                    <Typography>password: password</Typography>
+                    <Typography>LUB</Typography>
+                    <Typography>email: team_leader_1@gmail.com</Typography>
                     <Typography>password: password</Typography>
                 </Box>
             </Box>

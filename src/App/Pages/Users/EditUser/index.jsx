@@ -195,7 +195,6 @@ const EditUser = () => {
         const fetchData = async () => {
             try {
                 const userData = await usersService.getUserById(userId)
-                console.log(userData)
                 const organization = await organizationsService.getOrganization()
                 if (userData.accessId === 5) { // Check if user is a client
                     const projectsData = await projectsService.getProjectsByOrgId(organization.id)
