@@ -40,7 +40,7 @@ const App = () => {
 
     const [user, setUser] = useState(null)
 
-  // preventing the user from changing the id in session storage
+  // Preventing the user from changing the id in session storage
     useEffect(() => {
         const handleStorageChange = (event) => {
             if (event.storageArea === sessionStorage) {

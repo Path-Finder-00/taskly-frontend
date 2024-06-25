@@ -4,7 +4,7 @@ import { getStoredAuthToken, removeStoredAuthToken } from './authToken'
 import history from '@/browserHistory'
 
 const defaultParams = {
-    baseUrl: 'https://taskly-backend.fly.dev',
+    baseUrl:  'http://localhost:3001',//'https://taskly-backend.fly.dev',
     headers: () => ({
         'Content-Type': 'application/json'
     })
@@ -15,7 +15,8 @@ const api = (method, url, variables, headers = defaultParams.headers(), type = u
         axios({
             url: `${defaultParams.baseUrl}${url}`,
             method,
-            headers: Object.assign(headers, {Authorization: getStoredAuthToken() ? `Bearer ${getStoredAuthToken()}` : undefined}),
+            headers: Object.assign(headers, {Authorization: getStoredAuthToken() ? 
+                `Bearer ${getStoredAuthToken()}` : undefined}),
             params: method === 'get' ? variables : undefined,
             data: method !== 'get' ? variables : undefined,
             responseType: type

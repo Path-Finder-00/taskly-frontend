@@ -19,7 +19,6 @@ import {
 import Filter from '@/shared/components/Filter';
 import { usePermissions } from '@/shared/components/Permissions';
 import projectService from '@/App/services/projects';
-import userService from '@/App/services/users';
 
 import { color } from '@/shared/utils/styles';
 
@@ -37,9 +36,6 @@ const MyProjects = () => {
         const fetchProjects = async () => {
             setLoading(true);
             try {
-                const userId = sessionStorage.getItem('loggedTasklyAppUserId');
-                const user = await userService.getUserById(userId);
-
                 if (permissions.includes('seeAllProjects')){
                     const data = await projectService.getProjectsByOrgId();
                     const projectsData = data.map(project => ({
